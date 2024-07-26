@@ -23,7 +23,7 @@ class HomeProvider with ChangeNotifier {
     try {
       await Future.delayed(const Duration(seconds: 2));
       _carouselItems = dummyCarouselItems;
-      _products = dummyProducts;
+      //_products = dummyProducts;
       _state = HomeState.loaded;
     } catch (error) {
       _state = HomeState.error;
@@ -39,9 +39,7 @@ class HomeProvider with ChangeNotifier {
       _state = HomeState.loading;
       notifyListeners();
       final items = await homeServices.getProducts();
-      print(items.first.toString());
       _products = items;
-
       _state = HomeState.loaded;
     } catch (error) {
       _state = HomeState.error;
