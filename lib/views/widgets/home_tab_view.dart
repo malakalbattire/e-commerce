@@ -16,6 +16,7 @@ class HomeTabView extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (homeProvider.state == HomeState.initial) {
         homeProvider.loadHomeData();
+        homeProvider.getHomeData();
       }
     });
 

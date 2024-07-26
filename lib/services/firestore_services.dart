@@ -24,7 +24,7 @@ class FirestoreServices {
 
   Stream<List<T>> collectionStream<T>({
     required String path,
-    required T Function(Object? data, String documentId) builder,
+    required T Function(Map<String, dynamic>, String documentId) builder,
     Query Function(Query query)? queryBuilder,
     int Function(T lhs, T rhs)? sort,
   }) {
@@ -36,7 +36,8 @@ class FirestoreServices {
     final snapshots = query.snapshots();
     return snapshots.map((snapshot) {
       final result = snapshot.docs
-          .map((snapshot) => builder(snapshot.data(), snapshot.id))
+          .map((snapshot) =>
+              builder(snapshot.data() as Map<String, dynamic>, snapshot.id))
           .where((value) => value != null)
           .toList();
       if (sort != null) {
@@ -48,25 +49,26 @@ class FirestoreServices {
 
   Stream<T> documentStream<T>({
     required String path,
-    required T Function(Object? data, String documentID) builder,
+    required T Function(Map<String, dynamic>, String documentID) builder,
   }) {
     final reference = firestore.doc(path);
     final snapshots = reference.snapshots();
-    return snapshots.map((snapshot) => builder(snapshot.data(), snapshot.id));
+    return snapshots.map((snapshot) =>
+        builder(snapshot.data() as Map<String, dynamic>, snapshot.id));
   }
 
   Future<T> getDocument<T>({
     required String path,
-    required T Function(Object? data, String documentId) builder,
+    required T Function(Map<String, dynamic> data, String documentId) builder,
   }) async {
     final reference = firestore.doc(path);
     final snapshot = await reference.get();
-    return builder(snapshot.data(), snapshot.id);
+    return builder(snapshot.data() as Map<String, dynamic>, snapshot.id);
   }
 
   Future<List<T>> getCollection<T>({
     required String path,
-    required T Function(Object? data, String documentId) builder,
+    required T Function(Map<String, dynamic> data, String documentId) builder,
     Query Function(Query query)? queryBuilder,
     int Function(T lhs, T rhs)? sort,
   }) async {
@@ -76,7 +78,8 @@ class FirestoreServices {
     }
     final snapshots = await query.get();
     final result = snapshots.docs
-        .map((snapshot) => builder(snapshot.data(), snapshot.id))
+        .map((snapshot) =>
+            builder(snapshot.data() as Map<String, dynamic>, snapshot.id))
         .where((value) => value != null)
         .toList();
     if (sort != null) {

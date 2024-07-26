@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model.dart';
 import 'package:flutter/material.dart';
-
 import '../../utils/app_colors.dart';
 
 class ProductItemPaymentWidget extends StatelessWidget {

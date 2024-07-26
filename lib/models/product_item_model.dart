@@ -1,5 +1,10 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'product_item_model.g.dart';
+
 enum Size { S, M, L, xL }
 
+@JsonSerializable()
 class ProductItemModel {
   final String id;
   final String name;
@@ -24,6 +29,49 @@ class ProductItemModel {
     this.size,
     this.isAddedToCart = false,
   });
+
+  @override
+  String toString() {
+    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,description:$description,price:$price,category:$category,quantity:$quantity,size:$size,isAddedToCart:$isAddedToCart}';
+  }
+
+  factory ProductItemModel.fromJson(Map<String, dynamic> json) =>
+      _$ProductItemModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProductItemModelToJson(this);
+
+  factory ProductItemModel.fromMap(
+      Map<String, dynamic> data, String documentId) {
+    return ProductItemModel(
+      id: documentId,
+      name: data['name'] ?? '',
+      imgUrl: data['imgUrl'] ?? '',
+      isFavorite: data['isFavorite'] ?? false,
+      description: data['description'] ?? '',
+      price: data['price']?.toDouble() ?? 0.0,
+      category: data['category'] ?? '',
+      quantity: data['quantity']?.toInt() ?? 0,
+      size: data['size'] != null
+          ? Size.values.firstWhere((e) => e.name == data['size'])
+          : null,
+      isAddedToCart: data['isAddedToCart'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'imgUrl': imgUrl,
+      'isFavorite': isFavorite,
+      'description': description,
+      'price': price,
+      'category': category,
+      'quantity': quantity,
+      'size': size?.name,
+      'isAddedToCart': isAddedToCart,
+    };
+  }
+
   ProductItemModel copyWith({
     String? id,
     String? name,
@@ -70,7 +118,7 @@ List<ProductItemModel> dummyProducts = [
     imgUrl:
         'https://i.pinimg.com/564x/cc/09/26/cc09269ddc96e7900392d8aeba67f5af.jpg',
     price: 30,
-    category: 'snakes',
+    category: 'snacks',
     isFavorite: true,
   ),
   const ProductItemModel(
