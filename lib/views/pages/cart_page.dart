@@ -20,56 +20,61 @@ class CartPage extends StatelessWidget {
       }
     });
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          if (cartProvider.state == CartState.loading)
-            const CircularProgressIndicator.adaptive()
-          else if (cartProvider.state == CartState.error)
-            Text('Error: ${cartProvider.errorMessage}')
-          else ...[
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: cartProvider.cartItems.length,
-              itemBuilder: (context, index) {
-                return CartItemWidget(
-                  productItem: cartProvider.cartItems[index],
-                );
-              },
-            ),
-            buildCartTotalAndSubtotalItem(
-                context, 'Subtotal', cartProvider.subtotal),
-            const SizedBox(height: 8),
-            buildCartTotalAndSubtotalItem(context, 'Shipping', 10),
-            const SizedBox(height: 16),
-            Dash(
-              length: size.width - 32,
-              dashLength: 12,
-              dashColor: AppColors.gray,
-            ),
-            const SizedBox(height: 16),
-            buildCartTotalAndSubtotalItem(
-                context, 'Total Amount', cartProvider.subtotal + 10),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context, rootNavigator: true)
-                            .pushNamed(AppRoutes.payment);
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          foregroundColor: AppColors.white),
-                      child: Text('Checkout'))),
-            ),
-            const SizedBox(height: 80),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await cartProvider.loadCartData();
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (cartProvider.state == CartState.loading)
+              const CircularProgressIndicator.adaptive()
+            else if (cartProvider.state == CartState.error)
+              Text('Error: ${cartProvider.errorMessage}')
+            else ...[
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cartProvider.cartItems.length,
+                itemBuilder: (context, index) {
+                  return CartItemWidget(
+                    productItem: cartProvider.cartItems[index],
+                  );
+                },
+              ),
+              buildCartTotalAndSubtotalItem(
+                  context, 'Subtotal', cartProvider.subtotal),
+              const SizedBox(height: 8),
+              buildCartTotalAndSubtotalItem(context, 'Shipping', 10),
+              const SizedBox(height: 16),
+              Dash(
+                length: size.width - 32,
+                dashLength: 12,
+                dashColor: AppColors.gray,
+              ),
+              const SizedBox(height: 16),
+              buildCartTotalAndSubtotalItem(
+                  context, 'Total Amount', cartProvider.subtotal + 10),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true)
+                              .pushNamed(AppRoutes.payment);
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: AppColors.white),
+                        child: Text('Checkout'))),
+              ),
+              const SizedBox(height: 80),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

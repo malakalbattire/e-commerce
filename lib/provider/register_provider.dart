@@ -12,12 +12,16 @@ class RegisterProvider with ChangeNotifier {
   RegisterState get state => _state;
   String get errorMessage => _errorMessage;
 
-  Future<User?> register(String email, String password) async {
+  Future<User?> register(
+    String email,
+    String password,
+    String username,
+  ) async {
     _state = RegisterState.loading;
     notifyListeners();
 
     try {
-      final result = await _authServices.register(email, password);
+      final result = await _authServices.register(email, password, username);
       if (result) {
         final user = await _authServices.getUser();
         _state = RegisterState.loaded;

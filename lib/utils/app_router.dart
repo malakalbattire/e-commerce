@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/cart_provider.dart';
@@ -14,9 +15,21 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.productDetails:
+        final productId = settings.arguments as String?;
+        if (productId == null) {
+          return _errorRoute('Product ID is required');
+        }
         return MaterialPageRoute(
-          builder: (_) => const ProductDetailsPage(),
+          builder: (_) => ChangeNotifierProvider(
+            create: (context) {
+              final provider = ProductDetailsProvider();
+              provider.getProductDetails(productId);
+              return provider;
+            },
+            child: ProductDetailsPage(productId: productId),
+          ),
         );
+
       case AppRoutes.myOrders:
         return MaterialPageRoute(
           builder: (_) => MyOrdersPage(),
@@ -56,14 +69,17 @@ class AppRouter {
           settings: settings,
         );
       default:
-        return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(
-              child: Text('Error Page'),
-            ),
-          ),
-          settings: settings,
-        );
+        return _errorRoute('Page not found');
     }
+  }
+
+  static Route<dynamic> _errorRoute(String message) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        body: Center(
+          child: Text(message),
+        ),
+      ),
+    );
   }
 }

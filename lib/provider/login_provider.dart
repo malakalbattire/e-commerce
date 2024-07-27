@@ -37,12 +37,12 @@ class LoginProvider with ChangeNotifier {
     }
   }
 
-  Future<User?> register(String email, String password) async {
+  Future<User?> register(String email, String password, String username) async {
     _state = LoginState.loading;
     notifyListeners();
 
     try {
-      final result = await _authServices.register(email, password);
+      final result = await _authServices.register(email, password, username);
       if (result) {
         final user = await _authServices.getUser();
         _state = LoginState.loaded;

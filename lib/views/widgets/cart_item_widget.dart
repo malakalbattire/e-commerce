@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app_flutter/models/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model.dart';
 import 'package:e_commerce_app_flutter/views/widgets/counter_widget.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../../provider/cart_provider.dart';
 
 class CartItemWidget extends StatelessWidget {
-  final ProductItemModel productItem;
+  final AddToCartModel productItem;
 
   const CartItemWidget({super.key, required this.productItem});
 
@@ -25,7 +26,7 @@ class CartItemWidget extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
-                    imageUrl: productItem.imgUrl,
+                    imageUrl: productItem.product.imgUrl,
                     height: 150.0,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -79,7 +80,7 @@ class CartItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    productItem.name,
+                    productItem.product.name,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -103,7 +104,7 @@ class CartItemWidget extends StatelessWidget {
                 ],
               ),
               Text(
-                '\$${productItem.price}',
+                '\$${productItem.product.price}',
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

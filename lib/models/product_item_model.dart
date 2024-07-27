@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'product_item_model.g.dart';
 
-enum Size { S, M, L, xL }
+enum ProductSize { S, M, L, xL }
 
 @JsonSerializable()
 class ProductItemModel {
@@ -14,8 +14,9 @@ class ProductItemModel {
   final double price;
   final String category;
   final int quantity;
-  final Size? size;
+  final ProductSize? size;
   final bool isAddedToCart;
+  final double averageRate;
 
   const ProductItemModel({
     required this.id,
@@ -28,6 +29,7 @@ class ProductItemModel {
     this.quantity = 0,
     this.size,
     this.isAddedToCart = false,
+    this.averageRate = 0.0,
   });
 
   @override
@@ -50,8 +52,9 @@ class ProductItemModel {
       price: data['price']?.toDouble() ?? 0.0,
       category: data['category'] ?? '',
       quantity: data['quantity']?.toInt() ?? 0,
+      averageRate: data['averageRate']?.toInt() ?? 0.0,
       size: data['size'] != null
-          ? Size.values.firstWhere((e) => e.name == data['size'])
+          ? ProductSize.values.firstWhere((e) => e.name == data['size'])
           : null,
       isAddedToCart: data['isAddedToCart'] ?? false,
     );
@@ -81,8 +84,9 @@ class ProductItemModel {
     double? price,
     String? category,
     int? quantity,
-    Size? size,
+    ProductSize? size,
     bool? isAddedToCart,
+    double? averageRate,
   }) {
     return ProductItemModel(
       id: id ?? this.id,
@@ -95,50 +99,42 @@ class ProductItemModel {
       quantity: quantity ?? this.quantity,
       size: size ?? this.size,
       isAddedToCart: isAddedToCart ?? this.isAddedToCart,
+      averageRate: averageRate ?? this.averageRate,
     );
   }
 }
 
 List<ProductItemModel> dummyProducts = [
   const ProductItemModel(
-    id: '1',
-    name: 'Lip Oil-Berry ',
-    imgUrl:
-        'https://i.pinimg.com/564x/68/28/fd/6828fd5d65bba355774fa291e8af322e.jpg',
-    price: 10,
-    category: 'make up',
-    isAddedToCart: true,
-    quantity: 2,
-    size: Size.L,
-    isFavorite: true,
-  ),
-  const ProductItemModel(
-    id: '2',
+    id: 'gybeAnQTQhC1FcfakIGQ',
     name: 'chips ',
     imgUrl:
         'https://i.pinimg.com/564x/cc/09/26/cc09269ddc96e7900392d8aeba67f5af.jpg',
     price: 30,
     category: 'snacks',
     isFavorite: true,
+    size: ProductSize.L,
   ),
   const ProductItemModel(
-    id: '3',
+    id: '1hwtizSG8HeY0iyDJ7cB',
     name: 'hern ',
     imgUrl:
         'https://i.pinimg.com/564x/d9/7f/c2/d97fc2a506dcd1f61b5c848e3129dbf0.jpg',
     price: 20,
     category: 'drinks',
+    size: ProductSize.L,
   ),
   const ProductItemModel(
-    id: '4',
+    id: 'hDgs4iK1zbElsIm8Uh2N',
     name: 'drink ',
     imgUrl:
         'https://i.pinimg.com/736x/05/59/ab/0559abcd343d2743f9b128cbb8113d4f.jpg',
     price: 5,
     category: 'drinks',
+    size: ProductSize.L,
   ),
   const ProductItemModel(
-    id: '5',
+    id: '92gt8JNTGdPJo9BXj4RK',
     name: 'drink ',
     imgUrl:
         'https://i.pinimg.com/564x/aa/ad/22/aaad22bf99a5e34a85d491f8a520a304.jpg',
@@ -146,11 +142,11 @@ List<ProductItemModel> dummyProducts = [
     category: 'drinks',
     isAddedToCart: true,
     quantity: 3,
-    size: Size.S,
+    size: ProductSize.S,
     isFavorite: true,
   ),
   const ProductItemModel(
-    id: '6',
+    id: 'qaIfLI9tv5owQeh4G0Oz',
     name: 'drink ',
     imgUrl:
         'https://i.pinimg.com/564x/a3/d8/02/a3d802c3edd520bc1f08d5b537917c00.jpg',
@@ -158,5 +154,6 @@ List<ProductItemModel> dummyProducts = [
     category: 'drinks',
     isAddedToCart: true,
     quantity: 1,
+    size: ProductSize.L,
   ),
 ];

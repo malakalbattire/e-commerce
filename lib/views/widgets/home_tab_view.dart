@@ -16,79 +16,88 @@ class HomeTabView extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (homeProvider.state == HomeState.initial) {
         homeProvider.loadHomeData();
-        homeProvider.getHomeData();
+        homeProvider.getProductsStream();
       }
     });
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          if (homeProvider.state == HomeState.loading)
-            const CircularProgressIndicator.adaptive()
-          else if (homeProvider.state == HomeState.error)
-            Text('Error: ${homeProvider.errorMessage}')
-          else ...[
-            FlutterCarousel(
-              options: CarouselOptions(
-                height: 200.0,
-                showIndicator: true,
-                slideIndicator: CircularWaveSlideIndicator(),
-              ),
-              items: homeProvider.carouselItems.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: CachedNetworkImage(
-                      imageUrl: item.imgUrl,
-                      placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator.adaptive()),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                      fit: BoxFit.fill,
-                    ),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await homeProvider.getProductsStream();
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (homeProvider.state == HomeState.loading)
+              const CircularProgressIndicator.adaptive()
+            else if (homeProvider.state == HomeState.error)
+              Text('Error: ${homeProvider.errorMessage}')
+            else ...[
+              if (homeProvider.carouselItems.isNotEmpty)
+                FlutterCarousel(
+                  options: CarouselOptions(
+                    height: 200.0,
+                    showIndicator: true,
+                    slideIndicator: CircularWaveSlideIndicator(),
                   ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'New Arrivals',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        fontWeight: FontWeight.w600,
+                  items: homeProvider.carouselItems.map((item) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: CachedNetworkImage(
+                          imageUrl: item.imgUrl,
+                          placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator.adaptive()),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                          fit: BoxFit.fill,
+                        ),
                       ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('See All'),
+                    );
+                  }).toList(),
                 )
-              ],
-            ),
-            GridView.builder(
-              itemCount: homeProvider.products.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 18,
+              else
+                Text('No carousel items available'),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'New Arrivals',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text('See All'),
+                  )
+                ],
               ),
-              itemBuilder: (context, index) => InkWell(
-                onTap: () => Navigator.of(
-                  context,
-                  // rootNavigator: true,
-                ).pushNamed(AppRoutes.productDetails),
-                child: ProductItem(
-                  productItem: homeProvider.products[index],
+              GridView.builder(
+                itemCount: homeProvider.products.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 18,
+                ),
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () =>
+                      Navigator.of(context, rootNavigator: true).pushNamed(
+                    AppRoutes.productDetails,
+                    arguments: homeProvider.products[index].id,
+                  ),
+                  child: ProductItem(
+                    productItem: homeProvider.products[index],
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

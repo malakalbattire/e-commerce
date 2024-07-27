@@ -1,0 +1,95 @@
+import 'package:e_commerce_app_flutter/models/product_item_model.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'add_to_cart_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
+class AddToCartModel {
+  final String id;
+  final ProductItemModel product;
+  final Size size;
+  final int quantity;
+
+  AddToCartModel({
+    required this.id,
+    required this.product,
+    required this.size,
+    required this.quantity,
+  });
+
+  double get totalPrice => product.price * quantity;
+
+  AddToCartModel copyWith({
+    String? id,
+    ProductItemModel? product,
+    Size? size,
+    int? quantity,
+  }) {
+    return AddToCartModel(
+      id: id ?? this.id,
+      product: product ?? this.product,
+      size: size ?? this.size,
+      quantity: quantity ?? this.quantity,
+    );
+  }
+
+  // JSON serialization methods
+  factory AddToCartModel.fromJson(Map<String, dynamic> json) =>
+      _$AddToCartModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AddToCartModelToJson(this);
+
+  // Map conversion methods
+  factory AddToCartModel.fromMap(Map<String, dynamic> map, String documentId) {
+    return AddToCartModel(
+      id: documentId,
+      product:
+          ProductItemModel.fromJson(map['product'] as Map<String, dynamic>),
+      size: _sizeFromString(map['size'] as String),
+      quantity: map['quantity'] as int,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'product': product.toJson(),
+      'size': _sizeToString(size),
+      'quantity': quantity,
+    };
+  }
+
+  // Helper methods to convert Size to/from String
+  static Size _sizeFromString(String size) {
+    switch (size) {
+      case 'S':
+        return Size.S;
+      case 'M':
+        return Size.M;
+      case 'L':
+        return Size.L;
+      case 'XL':
+        return Size.xL;
+      default:
+        throw ArgumentError('Invalid size string');
+    }
+  }
+
+  static String _sizeToString(Size size) {
+    switch (size) {
+      case Size.S:
+        return 'S';
+      case Size.M:
+        return 'M';
+      case Size.L:
+        return 'L';
+      case Size.xL:
+        return 'XL';
+      default:
+        throw ArgumentError('Invalid size');
+    }
+  }
+}
+
+// Enum to represent product size
+enum Size { S, M, L, xL }
