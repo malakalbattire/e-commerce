@@ -6,12 +6,12 @@ part 'favorite_model.g.dart';
 class FavoriteModel {
   final String id;
   final String productId;
-  final String userId;
+  // final String userId;
 
   FavoriteModel({
     required this.id,
     required this.productId,
-    required this.userId,
+    // required this.userId,
   });
 
   factory FavoriteModel.fromJson(Map<String, dynamic> json) =>
@@ -22,7 +22,7 @@ class FavoriteModel {
     return FavoriteModel(
       id: documentId,
       productId: map['productId'] as String,
-      userId: map['userId'] as String,
+      // userId: map['userId'] as String,
     );
   }
 
@@ -30,19 +30,19 @@ class FavoriteModel {
     return {
       'id': id,
       'productId': productId,
-      'userId': userId,
+      // 'userId': userId,
     };
   }
 
   FavoriteModel copyWith({
     String? id,
     String? productId,
-    String? userId,
+    // String? userId,
   }) {
     return FavoriteModel(
       id: id ?? this.id,
       productId: productId ?? this.productId,
-      userId: userId ?? this.userId,
+      // userId: userId ?? this.userId,
     );
   }
 }

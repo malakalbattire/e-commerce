@@ -88,6 +88,7 @@ class HomeTabView extends StatelessWidget {
                     arguments: homeProvider.products[index].id,
                   ),
                   child: ProductItem(
+                    productId: homeProvider.products[index].id,
                     productItem: homeProvider.products[index],
                   ),
                 ),
