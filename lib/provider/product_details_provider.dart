@@ -24,7 +24,6 @@ class ProductDetailsProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
-      // Handle error if necessary
     }
   }
 
@@ -58,7 +57,7 @@ class ProductDetailsProvider with ChangeNotifier {
         final selectedProduct =
             await productDetailsServices.getProductDetails(productId);
         final cartItem = AddToCartModel(
-          id: DateTime.now().toIso8601String(),
+          id: productId,
           product: selectedProduct,
           quantity: _quantity,
           size: _selectedSize!,

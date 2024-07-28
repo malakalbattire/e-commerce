@@ -17,7 +17,7 @@ ProductItemModel _$ProductItemModelFromJson(Map<String, dynamic> json) =>
       price: (json['price'] as num).toDouble(),
       category: json['category'] as String,
       quantity: (json['quantity'] as num?)?.toInt() ?? 0,
-      size: $enumDecodeNullable(_$SizeEnumMap, json['size']),
+      size: $enumDecodeNullable(_$ProductSizeEnumMap, json['size']),
       isAddedToCart: json['isAddedToCart'] as bool? ?? false,
       averageRate: (json['averageRate'] as num?)?.toDouble() ?? 0.0,
     );
@@ -32,12 +32,12 @@ Map<String, dynamic> _$ProductItemModelToJson(ProductItemModel instance) =>
       'price': instance.price,
       'category': instance.category,
       'quantity': instance.quantity,
-      'size': _$SizeEnumMap[instance.size],
+      'size': _$ProductSizeEnumMap[instance.size],
       'isAddedToCart': instance.isAddedToCart,
       'averageRate': instance.averageRate,
     };
 
-const _$SizeEnumMap = {
+const _$ProductSizeEnumMap = {
   ProductSize.S: 'S',
   ProductSize.M: 'M',
   ProductSize.L: 'L',

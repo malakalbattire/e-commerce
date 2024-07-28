@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/views/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -17,13 +18,7 @@ class CustomBottomNavbar extends StatefulWidget {
 }
 
 class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
-  // late final PersistentTabController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    // _controller = PersistentTabController();
-  }
+  final AuthServicesImpl authServices = AuthServicesImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -38,24 +33,37 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
             radius: 25,
           ),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Hi, Malak',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge!
-                  .copyWith(fontWeight: FontWeight.w600),
-            ),
-            Text(
-              'Let\'s go shopping!',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge!
-                  .copyWith(color: Colors.grey),
-            ),
-          ],
+        title: FutureBuilder<String?>(
+          future: authServices.getUsername(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading...');
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data == null) {
+              return const Text('Hi, User');
+            } else {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hi, ${snapshot.data}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    'Let\'s go shopping!',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: Colors.grey),
+                  ),
+                ],
+              );
+            }
+          },
         ),
         actions: [
           IconButton(

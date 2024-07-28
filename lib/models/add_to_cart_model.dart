@@ -8,7 +8,7 @@ class AddToCartModel {
   final String id;
   final ProductItemModel product;
   final Size size;
-  final int quantity;
+  int quantity;
 
   AddToCartModel({
     required this.id,
@@ -33,13 +33,11 @@ class AddToCartModel {
     );
   }
 
-  // JSON serialization methods
   factory AddToCartModel.fromJson(Map<String, dynamic> json) =>
       _$AddToCartModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddToCartModelToJson(this);
 
-  // Map conversion methods
   factory AddToCartModel.fromMap(Map<String, dynamic> map, String documentId) {
     return AddToCartModel(
       id: documentId,
@@ -59,7 +57,6 @@ class AddToCartModel {
     };
   }
 
-  // Helper methods to convert Size to/from String
   static Size _sizeFromString(String size) {
     switch (size) {
       case 'S':
@@ -91,5 +88,4 @@ class AddToCartModel {
   }
 }
 
-// Enum to represent product size
 enum Size { S, M, L, xL }

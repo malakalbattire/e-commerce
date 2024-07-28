@@ -1,7 +1,6 @@
 import 'package:e_commerce_app_flutter/models/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/services/cart_services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model.dart';
 
 enum CartState { initial, loading, loaded, error }
 
@@ -18,44 +17,46 @@ class CartProvider with ChangeNotifier {
   double get subtotal {
     return _cartItems.fold<double>(
       0.0,
-      (sum, item) => sum + (item.product.price * (item.quantity)),
+      (sum, item) => sum + (item.product.price * item.quantity),
     );
   }
 
-  void removeFromCart(String productId) {
-    final index = _cartItems.indexWhere(
-      (item) => item.id == productId && item.product.isAddedToCart,
-    );
-
-    if (index != -1) {
-      final item = _cartItems[index].copyWith(quantity: 0);
-      _cartItems[index] = item;
-      if (item.quantity == 0) {
-        _cartItems.removeAt(index);
-      }
-
+  Future<void> removeFromCart(String productId) async {
+    try {
+      await cartServices.removeCartItem(productId);
+      _cartItems = await cartServices.getCartItems();
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = CartState.error;
       notifyListeners();
     }
   }
 
-  void increment(String productId) {
-    final index = _cartItems.indexWhere(
-        (item) => item.id == productId && item.product.isAddedToCart == true);
-    if (index != -1) {
-      _cartItems[index] = _cartItems[index].copyWith(
-        quantity: (_cartItems[index].quantity) + 1,
-      );
+  bool isInCart(String productId) {
+    return _cartItems.any((item) => item.product.id == productId);
+  }
+
+  Future<void> incrementQuantity(String productId) async {
+    try {
+      await cartServices.incrementCartItemQuantity(productId);
+      _cartItems = await cartServices.getCartItems();
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = CartState.error;
       notifyListeners();
     }
   }
 
-  void decrement(String productId) {
-    final index = _cartItems.indexWhere(
-        (item) => item.id == productId && item.product.isAddedToCart);
-    if (index != -1 && (_cartItems[index].quantity) > 1) {
-      _cartItems[index] = _cartItems[index].copyWith(
-        quantity: (_cartItems[index].quantity) - 1,
-      );
+  Future<void> decrementQuantity(String productId) async {
+    try {
+      await cartServices.decrementCartItemQuantity(productId);
+      _cartItems = await cartServices.getCartItems();
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = CartState.error;
       notifyListeners();
     }
   }

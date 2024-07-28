@@ -9,6 +9,7 @@ abstract class AuthServices {
   Future<void> logout();
   Future<bool> isLoggedIn();
   Future<User?> getUser();
+  Future<String?> getUsername();
 }
 
 class AuthServicesImpl implements AuthServices {
@@ -65,5 +66,21 @@ class AuthServicesImpl implements AuthServices {
   @override
   Future<User?> getUser() async {
     return await _firebaseAuth.currentUser;
+  }
+
+  Future<String?> getUsername() async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null) {
+      try {
+        final doc = await firestore.getDocument(
+          path: 'users/${user.uid}',
+          builder: (data, documentId) => data['username'] as String?,
+        );
+        return doc;
+      } catch (e) {
+        print('Error fetching username: $e');
+      }
+    }
+    return null;
   }
 }

@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model.dart';
 import 'package:e_commerce_app_flutter/views/widgets/counter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
-
 import 'package:provider/provider.dart';
 import '../../provider/cart_provider.dart';
 
@@ -85,22 +83,20 @@ class CartItemWidget extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                   ),
-                  if (productItem.size != null)
-                    Text.rich(
-                      TextSpan(
-                        text: 'Size:',
-                        style:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
-                                  color: AppColors.gray,
-                                ),
-                        children: [
-                          TextSpan(
-                            text: '/${productItem.size?.name}',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          )
-                        ],
-                      ),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Size:',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            color: AppColors.gray,
+                          ),
+                      children: [
+                        TextSpan(
+                          text: '/${productItem.size.name}',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        )
+                      ],
                     ),
+                  ),
                 ],
               ),
               Text(

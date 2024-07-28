@@ -11,7 +11,7 @@ class CounterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<CartProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
@@ -21,15 +21,16 @@ class CounterWidget extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              provider.decrement(productId);
+              cartProvider.decrementQuantity(productId);
             },
             icon: const Icon(Icons.remove),
           ),
-          Text('$value'),
+          Text(
+            value.toString(),
+          ),
           IconButton(
-            onPressed: () {
-              provider.increment(productId);
-              // print( );
+            onPressed: () async {
+              await cartProvider.incrementQuantity(productId);
             },
             icon: const Icon(Icons.add),
           ),

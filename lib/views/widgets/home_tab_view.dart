@@ -32,32 +32,29 @@ class HomeTabView extends StatelessWidget {
             else if (homeProvider.state == HomeState.error)
               Text('Error: ${homeProvider.errorMessage}')
             else ...[
-              if (homeProvider.carouselItems.isNotEmpty)
-                FlutterCarousel(
-                  options: CarouselOptions(
-                    height: 200.0,
-                    showIndicator: true,
-                    slideIndicator: CircularWaveSlideIndicator(),
-                  ),
-                  items: homeProvider.carouselItems.map((item) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: CachedNetworkImage(
-                          imageUrl: item.imgUrl,
-                          placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator.adaptive()),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                          fit: BoxFit.fill,
-                        ),
+              FlutterCarousel(
+                options: CarouselOptions(
+                  height: 200.0,
+                  showIndicator: true,
+                  slideIndicator: CircularWaveSlideIndicator(),
+                ),
+                items: homeProvider.carouselItems.map((item) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImage(
+                        imageUrl: item.imgUrl,
+                        placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator.adaptive()),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                        fit: BoxFit.fill,
                       ),
-                    );
-                  }).toList(),
-                )
-              else
-                Text('No carousel items available'),
+                    ),
+                  );
+                }).toList(),
+              ),
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

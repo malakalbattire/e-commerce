@@ -98,20 +98,6 @@ class PaymentPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                // Container(
-                //   width: double.infinity,
-                //   decoration: BoxDecoration(
-                //       color: Theme.of(context).scaffoldBackgroundColor,
-                //       border: Border.all(color: AppColors.gray),
-                //       borderRadius: BorderRadius.circular(16.0)),
-                //   child: Padding(
-                //     padding: EdgeInsets.all(8.0),
-                //     child: Row(
-                //       children: [],
-                //     ),
-                //   ),
-                // ),
                 const SizedBox(height: 16.0),
                 buildTotalAmount(context, paymentProvider.total),
                 const SizedBox(height: 16.0),
