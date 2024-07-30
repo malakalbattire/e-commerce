@@ -1,14 +1,16 @@
-import 'package:e_commerce_app_flutter/models/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model.dart';
+import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
   ProductItemModel? _selectedProduct;
   int _quantity = 1;
+  double _price = 0.0;
   Size? _selectedSize;
   final List<AddToCartModel> _cartItems = [];
-  final productDetailsServices = ProductDetailsServicesImpl();
+  final ProductDetailsServicesImpl productDetailsServices =
+      ProductDetailsServicesImpl();
 
   ProductItemModel? get selectedProduct => _selectedProduct;
   int get quantity => _quantity;
@@ -21,6 +23,7 @@ class ProductDetailsProvider with ChangeNotifier {
       _selectedProduct = result;
       _quantity = 1;
       _selectedSize = null;
+      _price = result.price;
       notifyListeners();
     } catch (e) {
       print(e);
@@ -54,13 +57,15 @@ class ProductDetailsProvider with ChangeNotifier {
   Future<void> addToCart(String productId) async {
     try {
       if (_selectedProduct != null && _selectedSize != null) {
-        final selectedProduct =
-            await productDetailsServices.getProductDetails(productId);
+        final selectedProduct = _selectedProduct!;
         final cartItem = AddToCartModel(
-          id: productId,
+          id: selectedProduct.id,
           product: selectedProduct,
-          quantity: _quantity,
           size: _selectedSize!,
+          quantity: _quantity,
+          price: _price,
+          imgUrl: selectedProduct.imgUrl,
+          name: selectedProduct.name,
         );
         await productDetailsServices.addToCart(cartItem);
         _cartItems.add(cartItem);

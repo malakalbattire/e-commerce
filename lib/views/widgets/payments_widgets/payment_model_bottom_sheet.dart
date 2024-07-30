@@ -1,5 +1,5 @@
 import 'package:e_commerce_app_flutter/models/payment_method_model.dart';
-import 'package:e_commerce_app_flutter/views/widgets/payment_item_widget.dart';
+import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';

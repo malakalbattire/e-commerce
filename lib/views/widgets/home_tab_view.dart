@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import '../../provider/home_provider.dart';
-import 'product_item.dart';
+import 'product_item_widgets/product_item.dart';
 
 class HomeTabView extends StatelessWidget {
   const HomeTabView({super.key});

@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/views/pages/address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/cart_provider.dart';
@@ -62,7 +63,11 @@ class AppRouter {
           builder: (_) => RegistrationPage(),
           settings: settings,
         );
-
+      case AppRoutes.address:
+        return MaterialPageRoute(
+          builder: (_) => AddressPage(),
+          settings: settings,
+        );
       case AppRoutes.login:
         return MaterialPageRoute(
           builder: (_) => LoginPage(),

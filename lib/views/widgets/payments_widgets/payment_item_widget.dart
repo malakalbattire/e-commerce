@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../../models/payment_method_model.dart';
-import '../../provider/payment_provider.dart';
-import '../../utils/app_colors.dart';
+import '../../../models/payment_method_model.dart';
+import '../../../provider/payment_provider.dart';
+import '../../../utils/app_colors.dart';
 import 'package:provider/provider.dart';
 
 class PaymentItemWidget extends StatelessWidget {

@@ -69,7 +69,7 @@ class CartPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: AppColors.white),
-                        child: Text('Checkout'))),
+                        child: const Text('Checkout'))),
               ),
               const SizedBox(height: 80),
             ],

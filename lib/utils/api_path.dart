@@ -10,4 +10,7 @@ class ApiPath {
   static String addToFavorites(String uid, String favoritesId) =>
       'users/$uid/favorites/$favoritesId';
   static String addToFavoritesItems(String uid) => 'users/$uid/favorites/';
+  static String addAddress(String uid, String addressId) =>
+      'users/$uid/address/$addressId';
+  static String addAddressItems(String uid) => 'users/$uid/address/';
 }

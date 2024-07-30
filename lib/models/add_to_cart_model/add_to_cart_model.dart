@@ -1,4 +1,4 @@
-import 'package:e_commerce_app_flutter/models/product_item_model.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_to_cart_model.g.dart';
@@ -9,27 +9,39 @@ class AddToCartModel {
   final ProductItemModel product;
   final Size size;
   int quantity;
+  final double price;
+  final String imgUrl; // New field
+  final String name; // New field
 
   AddToCartModel({
     required this.id,
     required this.product,
     required this.size,
     required this.quantity,
+    required this.price,
+    required this.imgUrl, // New field
+    required this.name, // New field
   });
 
-  double get totalPrice => product.price * quantity;
+  double get totalPrice => price * quantity;
 
   AddToCartModel copyWith({
     String? id,
     ProductItemModel? product,
     Size? size,
     int? quantity,
+    double? price,
+    String? imgUrl, // New field
+    String? name, // New field
   }) {
     return AddToCartModel(
       id: id ?? this.id,
       product: product ?? this.product,
       size: size ?? this.size,
       quantity: quantity ?? this.quantity,
+      price: price ?? this.price,
+      imgUrl: imgUrl ?? this.imgUrl, // New field
+      name: name ?? this.name, // New field
     );
   }
 
@@ -45,6 +57,9 @@ class AddToCartModel {
           ProductItemModel.fromJson(map['product'] as Map<String, dynamic>),
       size: _sizeFromString(map['size'] as String),
       quantity: map['quantity'] as int,
+      price: (map['price'] as num).toDouble(), // Ensure price is a double
+      imgUrl: map['imgUrl'] as String, // New field
+      name: map['name'] as String, // New field
     );
   }
 
@@ -54,6 +69,9 @@ class AddToCartModel {
       'product': product.toJson(),
       'size': _sizeToString(size),
       'quantity': quantity,
+      'price': price,
+      'imgUrl': imgUrl, // New field
+      'name': name, // New field
     };
   }
 

@@ -1,5 +1,5 @@
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model.dart';
 
 enum PaymentState { initial, loading, loaded, error }
 
@@ -17,7 +17,6 @@ class PaymentProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   double get subtotal => _subtotal;
   double get total => _total;
-
   String? get selectedPaymentMethodId => _selectedPaymentMethodId;
 
   void loadPaymentData() async {

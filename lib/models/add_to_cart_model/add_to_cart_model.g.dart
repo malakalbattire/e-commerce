@@ -13,6 +13,9 @@ AddToCartModel _$AddToCartModelFromJson(Map<String, dynamic> json) =>
           ProductItemModel.fromJson(json['product'] as Map<String, dynamic>),
       size: $enumDecode(_$SizeEnumMap, json['size']),
       quantity: (json['quantity'] as num).toInt(),
+      price: (json['price'] as num).toDouble(),
+      imgUrl: json['imgUrl'] as String,
+      name: json['name'] as String,
     );
 
 Map<String, dynamic> _$AddToCartModelToJson(AddToCartModel instance) =>
@@ -21,6 +24,9 @@ Map<String, dynamic> _$AddToCartModelToJson(AddToCartModel instance) =>
       'product': instance.product.toJson(),
       'size': _$SizeEnumMap[instance.size]!,
       'quantity': instance.quantity,
+      'price': instance.price,
+      'imgUrl': instance.imgUrl,
+      'name': instance.name,
     };
 
 const _$SizeEnumMap = {
