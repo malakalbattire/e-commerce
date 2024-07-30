@@ -26,43 +26,51 @@ class FavoritesPage extends StatelessWidget {
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-          child: Column(
-            children: [
-              if (favoriteProvider.state == FavoritesState.loading)
-                const Center(child: CircularProgressIndicator.adaptive())
-              else if (favoriteProvider.state == FavoritesState.error)
-                Text('Error: ${favoriteProvider.errorMessage}')
-              else ...[
-                GridView.builder(
-                  itemCount: favoriteProvider.favoritesProducts.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 18,
-                  ),
-                  itemBuilder: (context, index) => InkWell(
-                    onTap: () =>
-                        Navigator.of(context, rootNavigator: true).pushNamed(
-                      AppRoutes.productDetails,
-                      arguments: favoriteProvider.favoritesProducts[index].id,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await favoriteProvider.loadFavData();
+            },
+            child: Column(
+              children: [
+                if (favoriteProvider.state == FavoritesState.loading)
+                  const Center(child: CircularProgressIndicator.adaptive())
+                else if (favoriteProvider.state == FavoritesState.error)
+                  Text('Error: ${favoriteProvider.errorMessage}')
+                else ...[
+                  GridView.builder(
+                    itemCount: favoriteProvider.favoritesProducts.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 18,
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: AppColors.gray1,
-                          borderRadius: BorderRadius.circular(16)),
-                      child: ProductItem(
-                        productId: favoriteProvider.favoritesProducts[index].id,
-                        productItem: favoriteProvider.favoritesProducts[index],
+                    itemBuilder: (context, index) => InkWell(
+                      onTap: () =>
+                          Navigator.of(context, rootNavigator: true).pushNamed(
+                        AppRoutes.productDetails,
+                        arguments: favoriteProvider.favoritesProducts[index].id,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.gray1,
+                            borderRadius: BorderRadius.circular(16)),
+                        child: ProductItem(
+                          productId:
+                              favoriteProvider.favoritesProducts[index].id,
+                          productItem:
+                              favoriteProvider.favoritesProducts[index],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ]
+                ]
 
-              //ProductItem(productItem: favoriteProvider.favoriteProducts[index])
-            ],
+                //ProductItem(productItem: favoriteProvider.favoriteProducts[index])
+              ],
+            ),
           ),
         ),
       ),
@@ -79,9 +87,11 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => FavoritesProvider()..getProductDetails(productId),
-      child: Consumer(
+      create: (_) => FavoritesProvider()..loadFavData(),
+      child: Consumer<FavoritesProvider>(
         builder: (context, provider, _) {
+          bool isFavorite = provider.isFavorite(productId);
+
           return Column(
             children: [
               Stack(
@@ -111,18 +121,32 @@ class ProductItem extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () async {
-                          await Provider.of<FavoritesProvider>(context,
-                                  listen: false)
-                              .addToFav(productId);
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text(
-                              'Added to fav',
-                            )),
-                          );
+                          if (isFavorite) {
+                            await Provider.of<FavoritesProvider>(context,
+                                    listen: false)
+                                .removeFromFav(productId);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                'Removed from favorites',
+                              )),
+                            );
+                          } else {
+                            await Provider.of<FavoritesProvider>(context,
+                                    listen: false)
+                                .addToFav(productId);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                'Added to favorites',
+                              )),
+                            );
+                          }
                         },
-                        icon: const Icon(Icons.favorite_border),
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.black,
+                        ),
                       ),
                     ),
                   ),

@@ -1,3 +1,97 @@
+// import 'package:e_commerce_app_flutter/models/favorite_model.dart';
+// import 'package:e_commerce_app_flutter/services/favorites_services.dart';
+// import 'package:flutter/foundation.dart';
+// import '../../models/product_item_model.dart';
+//
+// enum FavoritesState { initial, loading, loaded, error }
+//
+// class FavoritesProvider with ChangeNotifier {
+//   ProductItemModel? _selectedProduct;
+//   List<FavoriteModel> _favoritesProducts = [];
+//   FavoritesState _state = FavoritesState.initial;
+//   String _errorMessage = '';
+//   final favServices = FavServicesIpl();
+//   List<FavoriteModel> _favItems = [];
+//
+//   ProductItemModel? get selectedProduct => _selectedProduct;
+//   List<FavoriteModel> get favoritesProducts => _favoritesProducts;
+//   FavoritesState get state => _state;
+//   String get errorMessage => _errorMessage;
+//   List<FavoriteModel> get favItems => _favItems;
+//
+//   Future<void> loadFavData() async {
+//     _state = FavoritesState.loading;
+//     notifyListeners();
+//
+//     try {
+//       await Future.delayed(const Duration(seconds: 2));
+//       _favoritesProducts = await favServices.getFavItems();
+//       _state = FavoritesState.loaded;
+//     } catch (error) {
+//       _state = FavoritesState.error;
+//       _errorMessage = error.toString();
+//     }
+//
+//     notifyListeners();
+//   }
+//
+//   Future<void> addToFav(String productId) async {
+//     try {
+//       final selectedProduct = await favServices.getProductDetails(productId);
+//       final favItem = FavoriteModel(
+//         id: productId,
+//         name: selectedProduct.name,
+//         imgUrl: selectedProduct.imgUrl,
+//         isFavorite: true,
+//         description: selectedProduct.description,
+//         price: selectedProduct.price,
+//         category: selectedProduct.category,
+//       );
+//       await favServices.addToFav(favItem);
+//       _favItems.add(favItem);
+//       notifyListeners();
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+//
+//   // Future<void> removeFromFav(String userId, String productId) async {
+//   //   try {
+//   //     await favServices.removeFromFav(userId, productId);
+//   //     _favItems = await favServices.getFavItems();
+//   //     notifyListeners();
+//   //   } catch (error) {
+//   //     _errorMessage = error.toString();
+//   //     _state = FavoritesState.error;
+//   //     notifyListeners();
+//   //   }
+//   // }
+//   Future<void> removeFromFav(String productId) async {
+//     try {
+//       await favServices.removeFromFav(productId);
+//       _favItems = await favServices.getFavItems();
+//       notifyListeners();
+//     } catch (error) {
+//       _errorMessage = error.toString();
+//       _state = FavoritesState.error;
+//       notifyListeners();
+//     }
+//   }
+//
+//   Future<void> getProductDetails(String id) async {
+//     try {
+//       final result = await favServices.getProductDetails(id);
+//       _selectedProduct = result;
+//       notifyListeners();
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+//
+//   bool isFavorite(String productId) {
+//     return _favItems.any((fav) => fav.id == productId);
+//   }
+// }
 import 'package:e_commerce_app_flutter/models/favorite_model.dart';
 import 'package:e_commerce_app_flutter/services/favorites_services.dart';
 import 'package:flutter/foundation.dart';
@@ -11,7 +105,7 @@ class FavoritesProvider with ChangeNotifier {
   FavoritesState _state = FavoritesState.initial;
   String _errorMessage = '';
   final favServices = FavServicesIpl();
-  final List<FavoriteModel> _favItems = [];
+  List<FavoriteModel> _favItems = [];
 
   ProductItemModel? get selectedProduct => _selectedProduct;
   List<FavoriteModel> get favoritesProducts => _favoritesProducts;
@@ -26,6 +120,7 @@ class FavoritesProvider with ChangeNotifier {
     try {
       await Future.delayed(const Duration(seconds: 2));
       _favoritesProducts = await favServices.getFavItems();
+      _favItems = _favoritesProducts;
       _state = FavoritesState.loaded;
     } catch (error) {
       _state = FavoritesState.error;
@@ -37,24 +132,51 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> addToFav(String productId) async {
     try {
-      final selectedProduct = await favServices.getProductDetails(productId);
-      if (selectedProduct != null) {
+      final existingFav = _favItems.firstWhere(
+        (fav) => fav.id == productId,
+        orElse: () => FavoriteModel(
+          id: '',
+          name: '',
+          imgUrl: '',
+          isFavorite: false,
+          description: '',
+          price: 0.0,
+          category: '',
+        ),
+      );
+
+      if (existingFav.id.isNotEmpty) {
+        await favServices.removeFromFav(productId);
+        _favItems.removeWhere((fav) => fav.id == productId);
+      } else {
+        final selectedProduct = await favServices.getProductDetails(productId);
         final favItem = FavoriteModel(
           id: productId,
           name: selectedProduct.name,
           imgUrl: selectedProduct.imgUrl,
-          isFavorite:
-              true, // Assuming this should be true when adding to favorites
+          isFavorite: true,
           description: selectedProduct.description,
           price: selectedProduct.price,
           category: selectedProduct.category,
         );
         await favServices.addToFav(favItem);
         _favItems.add(favItem);
-        notifyListeners();
       }
+      notifyListeners();
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> removeFromFav(String productId) async {
+    try {
+      await favServices.removeFromFav(productId);
+      _favItems = await favServices.getFavItems();
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = FavoritesState.error;
+      notifyListeners();
     }
   }
 
@@ -66,5 +188,9 @@ class FavoritesProvider with ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  bool isFavorite(String productId) {
+    return _favItems.any((fav) => fav.id == productId);
   }
 }
