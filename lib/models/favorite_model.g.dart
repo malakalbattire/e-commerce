@@ -9,13 +9,21 @@ part of 'favorite_model.dart';
 FavoriteModel _$FavoriteModelFromJson(Map<String, dynamic> json) =>
     FavoriteModel(
       id: json['id'] as String,
-      productId: json['productId'] as String,
-      // userId: json['userId'] as String,
+      name: json['name'] as String,
+      imgUrl: json['imgUrl'] as String,
+      isFavorite: json['isFavorite'] as bool,
+      description: json['description'] as String,
+      price: (json['price'] as num).toDouble(),
+      category: json['category'] as String,
     );
 
 Map<String, dynamic> _$FavoriteModelToJson(FavoriteModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'productId': instance.productId,
-      //'userId': instance.userId,
+      'name': instance.name,
+      'imgUrl': instance.imgUrl,
+      'isFavorite': instance.isFavorite,
+      'description': instance.description,
+      'price': instance.price,
+      'category': instance.category,
     };

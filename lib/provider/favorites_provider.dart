@@ -7,27 +7,25 @@ enum FavoritesState { initial, loading, loaded, error }
 
 class FavoritesProvider with ChangeNotifier {
   ProductItemModel? _selectedProduct;
-  List<ProductItemModel> _favoritesProducts = [];
+  List<FavoriteModel> _favoritesProducts = [];
   FavoritesState _state = FavoritesState.initial;
   String _errorMessage = '';
   final favServices = FavServicesIpl();
   final List<FavoriteModel> _favItems = [];
 
   ProductItemModel? get selectedProduct => _selectedProduct;
-  List<ProductItemModel> get favoritesProducts => _favoritesProducts;
+  List<FavoriteModel> get favoritesProducts => _favoritesProducts;
   FavoritesState get state => _state;
   String get errorMessage => _errorMessage;
   List<FavoriteModel> get favItems => _favItems;
 
-  void loadHomeData() async {
+  Future<void> loadFavData() async {
     _state = FavoritesState.loading;
     notifyListeners();
 
     try {
       await Future.delayed(const Duration(seconds: 2));
-      _favoritesProducts =
-          dummyProducts.where((item) => item.isFavorite).toList();
-
+      _favoritesProducts = await favServices.getFavItems();
       _state = FavoritesState.loaded;
     } catch (error) {
       _state = FavoritesState.error;
@@ -39,11 +37,17 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> addToFav(String productId) async {
     try {
-      if (_selectedProduct != null) {
-        final selectedProduct = await favServices.getProductDetails(productId);
+      final selectedProduct = await favServices.getProductDetails(productId);
+      if (selectedProduct != null) {
         final favItem = FavoriteModel(
           id: productId,
-          productId: productId,
+          name: selectedProduct.name,
+          imgUrl: selectedProduct.imgUrl,
+          isFavorite:
+              true, // Assuming this should be true when adding to favorites
+          description: selectedProduct.description,
+          price: selectedProduct.price,
+          category: selectedProduct.category,
         );
         await favServices.addToFav(favItem);
         _favItems.add(favItem);
@@ -63,19 +67,4 @@ class FavoritesProvider with ChangeNotifier {
       print(e);
     }
   }
-
-  // Future<void> loadFavData() async {
-  //   _state = FavoritesState.loading;
-  //   notifyListeners();
-  //
-  //   try {
-  //     await Future.delayed(const Duration(seconds: 2));
-  //     _favItems = await favServices.g();
-  //     _state = FavoritesState.loaded;
-  //   } catch (error) {
-  //     _state = FavoritesState.error;
-  //     _errorMessage = error.toString();
-  //   }
-  //   notifyListeners();
-  // }
 }

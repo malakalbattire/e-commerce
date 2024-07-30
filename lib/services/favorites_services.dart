@@ -8,7 +8,7 @@ abstract class FavoritesServices {
   Future<ProductItemModel> getProductDetails(String id);
   Future<void> addToFav(FavoriteModel addToFavModel);
 
-  // Future<List<FavoriteModel>> getFavItems();
+  Future<List<FavoriteModel>> getFavItems();
 }
 
 class FavServicesIpl implements FavoritesServices {
@@ -31,12 +31,12 @@ class FavServicesIpl implements FavoritesServices {
             ProductItemModel.fromMap(data, documentId));
   }
 
-  // @override
-  // Future<List<FavoriteModel>> getFavItems() async {
-  //   final currentUser = await authServices.getUser();
-  //   return await firestore.getCollection(
-  //     path: ApiPath.addToCartItems(currentUser!.uid),
-  //     builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
-  //   );
-  // }
+  @override
+  Future<List<FavoriteModel>> getFavItems() async {
+    final currentUser = await authServices.getUser();
+    return await firestore.getCollection(
+      path: ApiPath.addToFavoritesItems(currentUser!.uid),
+      builder: (data, documentId) => FavoriteModel.fromMap(data, documentId),
+    );
+  }
 }
