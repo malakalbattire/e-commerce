@@ -55,6 +55,8 @@ class ProductDetailsPage extends StatelessWidget {
                                   ' \$${provider.selectedProduct!.price.toStringAsFixed(2)}',
                                   style: const TextStyle(fontSize: 20),
                                 ),
+                                Text(
+                                    'In Stock: ${provider.selectedProduct!.inStock}'),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -97,9 +99,17 @@ class ProductDetailsPage extends StatelessWidget {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    provider.incrementQuantity(productId);
-                                  },
+
+                                  onPressed: provider.quantity <
+                                          provider.selectedProduct!.inStock
+                                      ? () =>
+                                          provider.incrementQuantity(productId)
+                                      : null,
+                                  // onPressed: () {
+                                  //
+                                  //   provider.quantity < provider.selectedProduct!.inStock?()=>
+                                  //   provider.incrementQuantity(productId):null,
+                                  // },
                                 ),
                               ],
                             ),

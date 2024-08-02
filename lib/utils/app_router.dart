@@ -1,4 +1,6 @@
+import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/views/pages/address_book_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +32,22 @@ class AppRouter {
             child: ProductDetailsPage(productId: productId),
           ),
         );
-
+      case AppRoutes.addressBook:
+        return MaterialPageRoute(
+          builder: (context) {
+            // Wrap AddressBookPage with ChangeNotifierProvider
+            return ChangeNotifierProvider(
+              create: (_) => AddressProvider(),
+              child: AddressBookPage(),
+            );
+          },
+          settings: settings,
+        );
+      // case AppRoutes.addressBook:
+      //   return MaterialPageRoute(
+      //     builder: (_) => AddressBookPage(),
+      //     settings: settings,
+      //   );
       case AppRoutes.myOrders:
         return MaterialPageRoute(
           builder: (_) => MyOrdersPage(),

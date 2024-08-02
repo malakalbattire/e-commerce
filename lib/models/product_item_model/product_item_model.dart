@@ -17,6 +17,7 @@ class ProductItemModel {
   final ProductSize? size;
   final bool isAddedToCart;
   final double averageRate;
+  final int inStock;
 
   const ProductItemModel({
     required this.id,
@@ -30,11 +31,12 @@ class ProductItemModel {
     this.size,
     this.isAddedToCart = false,
     this.averageRate = 0.0,
+    this.inStock = 0,
   });
 
   @override
   String toString() {
-    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,description:$description,price:$price,category:$category,quantity:$quantity,size:$size,isAddedToCart:$isAddedToCart}';
+    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,inStock:$inStock,description:$description,price:$price,category:$category,quantity:$quantity,size:$size,isAddedToCart:$isAddedToCart}';
   }
 
   factory ProductItemModel.fromJson(Map<String, dynamic> json) =>
@@ -57,6 +59,7 @@ class ProductItemModel {
           ? ProductSize.values.firstWhere((e) => e.name == data['size'])
           : null,
       isAddedToCart: data['isAddedToCart'] ?? false,
+      inStock: data['inStock']?.toInt() ?? 0,
     );
   }
 
@@ -72,6 +75,7 @@ class ProductItemModel {
       'quantity': quantity,
       'size': size?.name,
       'isAddedToCart': isAddedToCart,
+      'inStock': inStock,
     };
   }
 
@@ -87,6 +91,7 @@ class ProductItemModel {
     ProductSize? size,
     bool? isAddedToCart,
     double? averageRate,
+    int? inStock,
   }) {
     return ProductItemModel(
       id: id ?? this.id,
@@ -100,6 +105,7 @@ class ProductItemModel {
       size: size ?? this.size,
       isAddedToCart: isAddedToCart ?? this.isAddedToCart,
       averageRate: averageRate ?? this.averageRate,
+      inStock: inStock ?? this.inStock,
     );
   }
 }

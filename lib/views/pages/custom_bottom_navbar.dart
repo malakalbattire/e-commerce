@@ -24,15 +24,8 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: false,
-        leading: const Padding(
-          padding: EdgeInsetsDirectional.only(start: 12.0),
-          child: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(
-                'https://i.pinimg.com/564x/05/0f/d2/050fd2766e583ea6b578ea5b86f01272.jpg'),
-            radius: 25,
-          ),
-        ),
         title: FutureBuilder<String?>(
           future: authServices.getUsername(),
           builder: (context, snapshot) {

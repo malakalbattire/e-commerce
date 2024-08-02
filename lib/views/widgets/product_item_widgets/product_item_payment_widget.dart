@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProductItemPaymentWidget extends StatelessWidget {
-  final ProductItemModel item;
+  // final ProductItemModel item;
+  final AddToCartModel item;
+
   const ProductItemPaymentWidget({super.key, required this.item});
 
   @override

@@ -1,4 +1,3 @@
-import 'package:e_commerce_app_flutter/models/payment_method_model.dart';
 import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
@@ -26,9 +25,9 @@ class PaymentModelBottomSheet extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: savedCards.length,
+              //itemCount: savedCards.length,
               itemBuilder: (context, index) {
-                return PaymentItemWidget(paymentMethod: savedCards[index]);
+                //  return PaymentItemWidget(paymentMethod: savedCards[index]);
               },
             ),
           ),

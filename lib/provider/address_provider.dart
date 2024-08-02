@@ -1,5 +1,6 @@
+import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:flutter/foundation.dart';
-import 'package:e_commerce_app_flutter/models/address_model.dart';
+import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
 
 enum AddressState { initial, loading, loaded, error }
@@ -8,7 +9,7 @@ class AddressProvider with ChangeNotifier {
   List<AddressModel> _addressItems = [];
   AddressState _state = AddressState.initial;
   String _errorMessage = '';
-  final AddressServices _addressServices = AddressServicesImpl();
+  final addressServices = AddressServicesImpl();
   String? _selectedAddressId;
 
   List<AddressModel> get addressItems => _addressItems;
@@ -19,21 +20,20 @@ class AddressProvider with ChangeNotifier {
   Future<void> loadAddressData() async {
     _state = AddressState.loading;
     notifyListeners();
-
     try {
-      _addressItems = await _addressServices.getAddressItems();
+      final fetchedAddresses = await addressServices.getAddressItems();
+      _addressItems = fetchedAddresses;
       _state = AddressState.loaded;
     } catch (error) {
       _state = AddressState.error;
       _errorMessage = error.toString();
     }
-
     notifyListeners();
   }
 
   Future<void> addAddress(AddressModel addressModel) async {
     try {
-      await _addressServices.addAddress(addressModel);
+      await addressServices.addAddress(addressModel);
       _addressItems.add(addressModel);
       notifyListeners();
     } catch (error) {
@@ -50,7 +50,7 @@ class AddressProvider with ChangeNotifier {
 
   Future<void> removeAddress(String addressId) async {
     try {
-      await _addressServices.removeAddress(addressId);
+      await addressServices.removeAddress(addressId);
       _addressItems.removeWhere((address) => address.id == addressId);
       notifyListeners();
     } catch (error) {

@@ -22,54 +22,45 @@ class FavoritesPage extends StatelessWidget {
       onRefresh: () async {
         await favoriteProvider.loadFavData();
       },
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-          child: RefreshIndicator(
-            onRefresh: () async {
-              await favoriteProvider.loadFavData();
-            },
-            child: Column(
-              children: [
-                if (favoriteProvider.state == FavoritesState.loading)
-                  const Center(child: CircularProgressIndicator.adaptive())
-                else if (favoriteProvider.state == FavoritesState.error)
-                  Text('Error: ${favoriteProvider.errorMessage}')
-                else ...[
-                  GridView.builder(
-                    itemCount: favoriteProvider.favoritesProducts.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 18,
+      child: Stack(
+        children: [
+          if (favoriteProvider.state == FavoritesState.loading)
+            const Center(child: CircularProgressIndicator.adaptive())
+          else if (favoriteProvider.state == FavoritesState.error)
+            Center(child: Text('Error: ${favoriteProvider.errorMessage}'))
+          else
+            SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: GridView.builder(
+                itemCount: favoriteProvider.favoritesProducts.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 18,
+                ),
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () =>
+                      Navigator.of(context, rootNavigator: true).pushNamed(
+                    AppRoutes.productDetails,
+                    arguments: favoriteProvider.favoritesProducts[index].id,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.gray1,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    itemBuilder: (context, index) => InkWell(
-                      onTap: () =>
-                          Navigator.of(context, rootNavigator: true).pushNamed(
-                        AppRoutes.productDetails,
-                        arguments: favoriteProvider.favoritesProducts[index].id,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: AppColors.gray1,
-                            borderRadius: BorderRadius.circular(16)),
-                        child: FavProductItem(
-                          productId:
-                              favoriteProvider.favoritesProducts[index].id,
-                          productItem:
-                              favoriteProvider.favoritesProducts[index],
-                        ),
-                      ),
+                    child: FavProductItem(
+                      productId: favoriteProvider.favoritesProducts[index].id,
+                      productItem: favoriteProvider.favoritesProducts[index],
                     ),
                   ),
-                ]
-              ],
+                ),
+              ),
             ),
-          ),
-        ),
+        ],
       ),
     );
   }

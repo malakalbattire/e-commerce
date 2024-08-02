@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:e_commerce_app_flutter/models/address_model.dart';
+import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 
 class AddressPage extends StatefulWidget {
@@ -63,7 +63,8 @@ class _AddressPageState extends State<AddressPage> {
   Future<void> _submitAddress() async {
     if (_formKey.currentState!.validate()) {
       final address = AddressModel(
-        id: DateTime.timestamp().toIso8601String(),
+        id: DateTime.now()
+            .toIso8601String(), // Use DateTime.now() for unique ID
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         phoneNumber: _phoneNumberController.text,
@@ -71,10 +72,9 @@ class _AddressPageState extends State<AddressPage> {
         cityName: _cityNameController.text,
       );
 
-      await Provider.of<AddressProvider>(context, listen: false)
-          .addAddress(address);
-
       final provider = Provider.of<AddressProvider>(context, listen: false);
+      await provider.addAddress(address);
+
       if (provider.state == AddressState.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(provider.errorMessage)),
@@ -87,6 +87,34 @@ class _AddressPageState extends State<AddressPage> {
       }
     }
   }
+
+  // Future<void> _submitAddress() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     final address = AddressModel(
+  //       id: DateTime.timestamp().toIso8601String(),
+  //       firstName: _firstNameController.text,
+  //       lastName: _lastNameController.text,
+  //       phoneNumber: _phoneNumberController.text,
+  //       countryName: _countryNameController.text,
+  //       cityName: _cityNameController.text,
+  //     );
+  //
+  //     await Provider.of<AddressProvider>(context, listen: false)
+  //         .addAddress(address);
+  //
+  //     final provider = Provider.of<AddressProvider>(context, listen: false);
+  //     if (provider.state == AddressState.error) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text(provider.errorMessage)),
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Address submitted successfully!')),
+  //       );
+  //       Navigator.pop(context);
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +266,7 @@ class _AddressPageState extends State<AddressPage> {
                       textInputAction: TextInputAction.done,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your city name';
+                          return 'Please enter your city nameeeee';
                         }
                         return null;
                       },

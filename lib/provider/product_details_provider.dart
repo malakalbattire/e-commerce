@@ -31,15 +31,17 @@ class ProductDetailsProvider with ChangeNotifier {
   }
 
   void setQuantity(int quantity) {
-    if (quantity > 0) {
+    if (quantity > 0 && quantity <= _selectedProduct!.inStock) {
       _quantity = quantity;
       notifyListeners();
     }
   }
 
   void incrementQuantity(String productId) {
-    _quantity++;
-    notifyListeners();
+    if (_quantity < _selectedProduct!.inStock) {
+      _quantity++;
+      notifyListeners();
+    }
   }
 
   void decrementQuantity(String productId) {
@@ -54,9 +56,11 @@ class ProductDetailsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  double get totalPrice => _price * _quantity;
   Future<void> addToCart(String productId) async {
     try {
-      if (_selectedProduct != null && _selectedSize != null) {
+      if (_selectedProduct != null && _quantity <= _selectedProduct!.inStock) {
+        //_selectedSize != null) {
         final selectedProduct = _selectedProduct!;
         final cartItem = AddToCartModel(
           id: selectedProduct.id,
@@ -66,6 +70,7 @@ class ProductDetailsProvider with ChangeNotifier {
           price: _price,
           imgUrl: selectedProduct.imgUrl,
           name: selectedProduct.name,
+          inStock: selectedProduct.inStock,
         );
         await productDetailsServices.addToCart(cartItem);
         _cartItems.add(cartItem);
