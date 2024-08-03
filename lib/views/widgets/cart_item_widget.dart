@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/views/widgets/counter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
@@ -14,7 +13,7 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productDetailsProvider = Provider.of<ProductDetailsProvider>(context);
+    //  final productDetailsProvider = Provider.of<ProductDetailsProvider>(context);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),

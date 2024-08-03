@@ -1,7 +1,7 @@
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
   ProductItemModel? _selectedProduct;
@@ -26,7 +26,9 @@ class ProductDetailsProvider with ChangeNotifier {
       _price = result.price;
       notifyListeners();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -77,7 +79,9 @@ class ProductDetailsProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

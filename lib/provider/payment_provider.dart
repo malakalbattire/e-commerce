@@ -8,7 +8,7 @@ class PaymentProvider with ChangeNotifier {
   PaymentState _state = PaymentState.initial;
   String _errorMessage = '';
   double _subtotal = 0.0;
-  double _shippingCost = 10.0;
+  final double _shippingCost = 10.0;
   String? _selectedPaymentMethodId;
   double _total = 0.0;
 

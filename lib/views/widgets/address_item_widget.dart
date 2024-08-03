@@ -26,11 +26,10 @@ class AddressItemWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Consumer<AddressProvider>(builder: (context, provider, child) {
             return ListTile(
-              onTap: additionOnTap != null
-                  ? additionOnTap
-                  : () {
-                      provider.chooseAddress(address!.id);
-                    },
+              onTap: additionOnTap ??
+                  () {
+                    provider.chooseAddress(address!.id);
+                  },
               leading: address == null ? const Icon(Icons.add) : null,
               title: Text(
                 address != null

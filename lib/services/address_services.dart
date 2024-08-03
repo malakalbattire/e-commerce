@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class AddressServices {
   Future<void> addAddress(AddressModel addressModel);
@@ -45,7 +46,9 @@ class AddressServicesImpl implements AddressServices {
 
       return addresses;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return [];
     }
   }

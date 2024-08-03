@@ -70,7 +70,9 @@ class FavoritesProvider with ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -92,7 +94,9 @@ class FavoritesProvider with ChangeNotifier {
       _selectedProduct = result;
       notifyListeners();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 

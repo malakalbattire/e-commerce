@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:e_commerce_app_flutter/views/pages/profile_page.dart';

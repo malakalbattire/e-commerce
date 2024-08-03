@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -37,23 +36,21 @@ class ProductItemPaymentWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (item.size == null) const SizedBox.shrink(),
-                  if (item.size != null)
-                    Text.rich(
-                      TextSpan(
-                        text: 'Size',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(color: AppColors.gray),
-                        children: [
-                          TextSpan(
-                            text: item.size!.name,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Size',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: AppColors.gray),
+                      children: [
+                        TextSpan(
+                          text: item.size.name,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
                     ),
+                  ),
                   Text('\$ ${item.price}'),
                 ],
               ),

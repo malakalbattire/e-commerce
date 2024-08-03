@@ -1,5 +1,4 @@
 import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:e_commerce_app_flutter/views/widgets/address_model_bottom_sheet.dart';

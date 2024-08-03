@@ -1,9 +1,7 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
-import 'package:e_commerce_app_flutter/views/pages/add_payment_method_screen.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_book_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page.dart';
-import 'package:e_commerce_app_flutter/views/pages/payment_page_new.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/cart_provider.dart';

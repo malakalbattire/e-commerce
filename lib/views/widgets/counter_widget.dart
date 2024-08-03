@@ -1,5 +1,4 @@
 import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
-import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +18,6 @@ class CounterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    final productDetailsProvider = Provider.of<ProductDetailsProvider>(context);
 
     return DecoratedBox(
       decoration: BoxDecoration(

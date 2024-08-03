@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class AuthServices {
   Future<bool> login(String email, String password);
@@ -68,6 +69,7 @@ class AuthServicesImpl implements AuthServices {
     return await _firebaseAuth.currentUser;
   }
 
+  @override
   Future<String?> getUsername() async {
     final user = _firebaseAuth.currentUser;
     if (user != null) {
@@ -78,7 +80,9 @@ class AuthServicesImpl implements AuthServices {
         );
         return doc;
       } catch (e) {
-        print('Error fetching username: $e');
+        if (kDebugMode) {
+          print('Error fetching username: $e');
+        }
       }
     }
     return null;

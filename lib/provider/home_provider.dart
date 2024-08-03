@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/home_carousel_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/home_services.dart';
@@ -23,7 +23,9 @@ class HomeProvider with ChangeNotifier {
 
     try {
       _carouselItems = dummyCarouselItems;
-      print('Carousel Items: $_carouselItems');
+      if (kDebugMode) {
+        print('Carousel Items: $_carouselItems');
+      }
       _products = await _homeServices.getProducts();
       _state = HomeState.loaded;
     } catch (error) {

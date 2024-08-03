@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
-import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 
 class AddressBookPage extends StatefulWidget {
   const AddressBookPage({super.key});
