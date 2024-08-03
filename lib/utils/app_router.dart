@@ -4,6 +4,7 @@ import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_book_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/payment_cards_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/cart_provider.dart';
@@ -69,6 +70,11 @@ class AppRouter {
           settings: settings,
         );
 
+      case AppRoutes.search:
+        return MaterialPageRoute(
+          builder: (_) => SearchPage(),
+          settings: settings,
+        );
       case AppRoutes.addPaymentCard:
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(

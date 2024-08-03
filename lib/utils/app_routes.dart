@@ -11,4 +11,5 @@ class AppRoutes {
   static const String paymentNew = '/payment-new';
   static const String addPayment = '/add-payment';
   static const String paymentCard = '/payment-card';
+  static const String search = '/search';
 }

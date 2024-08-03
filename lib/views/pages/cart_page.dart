@@ -20,13 +20,13 @@ class CartPage extends StatelessWidget {
       }
     });
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        await cartProvider.loadCartData();
-      },
-      child: Stack(
-        children: [
-          SingleChildScrollView(
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: () async {
+            await cartProvider.loadCartData();
+          },
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 if (cartProvider.state == CartState.loading)
@@ -97,10 +97,10 @@ class CartPage extends StatelessWidget {
               ],
             ),
           ),
-          if (cartProvider.state == CartState.loading)
-            const Center(child: CircularProgressIndicator.adaptive())
-        ],
-      ),
+        ),
+        if (cartProvider.pageLoading)
+          const Center(child: CircularProgressIndicator.adaptive()),
+      ],
     );
   }
 
