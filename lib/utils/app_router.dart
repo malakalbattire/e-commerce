@@ -88,6 +88,11 @@ class AppRouter {
           builder: (_) => CustomBottomNavbar(),
           settings: settings,
         );
+      // case AppRoutes.category:
+      //   return MaterialPageRoute(
+      //     builder: (_) => CategoryPage(),
+      //     settings: settings,
+      //   );
       case AppRoutes.register:
         return MaterialPageRoute(
           builder: (_) => RegistrationPage(),

@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/provider/category_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,9 @@ class CategoryTabView extends StatelessWidget {
           else ...[
             GestureDetector(
               onTap: () {
-                print(dummyCategories.length);
+                if (kDebugMode) {
+                  print(dummyCategories.length);
+                }
               },
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.6,

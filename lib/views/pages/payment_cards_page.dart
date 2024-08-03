@@ -41,8 +41,7 @@ class _PaymentCardsPageState extends State<PaymentCardsPage> {
               child: paymentProvider.state == PaymentState.loading
                   ? const Center(child: CircularProgressIndicator.adaptive())
                   : paymentProvider.state == PaymentState.error
-                      ? Center(
-                          child: Text('Error: ${paymentProvider.errorMessage}'))
+                      ? const Center(child: Text('Please Login!'))
                       : paymentProvider.paymentItems.isEmpty
                           ? const Center(
                               child: Text('No payment cards available.'))

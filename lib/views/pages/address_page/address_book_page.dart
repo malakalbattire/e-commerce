@@ -41,8 +41,7 @@ class _AddressBookPageState extends State<AddressBookPage> {
               child: addressProvider.state == AddressState.loading
                   ? const Center(child: CircularProgressIndicator.adaptive())
                   : addressProvider.state == AddressState.error
-                      ? Center(
-                          child: Text('Error: ${addressProvider.errorMessage}'))
+                      ? const Center(child: Text('Please Login!'))
                       : addressProvider.addressItems.isEmpty
                           ? const Center(child: Text('No addresses available.'))
                           : SingleChildScrollView(

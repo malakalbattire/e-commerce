@@ -106,7 +106,7 @@ class ProductDetailsPage extends StatelessWidget {
                                 IconButton(
                                   icon: const Icon(Icons.remove),
                                   onPressed: () {
-                                    provider.decrementQuantity(productId);
+                                    provider.decrementQuantity();
                                   },
                                 ),
                                 Text(
@@ -117,8 +117,7 @@ class ProductDetailsPage extends StatelessWidget {
                                   icon: const Icon(Icons.add),
                                   onPressed: provider.quantity <
                                           provider.selectedProduct!.inStock
-                                      ? () =>
-                                          provider.incrementQuantity(productId)
+                                      ? () => provider.incrementQuantity()
                                       : null,
                                 ),
                               ],

@@ -67,7 +67,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           ),
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.paymentNew);
+              Navigator.pushNamed(context, AppRoutes.category);
             },
             icon: const Icon(Icons.notifications),
           ),

@@ -20,20 +20,20 @@ class CartPage extends StatelessWidget {
       }
     });
 
-    return Stack(
-      children: [
-        RefreshIndicator(
-          onRefresh: () async {
-            await cartProvider.loadCartData();
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                if (cartProvider.state == CartState.loading)
-                  const SizedBox.shrink()
-                else if (cartProvider.state == CartState.error)
-                  Center(child: Text('Error: ${cartProvider.errorMessage}'))
-                else ...[
+    return RefreshIndicator(
+      onRefresh: () async {
+        await cartProvider.loadCartData();
+      },
+      child: Stack(
+        children: [
+          if (cartProvider.state == CartState.loading)
+            const Center(child: CircularProgressIndicator())
+          else if (cartProvider.state == CartState.error)
+            const Center(child: Text('Please Login!'))
+          else ...[
+            SingleChildScrollView(
+              child: Column(
+                children: [
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -94,13 +94,13 @@ class CartPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 80),
                 ],
-              ],
+              ),
             ),
-          ),
-        ),
-        if (cartProvider.pageLoading)
-          const Center(child: CircularProgressIndicator.adaptive()),
-      ],
+          ],
+          if (cartProvider.pageLoading)
+            const Center(child: CircularProgressIndicator.adaptive()),
+        ],
+      ),
     );
   }
 

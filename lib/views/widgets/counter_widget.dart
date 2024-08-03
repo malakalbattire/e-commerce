@@ -9,11 +9,11 @@ class CounterWidget extends StatelessWidget {
   final int inStock;
 
   const CounterWidget({
-    Key? key,
+    super.key,
     required this.productId,
     required this.value,
     required this.inStock,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

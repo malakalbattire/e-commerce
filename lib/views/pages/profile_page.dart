@@ -8,8 +8,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-    final User? user = _firebaseAuth.currentUser;
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    final User? user = firebaseAuth.currentUser;
     final AuthServicesImpl authServices = AuthServicesImpl();
 
     return SingleChildScrollView(
@@ -99,7 +99,7 @@ class ProfilePage extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () async {
-              await _firebaseAuth.signOut();
+              await firebaseAuth.signOut();
               Navigator.pushNamedAndRemoveUntil(
                   context, AppRoutes.login, (route) => false);
             },

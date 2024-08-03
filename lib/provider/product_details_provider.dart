@@ -4,7 +4,7 @@ import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/foundation.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
-  ProductItemModel? _selectedProduct;
+  Map<String, ProductItemModel> _products = {}; // To store multiple products
   int _quantity = 1;
   double _price = 0.0;
   Size? _selectedSize;
@@ -12,7 +12,8 @@ class ProductDetailsProvider with ChangeNotifier {
   final ProductDetailsServicesImpl productDetailsServices =
       ProductDetailsServicesImpl();
 
-  ProductItemModel? get selectedProduct => _selectedProduct;
+  ProductItemModel? get selectedProduct =>
+      _products.isNotEmpty ? _products.values.first : null;
   int get quantity => _quantity;
   Size? get selectedSize => _selectedSize;
   List<AddToCartModel> get cartItems => _cartItems;
@@ -20,33 +21,51 @@ class ProductDetailsProvider with ChangeNotifier {
   Future<void> getProductDetails(String id) async {
     try {
       final result = await productDetailsServices.getProductDetails(id);
-      _selectedProduct = result;
+      _products[id] = result;
       _quantity = 1;
       _selectedSize = null;
       _price = result.price;
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        print('Error fetching product details: $e');
       }
     }
   }
 
+  Future<void> getProductsDetails(List<String> ids) async {
+    try {
+      final results = await Future.wait(
+        ids.map((id) => productDetailsServices.getProductDetails(id)),
+      );
+      _products = Map.fromIterables(ids, results);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching products details: $e');
+      }
+    }
+  }
+
+  ProductItemModel? getProductById(String id) {
+    return _products[id];
+  }
+
   void setQuantity(int quantity) {
-    if (quantity > 0 && quantity <= _selectedProduct!.inStock) {
+    if (quantity > 0 && quantity <= _products.values.first.inStock) {
       _quantity = quantity;
       notifyListeners();
     }
   }
 
-  void incrementQuantity(String productId) {
-    if (_quantity < _selectedProduct!.inStock) {
+  void incrementQuantity() {
+    if (_quantity < _products.values.first.inStock) {
       _quantity++;
       notifyListeners();
     }
   }
 
-  void decrementQuantity(String productId) {
+  void decrementQuantity() {
     if (_quantity > 1) {
       _quantity--;
       notifyListeners();
@@ -59,11 +78,13 @@ class ProductDetailsProvider with ChangeNotifier {
   }
 
   double get totalPrice => _price * _quantity;
+
   Future<void> addToCart(String productId) async {
     try {
-      if (_selectedProduct != null && _quantity <= _selectedProduct!.inStock) {
-        //_selectedSize != null) {
-        final selectedProduct = _selectedProduct!;
+      final selectedProduct = _products[productId];
+      if (selectedProduct != null &&
+          _quantity <= selectedProduct.inStock &&
+          _selectedSize != null) {
         final cartItem = AddToCartModel(
           id: selectedProduct.id,
           product: selectedProduct,
@@ -80,7 +101,7 @@ class ProductDetailsProvider with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        print('Error adding to cart: $e');
       }
     }
   }

@@ -10,7 +10,7 @@ class CartProvider with ChangeNotifier {
   final cartServices = CartServicesImpl();
   List<AddToCartModel> _cartItems = [];
   CartState _state = CartState.initial;
-  Map<String, ItemState> _itemStates = {};
+  final Map<String, ItemState> _itemStates = {};
   String _errorMessage = '';
   bool _pageLoading = false;
 
