@@ -1,6 +1,6 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
-import 'package:e_commerce_app_flutter/views/widgets/address_item_widget.dart';
+import 'package:e_commerce_app_flutter/views/widgets/address_widget/address_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

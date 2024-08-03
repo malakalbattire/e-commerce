@@ -11,7 +11,9 @@ class PaymentProvider with ChangeNotifier {
   final double _shippingCost = 10.0;
   String? _selectedPaymentMethodId;
   double _total = 0.0;
+  // PaymentMethod? _selectedPayment;
 
+  // PaymentMethod? get selectedPayment => _selectedPayment;
   List<ProductItemModel> get cartItems => _cartItems;
   PaymentState get state => _state;
   String get errorMessage => _errorMessage;
@@ -42,6 +44,7 @@ class PaymentProvider with ChangeNotifier {
   }
 
   void choosePaymentMethod(String paymentMethodId) {
+    //_selectedPayment = _paymentItems.firstWhere((item) => item.id == paymentId);
     _selectedPaymentMethodId = paymentMethodId;
     notifyListeners();
   }

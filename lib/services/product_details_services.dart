@@ -7,6 +7,7 @@ import 'package:e_commerce_app_flutter/utils/api_path.dart';
 abstract class ProductDetailsServices {
   Future<ProductItemModel> getProductDetails(String id);
   Future<void> addToCart(AddToCartModel addToCartModel);
+  // Future<void> fetchProductsByCategory(String category);
 }
 
 class ProductDetailsServicesImpl implements ProductDetailsServices {
@@ -19,6 +20,24 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
           builder: (data, documentId) =>
               ProductItemModel.fromMap(data, documentId));
 
+  // @override
+  // Future<List<ProductItemModel>> fetchProductsByCategory(String category) async {
+  //   try {
+  //     QuerySnapshot querySnapshot = await _firestore
+  //         .collection('products')
+  //         .where('category', isEqualTo: category)
+  //         .get();
+  //
+  //     List<ProductItemModel> products = querySnapshot.docs.map((doc) {
+  //       return ProductItemModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+  //     }).toList();
+  //
+  //     return products;
+  //   } catch (e) {
+  //     throw Exception('Failed to load products: $e');
+  //   }
+  // }
+  //
   @override
   Future<void> addToCart(AddToCartModel addToCartModel) async {
     final currentUser = await authServices.getUser();

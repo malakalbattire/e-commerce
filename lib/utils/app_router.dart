@@ -1,15 +1,17 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
+import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
-import 'package:e_commerce_app_flutter/views/pages/address_book_page.dart';
-import 'package:e_commerce_app_flutter/views/pages/address_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/address_page/address_book_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/address_page/address_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/payment_cards_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/cart_provider.dart';
-import '../views/pages/add_payment_card.dart';
+import '../views/pages/payment_page/add_payment_card.dart';
 import '../views/pages/custom_bottom_navbar.dart';
 import '../views/pages/login_page.dart';
 import '../views/pages/my_orders_page.dart';
-import '../views/pages/payment_page.dart';
+import '../views/pages/payment_page/checkout_page.dart';
 import '../views/pages/product_details_page.dart';
 import '../views/pages/registration_page.dart';
 import 'app_routes.dart';
@@ -42,7 +44,16 @@ class AppRouter {
           },
           settings: settings,
         );
-
+      case AppRoutes.paymentCard:
+        return MaterialPageRoute(
+          builder: (context) {
+            return ChangeNotifierProvider(
+              create: (_) => CardPaymentProvider(),
+              child: PaymentCardsPage(),
+            );
+          },
+          settings: settings,
+        );
       case AppRoutes.myOrders:
         return MaterialPageRoute(
           builder: (_) => MyOrdersPage(),
@@ -53,7 +64,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(
             value: Provider.of<CartProvider>(_, listen: false),
-            child: PaymentPage(),
+            child: CheckoutPage(),
           ),
           settings: settings,
         );

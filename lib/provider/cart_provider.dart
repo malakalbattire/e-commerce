@@ -21,6 +21,11 @@ class CartProvider with ChangeNotifier {
     );
   }
 
+  int get cartItemCount => _cartItems.fold<int>(
+        0,
+        (sum, item) => sum + item.quantity,
+      );
+
   Future<void> removeFromCart(String productId) async {
     try {
       await cartServices.removeCartItem(productId);

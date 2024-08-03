@@ -38,15 +38,15 @@ class ProductItemPaymentWidget extends StatelessWidget {
                 children: [
                   Text.rich(
                     TextSpan(
-                      text: 'Size',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(color: AppColors.gray),
+                      text: 'Size: ',
+                      style: Theme.of(context).textTheme.titleMedium,
                       children: [
                         TextSpan(
                           text: item.size.name,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: AppColors.gray),
                         ),
                       ],
                     ),
@@ -54,6 +54,7 @@ class ProductItemPaymentWidget extends StatelessWidget {
                   Text('\$ ${item.price}'),
                 ],
               ),
+              Text('QTY: ${item.quantity}'),
             ],
           ),
         ),

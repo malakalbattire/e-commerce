@@ -60,18 +60,37 @@ class CartPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context, rootNavigator: true)
-                                  .pushNamed(AppRoutes.payment);
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundColor: AppColors.white),
-                            child: const Text('Checkout'))),
+                    child: Row(
+                      children: [
+                        Text(
+                          '\$ ${cartProvider.subtotal + 10}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pushNamed(AppRoutes.payment);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  foregroundColor: AppColors.white),
+                              child: Text(
+                                'Checkout (${cartProvider.cartItemCount})',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 80),
                 ],

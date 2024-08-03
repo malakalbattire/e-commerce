@@ -81,10 +81,19 @@ class ProfilePage extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Account Settings'),
-            onTap: () {},
+            leading: const Icon(Icons.payment),
+            title: const Text('Payment Cards'),
+            onTap: () {
+              Navigator.of(context, rootNavigator: true)
+                  .pushNamed(AppRoutes.paymentCard);
+            },
           ),
+          // const Divider(),
+          // ListTile(
+          //   leading: const Icon(Icons.settings),
+          //   title: const Text('Account Settings'),
+          //   onTap: () {},
+          // ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout),

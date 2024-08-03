@@ -1,4 +1,4 @@
-import 'package:e_commerce_app_flutter/models/payment_model.dart';
+import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

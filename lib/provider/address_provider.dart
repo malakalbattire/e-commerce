@@ -10,7 +10,9 @@ class AddressProvider with ChangeNotifier {
   String _errorMessage = '';
   final addressServices = AddressServicesImpl();
   String? _selectedAddressId;
+  //Address? _selectedAddress;
 
+//  Address? get selectedAddress => _selectedAddress;
   List<AddressModel> get addressItems => _addressItems;
   AddressState get state => _state;
   String get errorMessage => _errorMessage;
@@ -59,6 +61,7 @@ class AddressProvider with ChangeNotifier {
   // }
 
   void chooseAddress(String addressId) {
+    // _selectedAddress = _addressItems.firstWhere((item) => item.id == addressId);
     _selectedAddressId = addressId;
     notifyListeners();
   }

@@ -1,7 +1,7 @@
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:flutter/material.dart';
-import '../../../utils/app_colors.dart';
+import '../../../../utils/app_colors.dart';
 import 'package:provider/provider.dart';
 
 class AddressItemWidget extends StatelessWidget {
