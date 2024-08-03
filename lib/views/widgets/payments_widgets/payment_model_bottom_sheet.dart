@@ -37,15 +37,6 @@ class PaymentModelBottomSheet extends StatelessWidget {
             },
           ),
           const SizedBox(height: 20.0),
-          SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: AppColors.white),
-                  child: const Text('Confirm Payment'))),
         ],
       ),
     );

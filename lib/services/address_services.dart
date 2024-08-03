@@ -33,57 +33,20 @@ class AddressServicesImpl implements AddressServices {
   @override
   Future<List<AddressModel>> getAddressItems() async {
     final currentUser = await authServices.getUser();
-    final addresses = await firestore.getCollection(
-      path: ApiPath.addAddressItems(currentUser!.uid),
-      builder: (data, documentId) => AddressModel.fromMap(data, documentId),
-    );
-    print('Fetched addresses: ${addresses.length}');
-    return addresses;
+    final path = ApiPath.addAddressItems(currentUser!.uid);
+
+    try {
+      final addresses = await firestore.getCollection(
+        path: path,
+        builder: (data, documentId) {
+          return AddressModel.fromMap(data, documentId);
+        },
+      );
+
+      return addresses;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
-
-// Future<List<AddressModel>> getAddressItems() async {
-  //   final currentUser = await authServices.getUser();
-  //   try {
-  //     final addresses = await firestore.getCollection(
-  //       path: ApiPath.addAddressItems(currentUser!.uid),
-  //       builder: (data, documentId) => AddressModel.fromMap(data, documentId),
-  //     );
-  //     print('Fetched addresses: ${addresses.length}'); // Debug print
-  //     return addresses;
-  //   } catch (e) {
-  //     print('Error fetching addresses: $e'); // Debug print
-  //     return [];
-  //   }
-  // }
 }
-
-// class AddressServicesImpl implements AddressServices {
-//   final firestore = FirestoreServices.instance;
-//   final authServices = AuthServicesImpl();
-//
-//   @override
-//   Future<void> addAddress(AddressModel addressModel) async {
-//     final currentUser = await authServices.getUser();
-//     return await firestore.setData(
-//       path: ApiPath.addAddress(currentUser!.uid, addressModel.id),
-//       data: addressModel.toMap(),
-//     );
-//   }
-//
-//   @override
-//   Future<void> removeAddress(String addressId) async {
-//     final currentUser = await authServices.getUser();
-//     await firestore.deleteData(
-//       path: ApiPath.addAddress(currentUser!.uid, addressId),
-//     );
-//   }
-//
-//   @override
-//   Future<List<AddressModel>> getAddressItems() async {
-//     final currentUser = await authServices.getUser();
-//     return await firestore.getCollection(
-//       path: ApiPath.addAddressItems(currentUser!.uid),
-//       builder: (data, documentId) => AddressModel.fromMap(data, documentId),
-//     );
-//   }
-// }

@@ -12,9 +12,8 @@ class ApiPath {
   static String addToFavoritesItems(String uid) => 'users/$uid/favorites/';
   static String addAddress(String uid, String addressId) =>
       'users/$uid/address/$addressId';
-  static String addAddressItems(String uid) => 'users/$uid/paymentMethod/';
-  static String addPaymentMethod(String uid, String paymentMethodId) =>
-      'users/$uid/address/$paymentMethodId';
-  static String addPaymentMethodItems(String uid) =>
-      'users/$uid/paymentMethod/';
+  static String addAddressItems(String uid) => 'users/$uid/address/';
+  static String addPaymentCard(String uid, String paymentMethodId) =>
+      'users/$uid/cards/$paymentMethodId';
+  static String addPaymentCardItems(String uid) => 'users/$uid/cards/';
 }

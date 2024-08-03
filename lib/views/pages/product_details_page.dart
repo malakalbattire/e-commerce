@@ -99,17 +99,11 @@ class ProductDetailsPage extends StatelessWidget {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.add),
-
                                   onPressed: provider.quantity <
                                           provider.selectedProduct!.inStock
                                       ? () =>
                                           provider.incrementQuantity(productId)
                                       : null,
-                                  // onPressed: () {
-                                  //
-                                  //   provider.quantity < provider.selectedProduct!.inStock?()=>
-                                  //   provider.incrementQuantity(productId):null,
-                                  // },
                                 ),
                               ],
                             ),

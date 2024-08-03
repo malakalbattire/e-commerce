@@ -63,8 +63,7 @@ class _AddressPageState extends State<AddressPage> {
   Future<void> _submitAddress() async {
     if (_formKey.currentState!.validate()) {
       final address = AddressModel(
-        id: DateTime.now()
-            .toIso8601String(), // Use DateTime.now() for unique ID
+        id: DateTime.now().toIso8601String(),
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         phoneNumber: _phoneNumberController.text,
@@ -87,34 +86,6 @@ class _AddressPageState extends State<AddressPage> {
       }
     }
   }
-
-  // Future<void> _submitAddress() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     final address = AddressModel(
-  //       id: DateTime.timestamp().toIso8601String(),
-  //       firstName: _firstNameController.text,
-  //       lastName: _lastNameController.text,
-  //       phoneNumber: _phoneNumberController.text,
-  //       countryName: _countryNameController.text,
-  //       cityName: _cityNameController.text,
-  //     );
-  //
-  //     await Provider.of<AddressProvider>(context, listen: false)
-  //         .addAddress(address);
-  //
-  //     final provider = Provider.of<AddressProvider>(context, listen: false);
-  //     if (provider.state == AddressState.error) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text(provider.errorMessage)),
-  //       );
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('Address submitted successfully!')),
-  //       );
-  //       Navigator.pop(context);
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

@@ -22,14 +22,6 @@ class PaymentPage extends StatelessWidget {
         cartProvider.loadCartData();
       }
     });
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (paymentProvider.state == PaymentState.initial) {
-    //     paymentProvider.loadPaymentData();
-    //     cartProvider.loadCartData();
-    //     print('Cart items: ${cartProvider.cartItems.length}');
-    //     print(cartProvider.toString());
-    //   }
-    // });
 
     return Scaffold(
       appBar: AppBar(
@@ -79,7 +71,6 @@ class PaymentPage extends StatelessWidget {
                 buildInlineHeadline(
                   context: context,
                   title: 'Products',
-                  //  productsNumbers: cartProvider.cartItems.length.toDouble() ,
                 ),
                 const SizedBox(height: 8.0),
                 ListView.builder(

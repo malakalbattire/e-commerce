@@ -8,4 +8,6 @@ class AppRoutes {
   static const String addPaymentCard = '/add-payment-card';
   static const String address = '/address';
   static const String addressBook = '/address-book';
+  static const String paymentNew = '/payment-new';
+  static const String addPayment = '/add-payment';
 }

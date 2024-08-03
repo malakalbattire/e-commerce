@@ -1,7 +1,7 @@
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:e_commerce_app_flutter/provider/payment_provider.dart'; // Assuming you have a PaymentProvider
+import 'package:e_commerce_app_flutter/provider/payment_provider.dart';
 
 class AddPaymentCard extends StatefulWidget {
   const AddPaymentCard({super.key});
@@ -34,42 +34,6 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
     super.dispose();
   }
 
-  // Future<void> _addCard() async {
-  //   final paymentProvider =
-  //       Provider.of<PaymentProvider>(context, listen: false);
-  //
-  //   if (_formKey.currentState!.validate()) {
-  //     setState(() {
-  //       _isSubmitting = true;
-  //     });
-  //
-  //     // final success = await paymentProvider.addPaymentCard(
-  //     //   _cardNumberController.text,
-  //     //   _expiryDateController.text,
-  //     //   _cvvController.text,
-  //     // );
-  //
-  //     setState(() {
-  //       _isSubmitting = false;
-  //     });
-  //
-  //     if (success) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text('Card Added Successfully!'),
-  //         ),
-  //       );
-  //       Navigator.pop(context); // Close the page on success
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(paymentProvider.errorMessage),
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
-  //
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,18 +52,10 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
                 children: [
                   const SizedBox(height: 36),
                   Text(
-                    'Add Payment Card',
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    'Please enter your card details.',
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    'Please enter your card details.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: AppColors.gray),
                   ),
                   const SizedBox(height: 36),
                   Text(
@@ -206,7 +162,9 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
                     width: double.infinity,
                     height: 60,
                     child: ElevatedButton(
-                      onPressed: () {}, // _isSubmitting ? null : _addCard,
+                      onPressed: () {
+                        print('object');
+                      }, // _isSubmitting ? null : _addCard,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
                         foregroundColor: AppColors.white,

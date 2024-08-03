@@ -84,9 +84,7 @@ class ProfilePage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Account Settings'),
-            onTap: () {
-              // Navigator.pushNamed(context, AppRoutes.settings);
-            },
+            onTap: () {},
           ),
           const Divider(),
           ListTile(

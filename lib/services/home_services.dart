@@ -7,7 +7,6 @@ abstract class HomeServices {
   Stream<List<ProductItemModel>> getProductsStream();
   Future<void> addProduct(ProductItemModel product);
   Future<void> deleteProduct(String id);
-  //Future<List<HomeCarouselModel>> getCarousel();
 }
 
 class HomeServicesImpl implements HomeServices {

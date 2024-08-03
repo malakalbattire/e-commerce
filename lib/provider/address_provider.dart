@@ -1,4 +1,3 @@
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
@@ -42,6 +41,22 @@ class AddressProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Future<void> updateAddress(AddressModel addressModel) async {
+  //   try {
+  //     await addressServices.updateAddress(addressModel);
+  //     final index =
+  //         _addressItems.indexWhere((address) => address.id == addressModel.id);
+  //     if (index != -1) {
+  //       _addressItems[index] = addressModel;
+  //       notifyListeners();
+  //     }
+  //   } catch (error) {
+  //     _errorMessage = error.toString();
+  //     _state = AddressState.error;
+  //     notifyListeners();
+  //   }
+  // }
 
   void chooseAddress(String addressId) {
     _selectedAddressId = addressId;
