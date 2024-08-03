@@ -16,4 +16,8 @@ class ApiPath {
   static String addPaymentCard(String uid, String paymentMethodId) =>
       'users/$uid/cards/$paymentMethodId';
   static String addPaymentCardItems(String uid) => 'users/$uid/cards/';
+
+  static String createOrder(String uid, String orderId) =>
+      'users/$uid/orders/$orderId';
+  static String orderItems(String uid) => 'users/$uid/orders/';
 }
