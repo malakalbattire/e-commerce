@@ -1,8 +1,7 @@
-import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
-import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
+import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final String productId;
@@ -31,11 +30,18 @@ class ProductDetailsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(
-                        provider.selectedProduct!.imgUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
+                      SizedBox(
                         height: 300,
+                        child: PageView.builder(
+                          itemCount: 1,
+                          itemBuilder: (context, index) {
+                            return Image.network(
+                              provider.selectedProduct!.imgUrl,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            );
+                          },
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -48,45 +54,55 @@ class ProductDetailsPage extends StatelessWidget {
                                 Text(
                                   provider.selectedProduct!.name,
                                   style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text(
-                                  ' \$${provider.selectedProduct!.price.toStringAsFixed(2)}',
-                                  style: const TextStyle(fontSize: 20),
+                                  '\$${provider.selectedProduct!.price.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                                Text(
-                                    'In Stock: ${provider.selectedProduct!.inStock}'),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            const SizedBox(height: 20),
+                            Text(
+                              provider.selectedProduct!.description,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 30),
                             const Text(
-                              'Select Size:',
+                              'Size:',
                               style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
-                            DropdownButton<Size>(
-                              value: provider.selectedSize,
-                              items: Size.values.map((Size size) {
-                                return DropdownMenuItem<Size>(
-                                  value: size,
-                                  child: Text(size.name),
+                            Wrap(
+                              spacing: 10.0,
+                              children: Size.values.map((Size size) {
+                                return ChoiceChip(
+                                  label: Text(size.name),
+                                  selected: provider.selectedSize == size,
+                                  onSelected: (bool selected) {
+                                    provider.setSize(size);
+                                  },
                                 );
                               }).toList(),
-                              onChanged: (Size? newSize) {
-                                provider.setSize(newSize!);
-                              },
-                              hint: const Text('Select a size'),
-                            ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'Quantity:',
-                              style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
+                            const Divider(),
+                            const SizedBox(height: 20),
                             Row(
                               children: [
+                                const Text(
+                                  'QTY:',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                                 IconButton(
                                   icon: const Icon(Icons.remove),
                                   onPressed: () {
@@ -106,6 +122,13 @@ class ProductDetailsPage extends StatelessWidget {
                                       : null,
                                 ),
                               ],
+                            ),
+                            Text(
+                              'In Stock: ${provider.selectedProduct!.inStock}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
                             ),
                             const SizedBox(height: 80),
                           ],
@@ -127,16 +150,16 @@ class ProductDetailsPage extends StatelessWidget {
                               await provider.addToCart(productId);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text(
-                                  'Added to cart',
-                                )),
+                                  content: Text('Added to cart'),
+                                ),
                               );
                             },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor),
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
                       child: const Text(
                         'Add to Cart',
-                        style: TextStyle(color: AppColors.white),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),

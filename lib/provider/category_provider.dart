@@ -1,30 +1,33 @@
-import 'package:flutter/foundation.dart';
-import 'package:e_commerce_app_flutter/models/category_model.dart';
+import 'package:flutter/material.dart';
+import '../models/category_model.dart';
+import '../services/category_services.dart';
 
 enum CategoryState { initial, loading, loaded, error }
 
 class CategoryProvider with ChangeNotifier {
-  List<CategoryModel> _categoryItems = [];
   CategoryState _state = CategoryState.initial;
-  String _errorMessage = '';
-
-  List<CategoryModel> get categoryItems => _categoryItems;
   CategoryState get state => _state;
+
+  String _errorMessage = '';
   String get errorMessage => _errorMessage;
 
-  void loadCategoryData() async {
+  List<CategoryModel> _categories = [];
+  List<CategoryModel> get categories => _categories;
+
+  final CategoryServices _categoryServices = CategoryServices();
+
+  Future<void> loadCategoryData() async {
     _state = CategoryState.loading;
     notifyListeners();
 
     try {
-      await Future.delayed(const Duration(seconds: 2));
-      _categoryItems = dummyCategories;
-
+      _categories = await _categoryServices.fetchCategories();
       _state = CategoryState.loaded;
-    } catch (error) {
+    } catch (e) {
+      _errorMessage = e.toString();
       _state = CategoryState.error;
-      _errorMessage = error.toString();
     }
+
     notifyListeners();
   }
 }
