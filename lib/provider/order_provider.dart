@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:e_commerce_app_flutter/models/order_model.dart';
+import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/order_services.dart';
 
 enum OrderState { initial, loading, loaded, error }

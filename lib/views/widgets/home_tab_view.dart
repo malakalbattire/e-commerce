@@ -22,7 +22,7 @@ class HomeTabView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        await homeProvider.getProductsStream();
+        homeProvider.getProductsStream();
       },
       child: SingleChildScrollView(
         child: Column(

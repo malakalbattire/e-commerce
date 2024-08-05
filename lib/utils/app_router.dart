@@ -1,9 +1,11 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_book_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/payment_cards_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/product_pages/product_list_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,9 +13,9 @@ import '../provider/cart_provider.dart';
 import '../views/pages/payment_page/add_payment_card.dart';
 import '../views/pages/custom_bottom_navbar.dart';
 import '../views/pages/login_page.dart';
-import '../views/pages/my_orders_page.dart';
+import '../views/pages/order_pages /my_orders_page.dart';
 import '../views/pages/payment_page/checkout_page.dart';
-import '../views/pages/product_details_page.dart';
+import '../views/pages/product_pages/product_details_page.dart';
 import '../views/pages/registration_page.dart';
 import 'app_routes.dart';
 
@@ -88,11 +90,15 @@ class AppRouter {
           builder: (_) => CustomBottomNavbar(),
           settings: settings,
         );
-      // case AppRoutes.category:
-      //   return MaterialPageRoute(
-      //     builder: (_) => CategoryPage(),
-      //     settings: settings,
-      //   );
+
+      case AppRoutes.productsList:
+        return MaterialPageRoute(
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => ProductProvider(),
+            child: ProductListPage(),
+          ),
+          settings: settings,
+        );
       case AppRoutes.register:
         return MaterialPageRoute(
           builder: (_) => RegistrationPage(),

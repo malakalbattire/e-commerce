@@ -1,9 +1,9 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
-import 'package:e_commerce_app_flutter/views/pages/my_orders_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/order_pages%20/my_orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:e_commerce_app_flutter/models/order_model.dart';
+import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 
 class OrderDetailsPage extends StatelessWidget {
   final OrderModel order;
@@ -14,7 +14,6 @@ class OrderDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductDetailsProvider>(context);
 
-    // Fetch product details if not already loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       productProvider.getProductsDetails(order.productIds);
     });
@@ -111,8 +110,7 @@ class OrderDetailsPage extends StatelessWidget {
           else
             ListView.builder(
               shrinkWrap: true,
-              physics:
-                  const NeverScrollableScrollPhysics(), // Prevents nested scrolling
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];

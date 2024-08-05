@@ -10,9 +10,9 @@ class AddToCartModel {
   final Size size;
   int quantity;
   final double price;
-  final String imgUrl; // New field
-  final String name; // New field
-  final int inStock; // New field
+  final String imgUrl;
+  final String name;
+  final int inStock;
 
   AddToCartModel({
     required this.id,
@@ -20,9 +20,9 @@ class AddToCartModel {
     required this.size,
     required this.quantity,
     required this.price,
-    required this.imgUrl, // New field
-    required this.name, // New field
-    required this.inStock, // New field
+    required this.imgUrl,
+    required this.name,
+    required this.inStock,
   });
 
   double get totalPrice => price * quantity;
@@ -33,9 +33,9 @@ class AddToCartModel {
     Size? size,
     int? quantity,
     double? price,
-    String? imgUrl, // New field
-    String? name, // New field
-    int? inStock, // New field
+    String? imgUrl,
+    String? name,
+    int? inStock,
   }) {
     return AddToCartModel(
       id: id ?? this.id,
@@ -43,9 +43,9 @@ class AddToCartModel {
       size: size ?? this.size,
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,
-      imgUrl: imgUrl ?? this.imgUrl, // New field
-      name: name ?? this.name, // New field
-      inStock: inStock ?? this.inStock, // New field
+      imgUrl: imgUrl ?? this.imgUrl,
+      name: name ?? this.name,
+      inStock: inStock ?? this.inStock,
     );
   }
 
@@ -61,10 +61,10 @@ class AddToCartModel {
           ProductItemModel.fromJson(map['product'] as Map<String, dynamic>),
       size: _sizeFromString(map['size'] as String),
       quantity: map['quantity'] as int,
-      price: (map['price'] as num).toDouble(), // Ensure price is a double
-      imgUrl: map['imgUrl'] as String, // New field
-      name: map['name'] as String, // New field
-      inStock: map['inStock'] as int, // New field
+      price: (map['price'] as num).toDouble(),
+      imgUrl: map['imgUrl'] as String,
+      name: map['name'] as String,
+      inStock: map['inStock'] as int,
     );
   }
 
@@ -75,9 +75,9 @@ class AddToCartModel {
       'size': _sizeToString(size),
       'quantity': quantity,
       'price': price,
-      'imgUrl': imgUrl, // New field
-      'name': name, // New field
-      'inStock': inStock, // New field
+      'imgUrl': imgUrl,
+      'name': name,
+      'inStock': inStock,
     };
   }
 

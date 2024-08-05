@@ -10,6 +10,7 @@ import 'provider/category_provider.dart';
 import 'provider/home_provider.dart';
 import 'provider/login_provider.dart';
 import 'provider/payment_provider.dart';
+import 'provider/product_provider.dart';
 import 'provider/register_provider.dart';
 import 'utils/app_colors.dart';
 import 'utils/app_router.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),

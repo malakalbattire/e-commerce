@@ -1,7 +1,7 @@
-import 'package:e_commerce_app_flutter/models/order_model.dart';
+import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
-import 'package:e_commerce_app_flutter/views/pages/my_orders_page.dart';
-import 'package:e_commerce_app_flutter/views/pages/order_details_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/order_pages%20/my_orders_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/order_pages%20/order_details_page.dart';
 import 'package:flutter/material.dart';
 
 class OrderTile extends StatelessWidget {

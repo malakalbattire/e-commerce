@@ -10,8 +10,7 @@ class MyOrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final orderProvider = Provider.of<OrderProvider>(context);
-    final userId =
-        FirebaseAuth.instance.currentUser!.uid; // Replace with actual user ID
+    final userId = FirebaseAuth.instance.currentUser!.uid;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (orderProvider.state == OrderState.initial) {

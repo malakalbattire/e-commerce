@@ -2,7 +2,7 @@ import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/views/widgets/home_tab_view.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/category_tab_view.dart';
+import '../widgets/category_widgets /category_tab_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

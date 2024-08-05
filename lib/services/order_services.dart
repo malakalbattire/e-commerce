@@ -1,4 +1,4 @@
-import 'package:e_commerce_app_flutter/models/order_model.dart';
+import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';

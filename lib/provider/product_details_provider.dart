@@ -4,7 +4,7 @@ import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/foundation.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
-  Map<String, ProductItemModel> _products = {}; // To store multiple products
+  Map<String, ProductItemModel> _products = {};
   int _quantity = 1;
   double _price = 0.0;
   Size? _selectedSize;
