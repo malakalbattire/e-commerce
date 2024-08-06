@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../widgets/login_social_item.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -46,11 +47,8 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login Success!'),
-          ),
-        );
+        Fluttertoast.showToast(msg: 'Login Success!');
+
         Navigator.pushNamed(context, AppRoutes.home);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

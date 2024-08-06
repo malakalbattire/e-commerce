@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class FavProductItem extends StatelessWidget {
@@ -51,21 +52,28 @@ class FavProductItem extends StatelessWidget {
                             await Provider.of<FavoritesProvider>(context,
                                     listen: false)
                                 .removeFromFav(productId);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                'Removed from favorites',
-                              )),
+
+                            Fluttertoast.showToast(
+                              msg: "Removed from Favorite",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.black.withOpacity(0.4),
+                              textColor: Colors.white,
+                              fontSize: 16.0,
                             );
                           } else {
                             await Provider.of<FavoritesProvider>(context,
                                     listen: false)
                                 .addToFav(productId);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                'Added to favorites',
-                              )),
+                            Fluttertoast.showToast(
+                              msg: "Added to Favorite",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.black.withOpacity(0.4),
+                              textColor: Colors.white,
+                              fontSize: 16.0,
                             );
                           }
                         },

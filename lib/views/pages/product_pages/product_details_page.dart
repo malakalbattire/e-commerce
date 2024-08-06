@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
@@ -147,10 +148,14 @@ class ProductDetailsPage extends StatelessWidget {
                           ? null
                           : () async {
                               await provider.addToCart(productId);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Added to cart'),
-                                ),
+                              Fluttertoast.showToast(
+                                msg: "Added to cart",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.black.withOpacity(0.4),
+                                textColor: Colors.white,
+                                fontSize: 16.0,
                               );
                             },
                       style: ElevatedButton.styleFrom(
