@@ -3,14 +3,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final AuthServicesImpl authServices = AuthServicesImpl();
+  bool isLoggedIn = true;
+
+  Future<void> handleAuthState() async {
     final User? user = firebaseAuth.currentUser;
-    final AuthServicesImpl authServices = AuthServicesImpl();
+    setState(() {
+      isLoggedIn = user != null;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    handleAuthState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final User? user = firebaseAuth.currentUser;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -88,20 +108,23 @@ class ProfilePage extends StatelessWidget {
                   .pushNamed(AppRoutes.paymentCard);
             },
           ),
-          // const Divider(),
-          // ListTile(
-          //   leading: const Icon(Icons.settings),
-          //   title: const Text('Account Settings'),
-          //   onTap: () {},
-          // ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
+            leading:
+                isLoggedIn ? const Icon(Icons.logout) : const Icon(Icons.login),
+            title: Text(isLoggedIn ? 'Logout' : 'Login'),
             onTap: () async {
-              await firebaseAuth.signOut();
-              Navigator.pushNamedAndRemoveUntil(
-                  context, AppRoutes.login, (route) => false);
+              if (isLoggedIn) {
+                await firebaseAuth.signOut();
+                setState(() {
+                  isLoggedIn = false;
+                });
+                Navigator.pushNamedAndRemoveUntil(
+                    context, AppRoutes.login, (route) => false);
+              } else if (isLoggedIn == false) {
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed(AppRoutes.login);
+              }
             },
           ),
           const SizedBox(
