@@ -1,11 +1,14 @@
+import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/order_services.dart';
+import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
 
 enum OrderState { initial, loading, loaded, error }
 
 class OrderProvider with ChangeNotifier {
   final orderServices = OrderServicesImpl();
+  final productServices = ProductDetailsServicesImpl();
   List<OrderModel> _orders = [];
   OrderState _state = OrderState.initial;
   String _errorMessage = '';
@@ -20,7 +23,11 @@ class OrderProvider with ChangeNotifier {
     required String addressId,
     required String paymentId,
     required double totalAmount,
+    required CartProvider cartProvider,
   }) async {
+    _state = OrderState.loading;
+    notifyListeners();
+
     try {
       final orderId = DateTime.now().millisecondsSinceEpoch.toString();
       final newOrder = OrderModel(
@@ -32,9 +39,32 @@ class OrderProvider with ChangeNotifier {
         totalAmount: totalAmount,
         createdAt: DateTime.now(),
       );
+
       await orderServices.createOrder(newOrder);
+
+      for (var cartItem in cartProvider.cartItems) {
+        await _updateProductInStock(cartItem.product.id, cartItem.quantity);
+      }
+
       _orders.add(newOrder);
+      _state = OrderState.loaded;
       notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = OrderState.error;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _updateProductInStock(String productId, int quantity) async {
+    try {
+      final product = await productServices.getProductDetails(productId);
+
+      if (product != null) {
+        final updatedStock = product.inStock - quantity;
+
+        await productServices.updateProductStock(productId, updatedStock);
+      }
     } catch (error) {
       _errorMessage = error.toString();
       _state = OrderState.error;

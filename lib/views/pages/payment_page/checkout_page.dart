@@ -150,6 +150,7 @@ class CheckoutPage extends StatelessWidget {
                               addressId: addressProvider.selectedAddressId!,
                               paymentId: paymentProvider.selectedPaymentId!,
                               totalAmount: cartProvider.subtotal + 10,
+                              cartProvider: cartProvider,
                             );
 
                             if (orderProvider.state == OrderState.error) {
