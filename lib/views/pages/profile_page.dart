@@ -28,6 +28,49 @@ class _ProfilePageState extends State<ProfilePage> {
     handleAuthState();
   }
 
+  Future<void> _showLogoutConfirmationDialog() async {
+    final bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            Column(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Logout'),
+                ),
+                const Divider(),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text('Cancel'),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      await firebaseAuth.signOut();
+      setState(() {
+        isLoggedIn = false;
+      });
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.login,
+        (route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final User? user = firebaseAuth.currentUser;
@@ -115,21 +158,14 @@ class _ProfilePageState extends State<ProfilePage> {
             title: Text(isLoggedIn ? 'Logout' : 'Login'),
             onTap: () async {
               if (isLoggedIn) {
-                await firebaseAuth.signOut();
-                setState(() {
-                  isLoggedIn = false;
-                });
-                Navigator.pushNamedAndRemoveUntil(
-                    context, AppRoutes.login, (route) => false);
-              } else if (isLoggedIn == false) {
+                await _showLogoutConfirmationDialog();
+              } else if (!isLoggedIn) {
                 Navigator.of(context, rootNavigator: true)
                     .pushNamed(AppRoutes.login);
               }
             },
           ),
-          const SizedBox(
-            height: 100,
-          ),
+          const SizedBox(height: 100),
         ],
       ),
     );
