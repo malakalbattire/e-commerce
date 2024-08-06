@@ -131,7 +131,8 @@ class CheckoutPage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (addressProvider.selectedAddressId == null ||
-                                paymentProvider.selectedPaymentId == null) {
+                                paymentProvider.selectedPaymentId == null ||
+                                cartProvider.cartItemCount == 0) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
