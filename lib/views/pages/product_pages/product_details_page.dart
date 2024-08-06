@@ -25,6 +25,8 @@ class ProductDetailsPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
+            bool isOutOfStock = provider.selectedProduct!.inStock == 0;
+
             return Stack(
               children: [
                 SingleChildScrollView(
@@ -143,29 +145,41 @@ class ProductDetailsPage extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     width: double.infinity,
                     color: Colors.white,
-                    child: ElevatedButton(
-                      onPressed: provider.selectedSize == null
-                          ? null
-                          : () async {
-                              await provider.addToCart(productId);
-                              Fluttertoast.showToast(
-                                msg: "Added to cart",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.black.withOpacity(0.4),
-                                textColor: Colors.white,
-                                fontSize: 16.0,
-                              );
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      child: const Text(
-                        'Add to Cart',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    child: isOutOfStock
+                        ? ElevatedButton(
+                            onPressed: null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                            ),
+                            child: const Text(
+                              'Sold Out',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        : ElevatedButton(
+                            onPressed: provider.selectedSize == null
+                                ? null
+                                : () async {
+                                    await provider.addToCart(productId);
+                                    Fluttertoast.showToast(
+                                      msg: "Added to cart",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor:
+                                          Colors.black.withOpacity(0.4),
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
+                                    );
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                            ),
+                            child: const Text(
+                              'Add to Cart',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                   ),
                 ),
               ],
