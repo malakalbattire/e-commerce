@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/views/widgets/empty_cart_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dash/flutter_dash.dart';
@@ -30,6 +31,8 @@ class CartPage extends StatelessWidget {
             const Center(child: CircularProgressIndicator())
           else if (cartProvider.state == CartState.error)
             const Center(child: Text('Please Login!'))
+          else if (cartProvider.cartItems.isEmpty)
+            EmptyCartWidget()
           else ...[
             SingleChildScrollView(
               child: Column(
