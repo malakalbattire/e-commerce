@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/provider/register_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../widgets/login_social_item.dart';
@@ -52,11 +53,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
         _usernameController.text,
       );
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Register Success!'),
-          ),
-        );
+        Fluttertoast.showToast(msg: 'Register Success!');
+
         Navigator.pushNamed(context, AppRoutes.home);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -213,7 +211,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         onPressed:
                             registerProvider.state == RegisterState.loading
                                 ? null
-                                : () => _register,
+                                : () => _register(),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: AppColors.white),
