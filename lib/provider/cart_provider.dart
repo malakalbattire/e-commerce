@@ -31,6 +31,20 @@ class CartProvider with ChangeNotifier {
         0,
         (sum, item) => sum + item.quantity,
       );
+  CartProvider() {
+    _init();
+  }
+  void _init() {
+    cartServices.getCartItemsStream().listen((cartItems) {
+      _cartItems = cartItems;
+      _state = CartState.loaded;
+      notifyListeners();
+    }).onError((error) {
+      _errorMessage = error.toString();
+      _state = CartState.error;
+      notifyListeners();
+    });
+  }
 
   Future<void> removeFromCart(String productId) async {
     try {

@@ -16,15 +16,9 @@ class CartPage extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(context);
     final size = MediaQuery.of(context).size;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (cartProvider.state == CartState.initial) {
-        cartProvider.loadCartData();
-      }
-    });
-
     return RefreshIndicator(
       onRefresh: () async {
-        await cartProvider.loadCartData();
+        cartProvider.loadCartData();
       },
       child: Stack(
         children: [

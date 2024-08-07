@@ -4,6 +4,8 @@ import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';
 
 abstract class CartServices {
+  Stream<List<AddToCartModel>> getCartItemsStream();
+
   Future<List<AddToCartModel>> getCartItems();
   Future<void> removeCartItem(String productId);
   Future<void> updateCartItem(AddToCartModel item, String productId);
@@ -14,6 +16,15 @@ abstract class CartServices {
 class CartServicesImpl implements CartServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
+
+  @override
+  Stream<List<AddToCartModel>> getCartItemsStream() async* {
+    final currentUser = await authServices.getUser();
+    yield* firestore.collectionStream(
+      path: ApiPath.addToCartItems(currentUser!.uid),
+      builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
+    );
+  }
 
   @override
   Future<List<AddToCartModel>> getCartItems() async {
