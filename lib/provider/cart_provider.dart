@@ -46,6 +46,12 @@ class CartProvider with ChangeNotifier {
     });
   }
 
+  Future<void> clearCart() async {
+    await cartServices.clearCart();
+    cartItems.clear();
+    notifyListeners();
+  }
+
   Future<void> removeFromCart(String productId) async {
     try {
       await cartServices.removeCartItem(productId);

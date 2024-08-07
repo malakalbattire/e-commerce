@@ -161,6 +161,7 @@ class CheckoutPage extends StatelessWidget {
                                 ),
                               );
                             } else {
+                              await cartProvider.clearCart();
                               Navigator.pushNamed(context, AppRoutes.myOrders);
                             }
                           },

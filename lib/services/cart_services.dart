@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class CartServices {
   Stream<List<AddToCartModel>> getCartItemsStream();
@@ -11,6 +13,7 @@ abstract class CartServices {
   Future<void> updateCartItem(AddToCartModel item, String productId);
   Future<void> incrementCartItemQuantity(String productId);
   Future<void> decrementCartItemQuantity(String productId);
+  Future<void> clearCart();
 }
 
 class CartServicesImpl implements CartServices {
@@ -24,6 +27,20 @@ class CartServicesImpl implements CartServices {
       path: ApiPath.addToCartItems(currentUser!.uid),
       builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
     );
+  }
+
+  @override
+  Future<void> clearCart() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final cartCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('cart');
+
+    final cartDocs = await cartCollection.get();
+    for (var doc in cartDocs.docs) {
+      await doc.reference.delete();
+    }
   }
 
   @override
