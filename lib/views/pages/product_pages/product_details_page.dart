@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ class ProductDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return ChangeNotifierProvider(
       create: (_) => ProductDetailsProvider()..getProductDetails(productId),
       child: Scaffold(
@@ -160,17 +163,31 @@ class ProductDetailsPage extends StatelessWidget {
                             onPressed: provider.selectedSize == null
                                 ? null
                                 : () async {
-                                    await provider.addToCart(productId);
-                                    Fluttertoast.showToast(
-                                      msg: "Added to cart",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor:
-                                          Colors.black.withOpacity(0.4),
-                                      textColor: Colors.white,
-                                      fontSize: 16.0,
-                                    );
+                                    if (currentUser == null) {
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            "Please sign in to add items to the cart",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            Colors.black.withOpacity(0.4),
+                                        textColor: Colors.white,
+                                        fontSize: 16.0,
+                                      );
+                                    } else {
+                                      await provider.addToCart(productId);
+                                      Fluttertoast.showToast(
+                                        msg: "Added to cart",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            Colors.black.withOpacity(0.4),
+                                        textColor: Colors.white,
+                                        fontSize: 16.0,
+                                      );
+                                    }
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
