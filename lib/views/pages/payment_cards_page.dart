@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
+import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
@@ -41,7 +42,7 @@ class _PaymentCardsPageState extends State<PaymentCardsPage> {
               child: paymentProvider.state == PaymentState.loading
                   ? const Center(child: CircularProgressIndicator.adaptive())
                   : paymentProvider.state == PaymentState.error
-                      ? const Center(child: Text('Please Login!'))
+                      ? SigninSignoutWidget()
                       : paymentProvider.paymentItems.isEmpty
                           ? const Center(
                               child: Text('No payment cards available.'))

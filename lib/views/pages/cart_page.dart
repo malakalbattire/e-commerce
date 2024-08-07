@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/views/widgets/empty_cart_widget.dart';
+import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dash/flutter_dash.dart';
@@ -30,7 +31,7 @@ class CartPage extends StatelessWidget {
           if (cartProvider.state == CartState.loading)
             const Center(child: CircularProgressIndicator())
           else if (cartProvider.state == CartState.error)
-            const Center(child: Text('Please Login!'))
+            SigninSignoutWidget()
           else if (cartProvider.cartItems.isEmpty)
             EmptyCartWidget()
           else ...[

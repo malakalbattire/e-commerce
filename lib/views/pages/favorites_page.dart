@@ -1,6 +1,8 @@
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
+import 'package:e_commerce_app_flutter/views/widgets/empty_favorites_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/product_item_widgets/product_item_fav_widget.dart';
+import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utils/app_routes.dart';
@@ -27,7 +29,9 @@ class FavoritesPage extends StatelessWidget {
           if (favoriteProvider.state == FavoritesState.loading)
             const Center(child: CircularProgressIndicator.adaptive())
           else if (favoriteProvider.state == FavoritesState.error)
-            Center(child: Text('Error: ${favoriteProvider.errorMessage}'))
+            SigninSignoutWidget()
+          else if (favoriteProvider.favItems.isEmpty)
+            EmptyFavoriteWidget()
           else
             SingleChildScrollView(
               padding:

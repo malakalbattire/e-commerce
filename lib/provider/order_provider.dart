@@ -60,11 +60,9 @@ class OrderProvider with ChangeNotifier {
     try {
       final product = await productServices.getProductDetails(productId);
 
-      if (product != null) {
-        final updatedStock = product.inStock - quantity;
+      final updatedStock = product.inStock - quantity;
 
-        await productServices.updateProductStock(productId, updatedStock);
-      }
+      await productServices.updateProductStock(productId, updatedStock);
     } catch (error) {
       _errorMessage = error.toString();
       _state = OrderState.error;

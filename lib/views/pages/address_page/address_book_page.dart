@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
@@ -41,7 +42,7 @@ class _AddressBookPageState extends State<AddressBookPage> {
               child: addressProvider.state == AddressState.loading
                   ? const Center(child: CircularProgressIndicator.adaptive())
                   : addressProvider.state == AddressState.error
-                      ? const Center(child: Text('Please Login!'))
+                      ? SigninSignoutWidget()
                       : addressProvider.addressItems.isEmpty
                           ? const Center(child: Text('No addresses available.'))
                           : SingleChildScrollView(
