@@ -4,6 +4,7 @@ import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/views/widgets/empty_favorites_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/product_item_widgets/product_item_fav_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utils/app_routes.dart';
@@ -14,6 +15,7 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final favoriteProvider = Provider.of<FavoritesProvider>(context);
+    final currentUser = FirebaseAuth.instance.currentUser;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (favoriteProvider.state == FavoritesState.initial) {
@@ -26,7 +28,7 @@ class FavoritesPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator.adaptive());
-        } else if (snapshot.hasError) {
+        } else if (snapshot.hasError || currentUser == null) {
           return SigninSignoutWidget();
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return EmptyFavoriteWidget();
