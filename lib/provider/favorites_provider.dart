@@ -19,21 +19,20 @@ class FavoritesProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   List<FavoriteModel> get favItems => _favItems;
 
-  Future<void> loadFavData() async {
+  void subscribeToFavorites() {
     _state = FavoritesState.loading;
     notifyListeners();
 
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-      _favoritesProducts = await favServices.getFavItems();
-      _favItems = _favoritesProducts;
+    favServices.getFavItemsStream().listen((favorites) {
+      _favoritesProducts = favorites;
+      _favItems = favorites;
       _state = FavoritesState.loaded;
-    } catch (error) {
+      notifyListeners();
+    }, onError: (error) {
       _state = FavoritesState.error;
       _errorMessage = error.toString();
-    }
-
-    notifyListeners();
+      notifyListeners();
+    });
   }
 
   Future<void> addToFav(String productId) async {

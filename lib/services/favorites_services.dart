@@ -9,6 +9,7 @@ abstract class FavoritesServices {
   Future<void> addToFav(FavoriteModel addToFavModel);
   Future<void> removeFromFav(String productId);
   Future<List<FavoriteModel>> getFavItems();
+  Stream<List<FavoriteModel>> getFavItemsStream();
 }
 
 class FavServicesIpl implements FavoritesServices {
@@ -47,5 +48,15 @@ class FavServicesIpl implements FavoritesServices {
       path: ApiPath.addToFavoritesItems(currentUser!.uid),
       builder: (data, documentId) => FavoriteModel.fromMap(data, documentId),
     );
+  }
+
+  @override
+  Stream<List<FavoriteModel>> getFavItemsStream() {
+    return authServices.getUser().asStream().asyncExpand((currentUser) {
+      return firestore.collectionStream(
+        path: ApiPath.addToFavoritesItems(currentUser!.uid),
+        builder: (data, documentId) => FavoriteModel.fromMap(data, documentId),
+      );
+    });
   }
 }
