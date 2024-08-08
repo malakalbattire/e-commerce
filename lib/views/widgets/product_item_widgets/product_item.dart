@@ -4,6 +4,7 @@ import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProductItem extends StatelessWidget {
   final String productId;
@@ -20,6 +21,7 @@ class ProductItem extends StatelessWidget {
     return Consumer<FavoritesProvider>(
       builder: (context, provider, _) {
         bool isFavorite = provider.isFavorite(productId);
+        final currentUser = FirebaseAuth.instance.currentUser;
 
         return StreamBuilder<int>(
           stream: productItem.stockStream,
@@ -74,10 +76,10 @@ class ProductItem extends StatelessWidget {
                           ),
                           child: IconButton(
                             onPressed: () async {
-                              if (isFavorite) {
-                                await provider.removeFromFav(productId);
+                              if (currentUser == null) {
                                 Fluttertoast.showToast(
-                                  msg: "Removed From Favorite",
+                                  msg:
+                                      "Please log in to add items to favorites",
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   timeInSecForIosWeb: 1,
@@ -87,17 +89,31 @@ class ProductItem extends StatelessWidget {
                                   fontSize: 16.0,
                                 );
                               } else {
-                                await provider.addToFav(productId);
-                                Fluttertoast.showToast(
-                                  msg: "Added to Favorite",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor:
-                                      Colors.black.withOpacity(0.4),
-                                  textColor: Colors.white,
-                                  fontSize: 16.0,
-                                );
+                                if (isFavorite) {
+                                  await provider.removeFromFav(productId);
+                                  Fluttertoast.showToast(
+                                    msg: "Removed From Favorite",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor:
+                                        Colors.black.withOpacity(0.4),
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
+                                  );
+                                } else {
+                                  await provider.addToFav(productId);
+                                  Fluttertoast.showToast(
+                                    msg: "Added to Favorite",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor:
+                                        Colors.black.withOpacity(0.4),
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
+                                  );
+                                }
                               }
                             },
                             icon: Icon(
