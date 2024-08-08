@@ -27,7 +27,7 @@ class PaymentProvider with ChangeNotifier {
 
     try {
       await Future.delayed(const Duration(seconds: 2));
-      _cartItems = dummyProducts.where((item) => item.isAddedToCart).toList();
+      // _cartItems = dummyProducts.where((item) => item.isAddedToCart).toList();
       _calculateTotals();
       _state = PaymentState.loaded;
     } catch (error) {

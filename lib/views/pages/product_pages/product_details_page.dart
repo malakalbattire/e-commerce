@@ -88,7 +88,6 @@ class ProductDetailsPage extends StatelessWidget {
                               style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
-                            // Conditionally render size options or "One Size"
                             provider.selectedProduct!.size == null
                                 ? const Text(
                                     'One Size',
@@ -199,10 +198,7 @@ class ProductDetailsPage extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
                             ),
-                            child: const Text(
-                              'Add to Cart',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            child: const Text('Add to Cart'),
                           ),
                   ),
                 ),

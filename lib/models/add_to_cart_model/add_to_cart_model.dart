@@ -91,6 +91,8 @@ class AddToCartModel {
         return Size.L;
       case 'XL':
         return Size.xL;
+      case 'OneSize':
+        return Size.OneSize;
       default:
         throw ArgumentError('Invalid size string');
     }
@@ -106,10 +108,12 @@ class AddToCartModel {
         return 'L';
       case Size.xL:
         return 'XL';
+      case Size.OneSize:
+        return 'OneSize';
       default:
         throw ArgumentError('Invalid size');
     }
   }
 }
 
-enum Size { S, M, L, xL }
+enum Size { S, M, L, xL, OneSize }

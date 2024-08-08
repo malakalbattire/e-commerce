@@ -82,13 +82,11 @@ class ProductDetailsProvider with ChangeNotifier {
   Future<void> addToCart(String productId) async {
     try {
       final selectedProduct = _products[productId];
-      if (selectedProduct != null &&
-          _quantity <= selectedProduct.inStock &&
-          _selectedSize != null) {
+      if (selectedProduct != null && _quantity <= selectedProduct.inStock) {
         final cartItem = AddToCartModel(
           id: selectedProduct.id,
           product: selectedProduct,
-          size: _selectedSize!,
+          size: _selectedSize ?? Size.OneSize,
           quantity: _quantity,
           price: _price,
           imgUrl: selectedProduct.imgUrl,
