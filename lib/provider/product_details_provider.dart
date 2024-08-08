@@ -8,6 +8,7 @@ class ProductDetailsProvider with ChangeNotifier {
   int _quantity = 1;
   double _price = 0.0;
   Size? _selectedSize;
+  ProductColor? _selectedColor;
   final List<AddToCartModel> _cartItems = [];
   final ProductDetailsServicesImpl productDetailsServices =
       ProductDetailsServicesImpl();
@@ -16,6 +17,7 @@ class ProductDetailsProvider with ChangeNotifier {
       _products.isNotEmpty ? _products.values.first : null;
   int get quantity => _quantity;
   Size? get selectedSize => _selectedSize;
+  ProductColor? get selectedColor => _selectedColor;
   List<AddToCartModel> get cartItems => _cartItems;
 
   Future<void> getProductDetails(String id) async {
@@ -24,6 +26,7 @@ class ProductDetailsProvider with ChangeNotifier {
       _products[id] = result;
       _quantity = 1;
       _selectedSize = null;
+      _selectedColor = null;
       _price = result.price;
       notifyListeners();
     } catch (e) {
@@ -74,6 +77,11 @@ class ProductDetailsProvider with ChangeNotifier {
 
   void setSize(Size size) {
     _selectedSize = size;
+    notifyListeners();
+  }
+
+  void setColor(ProductColor color) {
+    _selectedColor = color;
     notifyListeners();
   }
 

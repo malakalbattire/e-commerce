@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -17,20 +18,24 @@ class ProductDetailsPage extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (_) => ProductDetailsProvider()..getProductDetails(productId),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Align(
-              alignment: Alignment.center, child: Text('Product Details')),
-        ),
-        body: Consumer<ProductDetailsProvider>(
-          builder: (context, provider, _) {
-            if (provider.selectedProduct == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      child: Consumer<ProductDetailsProvider>(
+        builder: (context, provider, _) {
+          if (provider.selectedProduct == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            bool isOutOfStock = provider.selectedProduct!.inStock == 0;
+          final product = provider.selectedProduct!;
+          final bool isOutOfStock = provider.quantity > product.inStock;
+          final bool hasSize = product.size != null;
 
-            return Stack(
+          return Scaffold(
+            appBar: AppBar(
+              title: const Align(
+                alignment: Alignment.center,
+                child: Text('Product Details'),
+              ),
+            ),
+            body: Stack(
               children: [
                 SingleChildScrollView(
                   child: Column(
@@ -42,7 +47,7 @@ class ProductDetailsPage extends StatelessWidget {
                           itemCount: 1,
                           itemBuilder: (context, index) {
                             return Image.network(
-                              provider.selectedProduct!.imgUrl,
+                              product.imgUrl,
                               fit: BoxFit.cover,
                               width: double.infinity,
                             );
@@ -58,14 +63,14 @@ class ProductDetailsPage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  provider.selectedProduct!.name,
+                                  product.name,
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  '\$${provider.selectedProduct!.price.toStringAsFixed(2)}',
+                                  '\$${product.price.toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -76,19 +81,48 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              provider.selectedProduct!.description,
+                              product.description,
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey,
                               ),
                             ),
                             const SizedBox(height: 30),
+                            if (product.colors != null)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      'Select Color:',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    DropdownButton<ProductColor>(
+                                      value: provider.selectedColor,
+                                      onChanged: (color) {
+                                        if (color != null) {
+                                          provider.setColor(color);
+                                        }
+                                      },
+                                      items: product.colors!.map((color) {
+                                        return DropdownMenuItem(
+                                          value: color,
+                                          child: Text(color.name),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            const SizedBox(height: 10),
                             const Text(
                               'Size:',
                               style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
-                            provider.selectedProduct!.size == null
+                            product.size == null
                                 ? const Text(
                                     'One Size',
                                     style: TextStyle(fontSize: 18),
@@ -126,15 +160,14 @@ class ProductDetailsPage extends StatelessWidget {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.add),
-                                  onPressed: provider.quantity <
-                                          provider.selectedProduct!.inStock
+                                  onPressed: provider.quantity < product.inStock
                                       ? () => provider.incrementQuantity()
                                       : null,
                                 ),
                               ],
                             ),
                             Text(
-                              'In Stock: ${provider.selectedProduct!.inStock}',
+                              'In Stock: ${product.inStock}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey,
@@ -165,8 +198,7 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                           )
                         : ElevatedButton(
-                            onPressed: provider.selectedSize == null &&
-                                    provider.selectedProduct!.size != null
+                            onPressed: provider.selectedSize == null && hasSize
                                 ? null
                                 : () async {
                                     if (currentUser == null) {
@@ -198,14 +230,17 @@ class ProductDetailsPage extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
                             ),
-                            child: const Text('Add to Cart'),
+                            child: const Text(
+                              'Add to Cart',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                   ),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

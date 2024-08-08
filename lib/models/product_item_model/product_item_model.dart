@@ -5,6 +5,8 @@ part 'product_item_model.g.dart';
 
 enum ProductSize { S, M, L, xL }
 
+enum ProductColor { Red, Blue, Green, Black, White }
+
 @JsonSerializable()
 class ProductItemModel {
   final String id;
@@ -19,6 +21,7 @@ class ProductItemModel {
   final bool isAddedToCart;
   final double averageRate;
   final int inStock;
+  final List<ProductColor>? colors;
 
   const ProductItemModel({
     required this.id,
@@ -33,11 +36,12 @@ class ProductItemModel {
     this.isAddedToCart = false,
     this.averageRate = 0.0,
     this.inStock = 0,
+    this.colors,
   });
 
   @override
   String toString() {
-    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,inStock:$inStock,description:$description,price:$price,category:$category,quantity:$quantity,size:$size,isAddedToCart:$isAddedToCart}';
+    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,inStock:$inStock,description:$description,price:$price,category:$category,quantity:$quantity,size:$size,isAddedToCart:$isAddedToCart, colors:$colors}';
   }
 
   factory ProductItemModel.fromJson(Map<String, dynamic> json) =>
@@ -55,12 +59,16 @@ class ProductItemModel {
       price: data['price']?.toDouble() ?? 0.0,
       category: data['category'] ?? '',
       quantity: data['quantity']?.toInt() ?? 0,
-      averageRate: data['averageRate']?.toInt() ?? 0.0,
+      averageRate: data['averageRate']?.toDouble() ?? 0.0,
       size: data['size'] != null
           ? ProductSize.values.firstWhere((e) => e.name == data['size'])
           : null,
       isAddedToCart: data['isAddedToCart'] ?? false,
       inStock: data['inStock']?.toInt() ?? 0,
+      colors: data['colors'] != null
+          ? List<ProductColor>.from((data['colors'] as List).map((e) =>
+              ProductColor.values.firstWhere((color) => color.name == e)))
+          : null,
     );
   }
 
@@ -77,6 +85,7 @@ class ProductItemModel {
       'size': size?.name,
       'isAddedToCart': isAddedToCart,
       'inStock': inStock,
+      'colors': colors?.map((color) => color.name).toList(),
     };
   }
 
@@ -93,6 +102,7 @@ class ProductItemModel {
     bool? isAddedToCart,
     double? averageRate,
     int? inStock,
+    List<ProductColor>? colors,
   }) {
     return ProductItemModel(
       id: id ?? this.id,
@@ -107,6 +117,7 @@ class ProductItemModel {
       isAddedToCart: isAddedToCart ?? this.isAddedToCart,
       averageRate: averageRate ?? this.averageRate,
       inStock: inStock ?? this.inStock,
+      colors: colors ?? this.colors,
     );
   }
 
