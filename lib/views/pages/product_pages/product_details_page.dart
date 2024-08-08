@@ -88,18 +88,24 @@ class ProductDetailsPage extends StatelessWidget {
                               style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
-                            Wrap(
-                              spacing: 10.0,
-                              children: Size.values.map((Size size) {
-                                return ChoiceChip(
-                                  label: Text(size.name),
-                                  selected: provider.selectedSize == size,
-                                  onSelected: (bool selected) {
-                                    provider.setSize(size);
-                                  },
-                                );
-                              }).toList(),
-                            ),
+                            // Conditionally render size options or "One Size"
+                            provider.selectedProduct!.size == null
+                                ? const Text(
+                                    'One Size',
+                                    style: TextStyle(fontSize: 18),
+                                  )
+                                : Wrap(
+                                    spacing: 10.0,
+                                    children: Size.values.map((Size size) {
+                                      return ChoiceChip(
+                                        label: Text(size.name),
+                                        selected: provider.selectedSize == size,
+                                        onSelected: (bool selected) {
+                                          provider.setSize(size);
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
                             const SizedBox(height: 10),
                             const Divider(),
                             const SizedBox(height: 20),
@@ -160,7 +166,8 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                           )
                         : ElevatedButton(
-                            onPressed: provider.selectedSize == null
+                            onPressed: provider.selectedSize == null &&
+                                    provider.selectedProduct!.size != null
                                 ? null
                                 : () async {
                                     if (currentUser == null) {
@@ -205,22 +212,5 @@ class ProductDetailsPage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-extension SizeExtension on Size {
-  String get name {
-    switch (this) {
-      case Size.S:
-        return 'S';
-      case Size.M:
-        return 'M';
-      case Size.L:
-        return 'L';
-      case Size.xL:
-        return 'XL';
-      default:
-        return '';
-    }
   }
 }

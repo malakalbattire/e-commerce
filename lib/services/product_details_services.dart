@@ -9,7 +9,7 @@ abstract class ProductDetailsServices {
   Future<ProductItemModel> getProductDetails(String id);
   Future<void> addToCart(AddToCartModel addToCartModel);
   Future<void> updateProductStock(String productId, int newStock);
-  // Future<void> fetchProductsByCategory(String category);
+// Future<void> fetchProductsByCategory(String category);
 }
 
 class ProductDetailsServicesImpl implements ProductDetailsServices {

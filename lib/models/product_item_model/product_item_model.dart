@@ -111,7 +111,6 @@ class ProductItemModel {
   }
 
   Stream<int> get stockStream {
-    // Replace with your actual Firestore query
     return FirebaseFirestore.instance
         .collection('products')
         .doc(id)
