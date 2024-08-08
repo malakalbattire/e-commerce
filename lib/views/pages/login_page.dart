@@ -49,7 +49,11 @@ class _LoginPageState extends State<LoginPage> {
       if (user != null) {
         Fluttertoast.showToast(msg: 'Login Success!');
 
-        Navigator.pushNamed(context, AppRoutes.home);
+        if (_emailController.text == 'admin@gmail.com') {
+          Navigator.pushNamed(context, AppRoutes.home);
+        } else {
+          Navigator.pushNamed(context, AppRoutes.home);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

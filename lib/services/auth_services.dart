@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';
@@ -11,11 +12,26 @@ abstract class AuthServices {
   Future<bool> isLoggedIn();
   Future<User?> getUser();
   Future<String?> getUsername();
+  Future<bool> isAdmin();
 }
 
 class AuthServicesImpl implements AuthServices {
   final _firebaseAuth = FirebaseAuth.instance;
   final firestore = FirestoreServices.instance;
+
+  @override
+  Future<bool> isAdmin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    final isAdmin = userDoc.data()?['role'] == 'admin';
+    print('Is Admin: $isAdmin');
+    return isAdmin;
+  }
 
   @override
   Future<bool> login(String email, String password) async {
