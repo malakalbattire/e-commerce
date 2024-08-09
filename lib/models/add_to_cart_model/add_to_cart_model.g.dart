@@ -36,4 +36,5 @@ const _$SizeEnumMap = {
   Size.M: 'M',
   Size.L: 'L',
   Size.xL: 'xL',
+  Size.OneSize: 'OneSize',
 };

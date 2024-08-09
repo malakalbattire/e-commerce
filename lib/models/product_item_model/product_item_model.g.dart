@@ -21,6 +21,9 @@ ProductItemModel _$ProductItemModelFromJson(Map<String, dynamic> json) =>
       isAddedToCart: json['isAddedToCart'] as bool? ?? false,
       averageRate: (json['averageRate'] as num?)?.toDouble() ?? 0.0,
       inStock: (json['inStock'] as num?)?.toInt() ?? 0,
+      colors: (json['colors'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$ProductColorEnumMap, e))
+          .toList(),
     );
 
 Map<String, dynamic> _$ProductItemModelToJson(ProductItemModel instance) =>
@@ -37,6 +40,7 @@ Map<String, dynamic> _$ProductItemModelToJson(ProductItemModel instance) =>
       'isAddedToCart': instance.isAddedToCart,
       'averageRate': instance.averageRate,
       'inStock': instance.inStock,
+      'colors': instance.colors?.map((e) => _$ProductColorEnumMap[e]!).toList(),
     };
 
 const _$ProductSizeEnumMap = {
@@ -44,4 +48,12 @@ const _$ProductSizeEnumMap = {
   ProductSize.M: 'M',
   ProductSize.L: 'L',
   ProductSize.xL: 'xL',
+};
+
+const _$ProductColorEnumMap = {
+  ProductColor.Red: 'Red',
+  ProductColor.Blue: 'Blue',
+  ProductColor.Green: 'Green',
+  ProductColor.Black: 'Black',
+  ProductColor.White: 'White',
 };

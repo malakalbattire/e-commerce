@@ -5,6 +5,12 @@ class AdminOrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    //final adminOrderProvider = Provider.of<AdminOrderProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Orders'),
+      ),
+    );
   }
 }

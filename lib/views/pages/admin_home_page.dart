@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/provider/home_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:e_commerce_app_flutter/views/widgets/product_item_widgets/product_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,12 +13,13 @@ class AdminHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
+    final currentUser = FirebaseAuth.instance.currentUser;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (homeProvider.state == HomeState.initial) {
         homeProvider.loadHomeData();
         homeProvider.getProductsStream();
-        favoritesProvider.subscribeToFavorites();
+        favoritesProvider.subscribeToFavorites(currentUser!.uid);
       }
     });
     return SingleChildScrollView(

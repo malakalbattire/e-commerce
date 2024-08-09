@@ -1,7 +1,8 @@
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/favorites_services.dart';
 import 'package:flutter/foundation.dart';
-import '../models/product_item_model/product_item_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 enum FavoritesState { initial, loading, loaded, error }
 
@@ -10,7 +11,7 @@ class FavoritesProvider with ChangeNotifier {
   List<FavoriteModel> _favoritesProducts = [];
   FavoritesState _state = FavoritesState.initial;
   String _errorMessage = '';
-  final favServices = FavServicesIpl();
+  final FavServicesImpl favServices = FavServicesImpl();
   List<FavoriteModel> _favItems = [];
 
   ProductItemModel? get selectedProduct => _selectedProduct;
@@ -19,11 +20,31 @@ class FavoritesProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   List<FavoriteModel> get favItems => _favItems;
 
-  void subscribeToFavorites() {
+  FavoritesProvider() {
+    _listenToAuthChanges();
+  }
+
+  void _listenToAuthChanges() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        _clearFavorites();
+      } else {
+        subscribeToFavorites(user.uid);
+      }
+    });
+  }
+
+  void _clearFavorites() {
+    _favItems.clear();
+    _favoritesProducts.clear();
+    notifyListeners();
+  }
+
+  void subscribeToFavorites(String userId) {
     _state = FavoritesState.loading;
     notifyListeners();
 
-    favServices.getFavItemsStream().listen((favorites) {
+    favServices.getFavItemsStream(userId).listen((favorites) {
       _favoritesProducts = favorites;
       _favItems = favorites;
       _state = FavoritesState.loaded;
@@ -51,8 +72,11 @@ class FavoritesProvider with ChangeNotifier {
       );
 
       if (existingFav.id.isNotEmpty) {
-        await favServices.removeFromFav(productId);
-        _favItems.removeWhere((fav) => fav.id == productId);
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await favServices.removeFromFav(productId);
+          _favItems.removeWhere((fav) => fav.id == productId);
+        }
       } else {
         final selectedProduct = await favServices.getProductDetails(productId);
         final favItem = FavoriteModel(
@@ -64,8 +88,11 @@ class FavoritesProvider with ChangeNotifier {
           price: selectedProduct.price,
           category: selectedProduct.category,
         );
-        await favServices.addToFav(favItem);
-        _favItems.add(favItem);
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await favServices.addToFav(favItem);
+          _favItems.add(favItem);
+        }
       }
       notifyListeners();
     } catch (e) {
@@ -77,8 +104,13 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> removeFromFav(String productId) async {
     try {
-      await favServices.removeFromFav(productId);
-      _favItems = await favServices.getFavItems();
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await favServices.removeFromFav(productId);
+        _favItems = await favServices.getFavItems(user.uid);
+      } else {
+        _favItems.clear();
+      }
       notifyListeners();
     } catch (error) {
       _errorMessage = error.toString();

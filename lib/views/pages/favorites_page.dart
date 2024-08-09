@@ -19,12 +19,12 @@ class FavoritesPage extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (favoriteProvider.state == FavoritesState.initial) {
-        favoriteProvider.subscribeToFavorites();
+        favoriteProvider.subscribeToFavorites(currentUser!.uid);
       }
     });
 
     return StreamBuilder<List<FavoriteModel>>(
-      stream: favoriteProvider.favServices.getFavItemsStream(),
+      stream: favoriteProvider.favServices.getFavItemsStream(currentUser!.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator.adaptive());

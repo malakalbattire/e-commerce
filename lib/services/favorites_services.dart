@@ -8,55 +8,60 @@ abstract class FavoritesServices {
   Future<ProductItemModel> getProductDetails(String id);
   Future<void> addToFav(FavoriteModel addToFavModel);
   Future<void> removeFromFav(String productId);
-  Future<List<FavoriteModel>> getFavItems();
-  Stream<List<FavoriteModel>> getFavItemsStream();
+  Future<List<FavoriteModel>> getFavItems(String userId);
+  Stream<List<FavoriteModel>> getFavItemsStream(String userId);
 }
 
-class FavServicesIpl implements FavoritesServices {
+class FavServicesImpl implements FavoritesServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
 
+  Future<String> _getCurrentUserId() async {
+    final currentUser = await authServices.getUser();
+    if (currentUser == null) {
+      throw Exception('No user is signed in.');
+    }
+    return currentUser.uid;
+  }
+
   @override
   Future<void> addToFav(FavoriteModel addToFavModel) async {
-    final currentUser = await authServices.getUser();
+    final userId = await _getCurrentUserId();
     return await firestore.setData(
-      path: ApiPath.addToFavorites(currentUser!.uid, addToFavModel.id),
+      path: ApiPath.addToFavorites(userId, addToFavModel.id),
       data: addToFavModel.toMap(),
     );
   }
 
   @override
   Future<void> removeFromFav(String productId) async {
-    final currentUser = await authServices.getUser();
-    await firestore.deleteData(
-      path: ApiPath.addToFavorites(currentUser!.uid, productId),
+    final userId = await _getCurrentUserId();
+    return await firestore.deleteData(
+      path: ApiPath.addToFavorites(userId, productId),
     );
   }
 
   @override
   Future<ProductItemModel> getProductDetails(String id) async {
     return await firestore.getDocument<ProductItemModel>(
-        path: ApiPath.product(id),
-        builder: (data, documentId) =>
-            ProductItemModel.fromMap(data, documentId));
+      path: ApiPath.product(id),
+      builder: (data, documentId) => ProductItemModel.fromMap(data, documentId),
+    );
   }
 
   @override
-  Future<List<FavoriteModel>> getFavItems() async {
-    final currentUser = await authServices.getUser();
+  Future<List<FavoriteModel>> getFavItems(String userId) async {
     return await firestore.getCollection(
-      path: ApiPath.addToFavoritesItems(currentUser!.uid),
+      path: ApiPath.addToFavoritesItems(userId),
       builder: (data, documentId) => FavoriteModel.fromMap(data, documentId),
     );
   }
 
   @override
-  Stream<List<FavoriteModel>> getFavItemsStream() {
-    return authServices.getUser().asStream().asyncExpand((currentUser) {
-      return firestore.collectionStream(
-        path: ApiPath.addToFavoritesItems(currentUser!.uid),
-        builder: (data, documentId) => FavoriteModel.fromMap(data, documentId),
-      );
-    });
+  Stream<List<FavoriteModel>> getFavItemsStream(String userId) {
+    return firestore.collectionStream(
+      path: ApiPath.addToFavoritesItems(userId),
+      builder: (data, documentId) => FavoriteModel.fromMap(data, documentId),
+    );
   }
 }

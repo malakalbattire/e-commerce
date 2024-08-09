@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
+//import 'package:e_commerce_app_flutter/provider/admin_order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/admin_product_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CardPaymentProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => AdminProductProvider()),
+        // ChangeNotifierProvider(create: (_) => AdminOrderProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
