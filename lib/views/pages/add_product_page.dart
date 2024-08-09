@@ -120,7 +120,6 @@ class _AddProductPageState extends State<AddProductPage> {
                     _inStock = int.parse(value!);
                   },
                 ),
-                // Add more fields for colors, size, etc.
                 ElevatedButton(
                   onPressed: _submit,
                   child: Text('Add Product'),

@@ -52,9 +52,7 @@ class AdminProductProvider with ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    try {
-      // Fetch products logic can be implemented here using collectionStream from FirestoreServices
-    } catch (e) {
+    try {} catch (e) {
       debugPrint('Error fetching products: $e');
     }
   }
