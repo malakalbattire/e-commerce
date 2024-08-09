@@ -1,6 +1,5 @@
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
-import 'package:e_commerce_app_flutter/views/pages/add_product_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/admin_home_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/admin_orders_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/profile_page.dart';
@@ -93,15 +92,6 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
               tabs: [
                 PersistentTabConfig(
                   screen: AdminHomePage(),
-                  item: ItemConfig(
-                    icon: const Icon(Icons.home),
-                    title: "Admin Home",
-                    activeForegroundColor: Theme.of(context).primaryColor,
-                    inactiveForegroundColor: Colors.grey,
-                  ),
-                ),
-                PersistentTabConfig(
-                  screen: AddProductPage(),
                   item: ItemConfig(
                     icon: const Icon(Icons.home),
                     title: "Admin Home",

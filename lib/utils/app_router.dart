@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_provider.dart';
+import 'package:e_commerce_app_flutter/views/pages/add_product_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_book_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/payment_cards_page.dart';
@@ -90,7 +91,11 @@ class AppRouter {
           builder: (_) => CustomBottomNavbar(),
           settings: settings,
         );
-
+      case AppRoutes.addProduct:
+        return MaterialPageRoute(
+          builder: (_) => AddProductPage(),
+          settings: settings,
+        );
       case AppRoutes.productsList:
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider(
