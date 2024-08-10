@@ -103,14 +103,12 @@ class ProductDetailsProvider with ChangeNotifier {
         .get();
 
     if (cartSnapshot.docs.isNotEmpty) {
-      // If the product with the same size exists in the cart, increment the quantity
       final doc = cartSnapshot.docs.first;
       final currentQuantity = doc['quantity'] as int;
       doc.reference.update({
         'quantity': currentQuantity + quantity,
       });
     } else {
-      // If not, add it as a new item
       final newCartItem = AddToCartModel(
         id: productId,
         product: selectedProduct!,
@@ -124,28 +122,4 @@ class ProductDetailsProvider with ChangeNotifier {
       cartRef.add(newCartItem.toMap());
     }
   }
-  // Future<void> addToCart(String productId) async {
-  //   try {
-  //     final selectedProduct = _products[productId];
-  //     if (selectedProduct != null && _quantity <= selectedProduct.inStock) {
-  //       final cartItem = AddToCartModel(
-  //         id: selectedProduct.id,
-  //         product: selectedProduct,
-  //         size: _selectedSize ?? Size.OneSize,
-  //         quantity: _quantity,
-  //         price: _price,
-  //         imgUrl: selectedProduct.imgUrl,
-  //         name: selectedProduct.name,
-  //         inStock: selectedProduct.inStock,
-  //       );
-  //       await productDetailsServices.addToCart(cartItem);
-  //       _cartItems.add(cartItem);
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       print('Error adding to cart: $e');
-  //     }
-  //   }
-  // }
 }

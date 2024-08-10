@@ -27,6 +27,8 @@ class ProductDetailsPage extends StatelessWidget {
           final product = provider.selectedProduct!;
           final bool isOutOfStock = provider.quantity > product.inStock;
           final bool hasSize = product.size != null;
+          final bool isSizeSelected = provider.selectedSize != null;
+          final bool isColorSelected = provider.selectedColor != null;
 
           return Scaffold(
             appBar: AppBar(
@@ -198,7 +200,8 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                           )
                         : ElevatedButton(
-                            onPressed: provider.selectedSize == null && hasSize
+                            onPressed: (!isColorSelected ||
+                                    (hasSize && !isSizeSelected))
                                 ? null
                                 : () async {
                                     if (currentUser == null) {

@@ -117,5 +117,4 @@ class AddToCartModel {
   }
 }
 
-// ignore: constant_identifier_names
 enum Size { S, M, L, xL, OneSize }

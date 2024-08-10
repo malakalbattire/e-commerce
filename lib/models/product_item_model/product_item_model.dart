@@ -5,7 +5,6 @@ part 'product_item_model.g.dart';
 
 enum ProductSize { S, M, L, xL }
 
-// ignore: constant_identifier_names
 enum ProductColor { Red, Blue, Green, Black, White }
 
 @JsonSerializable()
