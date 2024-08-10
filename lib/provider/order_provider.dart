@@ -35,6 +35,7 @@ class OrderProvider with ChangeNotifier {
     required String phoneNumber,
     required String cardNumber,
     required double totalAmount,
+    required int orderNumber,
     required CartProvider cartProvider,
   }) async {
     _state = OrderState.loading;
@@ -56,6 +57,7 @@ class OrderProvider with ChangeNotifier {
         cardNumber: cardNumber,
         totalAmount: totalAmount,
         createdAt: DateTime.now(),
+        orderNumber: orderNumber,
       );
 
       await orderServices.createOrder(newOrder);

@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
+import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/order_pages%20/my_orders_page.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,10 @@ class OrderDetailsPage extends StatelessWidget {
         children: [
           Text(
             'Order ID: ${order.id}',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          Text(
+            'Order #: ${order.orderNumber}',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8.0),

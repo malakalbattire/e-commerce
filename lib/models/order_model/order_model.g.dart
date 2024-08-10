@@ -22,6 +22,7 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
       cardNumber: json['cardNumber'] as String,
       totalAmount: (json['totalAmount'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
+      orderNumber: (json['orderNumber'] as num).toInt(),
     );
 
 Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
@@ -39,4 +40,5 @@ Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
       'cardNumber': instance.cardNumber,
       'totalAmount': instance.totalAmount,
       'createdAt': instance.createdAt.toIso8601String(),
+      'orderNumber': instance.orderNumber,
     };

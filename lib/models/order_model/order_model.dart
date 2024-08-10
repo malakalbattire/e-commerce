@@ -18,6 +18,7 @@ class OrderModel {
   final String cardNumber;
   final double totalAmount;
   final DateTime createdAt;
+  final int orderNumber;
 
   OrderModel({
     required this.id,
@@ -33,6 +34,7 @@ class OrderModel {
     required this.cardNumber,
     required this.totalAmount,
     required this.createdAt,
+    required this.orderNumber,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>
@@ -54,6 +56,7 @@ class OrderModel {
     String? cardNumber,
     double? totalAmount,
     DateTime? createdAt,
+    int? orderNumber,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -69,6 +72,7 @@ class OrderModel {
       cardNumber: cardNumber ?? this.cardNumber,
       totalAmount: totalAmount ?? this.totalAmount,
       createdAt: createdAt ?? this.createdAt,
+      orderNumber: orderNumber ?? this.orderNumber,
     );
   }
 
@@ -87,6 +91,7 @@ class OrderModel {
       cardNumber: map['cardNumber'] as String,
       totalAmount: (map['totalAmount'] as num).toDouble(),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
+      orderNumber: map['orderNumber'] as int,
     );
   }
 
@@ -105,6 +110,7 @@ class OrderModel {
       'cardNumber': cardNumber,
       'totalAmount': totalAmount,
       'createdAt': createdAt,
+      'orderNumber': orderNumber,
     };
   }
 }
