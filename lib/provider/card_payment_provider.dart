@@ -9,12 +9,14 @@ class CardPaymentProvider with ChangeNotifier {
   PaymentState _state = PaymentState.initial;
   String _errorMessage = '';
   final paymentServices = PaymentServicesImpl();
-  String? _selectedPaymentId;
+  // String? _selectedPaymentId;
+  String? _selectedPaymentMethodId;
 
   List<PaymentModel> get paymentItems => _paymentItems;
   PaymentState get state => _state;
   String get errorMessage => _errorMessage;
-  String? get selectedPaymentId => _selectedPaymentId;
+  // String? get selectedPaymentId => _selectedPaymentId;
+  String? get selectedPaymentMethodId => _selectedPaymentMethodId;
 
   Future<void> loadPaymentData() async {
     _state = PaymentState.loading;
@@ -58,8 +60,8 @@ class CardPaymentProvider with ChangeNotifier {
   //   }
   // }
 
-  void choosePayment(String paymentId) {
-    _selectedPaymentId = paymentId;
+  void choosePayment(String paymentMethodId) {
+    _selectedPaymentMethodId = paymentMethodId;
     notifyListeners();
   }
 

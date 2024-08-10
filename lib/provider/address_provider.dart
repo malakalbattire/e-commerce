@@ -9,14 +9,14 @@ class AddressProvider with ChangeNotifier {
   AddressState _state = AddressState.initial;
   String _errorMessage = '';
   final addressServices = AddressServicesImpl();
-  String? _selectedAddressId;
-  //Address? _selectedAddress;
+  // String? _selectedAddressId;
+  String? _selectedAddress;
 
 //  Address? get selectedAddress => _selectedAddress;
   List<AddressModel> get addressItems => _addressItems;
   AddressState get state => _state;
   String get errorMessage => _errorMessage;
-  String? get selectedAddressId => _selectedAddressId;
+  String? get selectedAddress => _selectedAddress;
 
   Future<void> loadAddressData() async {
     _state = AddressState.loading;
@@ -62,7 +62,7 @@ class AddressProvider with ChangeNotifier {
 
   void chooseAddress(String addressId) {
     // _selectedAddress = _addressItems.firstWhere((item) => item.id == addressId);
-    _selectedAddressId = addressId;
+    _selectedAddress = addressId;
     notifyListeners();
   }
 

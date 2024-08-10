@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
@@ -25,6 +26,12 @@ class CheckoutPage extends StatelessWidget {
       if (cartProvider.state == CartState.initial) {
         cartProvider.loadCartData();
       }
+      if (paymentProvider.state == PaymentState.initial) {
+        paymentProvider.loadPaymentData();
+      }
+      if (addressProvider.state == AddressState.initial) {
+        addressProvider.loadAddressData();
+      }
     });
 
     return Scaffold(
@@ -37,6 +44,8 @@ class CheckoutPage extends StatelessWidget {
           RefreshIndicator(
             onRefresh: () async {
               await cartProvider.loadCartData();
+              await paymentProvider.loadPaymentData();
+              await addressProvider.loadAddressData();
             },
             child: SingleChildScrollView(
               child: Padding(
@@ -70,11 +79,26 @@ class CheckoutPage extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: addressProvider.selectedAddressId == null
+                            child: addressProvider.selectedAddress == null
                                 ? const Center(child: Text('Add Address'))
                                 : Center(
-                                    child: Text(
-                                        '${addressProvider.selectedAddressId}')),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).firstName} ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).lastName}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium,
+                                        ),
+                                        Text(
+                                            '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).cityName} / ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).countryName}'),
+                                        Text(
+                                            '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).phoneNumber}'),
+                                      ],
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -113,12 +137,33 @@ class CheckoutPage extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: paymentProvider.selectedPaymentId == null
-                                ? const Center(
-                                    child: Text('Add Payment Method'))
-                                : Center(
-                                    child: Text(
-                                        ' ${paymentProvider.selectedPaymentId}')),
+                            child:
+                                paymentProvider.selectedPaymentMethodId == null
+                                    ? const Center(
+                                        child: Text('Add Payment Method'))
+                                    : Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(16.0),
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    'https://i.pinimg.com/564x/56/65/ac/5665acfeb0668fe3ffdeb3168d3b38a4.jpg',
+                                                height: 80,
+                                                width: 80,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            Text(
+                                                '${paymentProvider.paymentItems.firstWhere((payment) => payment.id == paymentProvider.selectedPaymentMethodId).cardNumber}'),
+                                          ],
+                                        ),
+                                      ),
                           ),
                         ),
                       ),
@@ -130,8 +175,9 @@ class CheckoutPage extends StatelessWidget {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (addressProvider.selectedAddressId == null ||
-                                paymentProvider.selectedPaymentId == null ||
+                            if (addressProvider.selectedAddress == null ||
+                                paymentProvider.selectedPaymentMethodId ==
+                                    null ||
                                 cartProvider.cartItemCount == 0) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -147,8 +193,9 @@ class CheckoutPage extends StatelessWidget {
                               productIds: cartProvider.cartItems
                                   .map((item) => item.product.id)
                                   .toList(),
-                              addressId: addressProvider.selectedAddressId!,
-                              paymentId: paymentProvider.selectedPaymentId!,
+                              addressId: addressProvider.selectedAddress!,
+                              paymentId:
+                                  paymentProvider.selectedPaymentMethodId!,
                               totalAmount: cartProvider.subtotal + 10,
                               cartProvider: cartProvider,
                             );
@@ -179,7 +226,8 @@ class CheckoutPage extends StatelessWidget {
               ),
             ),
           ),
-          if (cartProvider.state == CartState.loading)
+          if (cartProvider.state == CartState.loading ||
+              paymentProvider.state == PaymentState.loading)
             const Positioned.fill(
               child: Center(
                 child: CircularProgressIndicator.adaptive(),

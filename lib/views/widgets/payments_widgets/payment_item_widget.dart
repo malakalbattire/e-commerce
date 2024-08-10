@@ -52,7 +52,7 @@ class PaymentItemWidget extends StatelessWidget {
               trailing: paymentMethod != null
                   ? Radio<String>(
                       value: paymentMethod!.id,
-                      groupValue: provider.selectedPaymentId,
+                      groupValue: provider.selectedPaymentMethodId,
                       onChanged: (value) => provider.choosePayment(value!),
                     )
                   : null,

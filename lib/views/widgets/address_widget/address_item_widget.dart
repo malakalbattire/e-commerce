@@ -61,7 +61,7 @@ class AddressItemWidget extends StatelessWidget {
               trailing: address != null
                   ? Radio<String>(
                       value: address!.id,
-                      groupValue: provider.selectedAddressId,
+                      groupValue: provider.selectedAddress,
                       onChanged: (value) => provider.chooseAddress(value!),
                     )
                   : null,
