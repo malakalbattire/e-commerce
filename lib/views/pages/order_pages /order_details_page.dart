@@ -179,14 +179,40 @@ class OrderDetailsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Address ID: ${order.addressId}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Address : ',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                ' ${order.firstName} ${order.lastName}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                ' ${order.countryName} / ${order.cityName}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                ' ${order.phoneNumber} ',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
           ),
-          const SizedBox(height: 8.0),
-          Text(
-            'Payment ID: ${order.paymentId}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(height: 24.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Card Number: ',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                'Card Number: ${order.cardNumber}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
           ),
         ],
       ),

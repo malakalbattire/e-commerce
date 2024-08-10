@@ -1,3 +1,5 @@
+import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
+import 'package:e_commerce_app_flutter/services/address_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
@@ -7,11 +9,15 @@ import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
 enum OrderState { initial, loading, loaded, error }
 
 class OrderProvider with ChangeNotifier {
-  final orderServices = OrderServicesImpl();
-  final productServices = ProductDetailsServicesImpl();
+  final OrderServicesImpl orderServices = OrderServicesImpl();
+  final ProductDetailsServicesImpl productServices =
+      ProductDetailsServicesImpl();
+  final AddressServicesImpl addressServices = AddressServicesImpl();
+
   List<OrderModel> _orders = [];
   OrderState _state = OrderState.initial;
   String _errorMessage = '';
+  Map<String, AddressModel> _addressCache = {};
 
   List<OrderModel> get orders => _orders;
   OrderState get state => _state;
@@ -22,6 +28,12 @@ class OrderProvider with ChangeNotifier {
     required List<String> productIds,
     required String addressId,
     required String paymentId,
+    required String cityName,
+    required String countryName,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required String cardNumber,
     required double totalAmount,
     required CartProvider cartProvider,
   }) async {
@@ -36,6 +48,12 @@ class OrderProvider with ChangeNotifier {
         productIds: productIds,
         addressId: addressId,
         paymentId: paymentId,
+        cityName: cityName,
+        countryName: countryName,
+        firstName: firstName,
+        lastName: lastName,
+        phoneNumber: phoneNumber,
+        cardNumber: cardNumber,
         totalAmount: totalAmount,
         createdAt: DateTime.now(),
       );
@@ -56,12 +74,26 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
+  Future<AddressModel?> getAddressDetails(String addressId) async {
+    if (_addressCache.containsKey(addressId)) {
+      return _addressCache[addressId];
+    }
+    try {
+      final address = await addressServices.getAddressById(addressId);
+      _addressCache[addressId] = address;
+      return address;
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = OrderState.error;
+      notifyListeners();
+      return null;
+    }
+  }
+
   Future<void> _updateProductInStock(String productId, int quantity) async {
     try {
       final product = await productServices.getProductDetails(productId);
-
       final updatedStock = product.inStock - quantity;
-
       await productServices.updateProductStock(productId, updatedStock);
     } catch (error) {
       _errorMessage = error.toString();

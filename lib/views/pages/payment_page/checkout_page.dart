@@ -196,6 +196,36 @@ class CheckoutPage extends StatelessWidget {
                               addressId: addressProvider.selectedAddress!,
                               paymentId:
                                   paymentProvider.selectedPaymentMethodId!,
+                              firstName: addressProvider.addressItems
+                                  .firstWhere((address) =>
+                                      address.id ==
+                                      addressProvider.selectedAddress)
+                                  .firstName,
+                              countryName: addressProvider.addressItems
+                                  .firstWhere((address) =>
+                                      address.id ==
+                                      addressProvider.selectedAddress)
+                                  .countryName,
+                              cityName: addressProvider.addressItems
+                                  .firstWhere((address) =>
+                                      address.id ==
+                                      addressProvider.selectedAddress)
+                                  .cityName,
+                              lastName: addressProvider.addressItems
+                                  .firstWhere((address) =>
+                                      address.id ==
+                                      addressProvider.selectedAddress)
+                                  .lastName,
+                              phoneNumber: addressProvider.addressItems
+                                  .firstWhere((address) =>
+                                      address.id ==
+                                      addressProvider.selectedAddress)
+                                  .phoneNumber,
+                              cardNumber: paymentProvider.paymentItems
+                                  .firstWhere((payment) =>
+                                      payment.id ==
+                                      paymentProvider.selectedPaymentMethodId)
+                                  .cardNumber,
                               totalAmount: cartProvider.subtotal + 10,
                               cartProvider: cartProvider,
                             );

@@ -12,8 +12,14 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
       productIds: (json['productIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      cityName: json['cityName'] as String,
       addressId: json['addressId'] as String,
       paymentId: json['paymentId'] as String,
+      countryName: json['countryName'] as String,
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      phoneNumber: json['phoneNumber'] as String,
+      cardNumber: json['cardNumber'] as String,
       totalAmount: (json['totalAmount'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
@@ -23,8 +29,14 @@ Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
       'id': instance.id,
       'userId': instance.userId,
       'productIds': instance.productIds,
+      'cityName': instance.cityName,
       'addressId': instance.addressId,
       'paymentId': instance.paymentId,
+      'countryName': instance.countryName,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'phoneNumber': instance.phoneNumber,
+      'cardNumber': instance.cardNumber,
       'totalAmount': instance.totalAmount,
       'createdAt': instance.createdAt.toIso8601String(),
     };

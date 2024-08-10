@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
@@ -8,6 +9,7 @@ abstract class AddressServices {
   Future<void> addAddress(AddressModel addressModel);
   Future<void> removeAddress(String addressId);
   Future<List<AddressModel>> getAddressItems();
+  Future<AddressModel> getAddressById(String addressId);
 }
 
 class AddressServicesImpl implements AddressServices {
@@ -21,6 +23,19 @@ class AddressServicesImpl implements AddressServices {
       path: ApiPath.addAddress(currentUser!.uid, addressModel.id),
       data: addressModel.toMap(),
     );
+  }
+
+  @override
+  Future<AddressModel> getAddressById(String addressId) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('address')
+        .doc(addressId)
+        .get();
+    if (doc.exists) {
+      return AddressModel.fromMap(doc.data()!, doc.id);
+    } else {
+      throw Exception('Address not found');
+    }
   }
 
   @override
