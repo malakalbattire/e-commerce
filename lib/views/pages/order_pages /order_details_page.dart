@@ -56,12 +56,13 @@ class OrderDetailsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Order ID: ${order.id}',
+            'Order Number (${order.orderNumber})',
             style: Theme.of(context).textTheme.titleLarge,
           ),
+          const SizedBox(height: 8.0),
           Text(
-            'Order #: ${order.orderNumber}',
-            style: Theme.of(context).textTheme.titleLarge,
+            'Order ID: ${order.id}',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8.0),
           Text(
