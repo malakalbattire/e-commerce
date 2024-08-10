@@ -1,5 +1,4 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
-import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/order_pages%20/my_orders_page.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +88,11 @@ class OrderDetailsPage extends StatelessWidget {
         .cast<ProductItemModel>()
         .toList();
 
+    final productQuantities = <String, int>{};
+    for (var orderItem in order.items) {
+      productQuantities[orderItem.productId] = orderItem.quantity;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -120,6 +124,7 @@ class OrderDetailsPage extends StatelessWidget {
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
+                final quantity = productQuantities[product.id] ?? 0;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -154,6 +159,10 @@ class OrderDetailsPage extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(height: 4.0),
+                            Text(
+                              'QTY: $quantity',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                           ],
                         ),
                       ),

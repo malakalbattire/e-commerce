@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app_flutter/models/order_item_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'order_model.g.dart';
@@ -7,8 +8,9 @@ part 'order_model.g.dart';
 class OrderModel {
   final String id;
   final String userId;
-  final List<String> productIds;
+  final List<OrderItem> items;
   final String cityName;
+  final List<String> productIds;
   final String addressId;
   final String paymentId;
   final String countryName;
@@ -23,8 +25,9 @@ class OrderModel {
   OrderModel({
     required this.id,
     required this.userId,
-    required this.productIds,
+    required this.items,
     required this.cityName,
+    required this.productIds,
     required this.addressId,
     required this.paymentId,
     required this.countryName,
@@ -45,8 +48,9 @@ class OrderModel {
   OrderModel copyWith({
     String? id,
     String? userId,
-    List<String>? productIds,
+    List<OrderItem>? items,
     String? cityName,
+    List<String>? productIds,
     String? addressId,
     String? paymentId,
     String? countryName,
@@ -61,8 +65,9 @@ class OrderModel {
     return OrderModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      productIds: productIds ?? this.productIds,
+      items: items ?? this.items,
       cityName: cityName ?? this.cityName,
+      productIds: productIds ?? this.productIds,
       addressId: addressId ?? this.addressId,
       paymentId: paymentId ?? this.paymentId,
       countryName: countryName ?? this.countryName,
@@ -80,8 +85,11 @@ class OrderModel {
     return OrderModel(
       id: map['id'] as String,
       userId: map['userId'] as String,
-      productIds: List<String>.from(map['productIds'] as List<dynamic>),
+      items: (map['items'] as List<dynamic>)
+          .map((item) => OrderItem.fromMap(item as Map<String, dynamic>))
+          .toList(),
       cityName: map['cityName'] as String,
+      productIds: List<String>.from(map['productIds'] as List<dynamic>),
       addressId: map['addressId'] as String,
       paymentId: map['paymentId'] as String,
       countryName: map['countryName'] as String,
@@ -99,8 +107,9 @@ class OrderModel {
     return {
       'id': id,
       'userId': userId,
-      'productIds': productIds,
+      'items': items.map((item) => item.toMap()).toList(),
       'cityName': cityName,
+      'productIds': productIds,
       'addressId': addressId,
       'paymentId': paymentId,
       'countryName': countryName,

@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
+import 'package:e_commerce_app_flutter/models/order_item_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/foundation.dart';
@@ -25,8 +26,8 @@ class OrderProvider with ChangeNotifier {
 
   Future<void> placeOrder({
     required String userId,
-    required List<String> productIds,
     required String addressId,
+    required List<String> productIds,
     required String paymentId,
     required String cityName,
     required String countryName,
@@ -39,14 +40,23 @@ class OrderProvider with ChangeNotifier {
     required CartProvider cartProvider,
   }) async {
     _state = OrderState.loading;
+    _errorMessage = '';
     notifyListeners();
 
     try {
       final orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final orderItems = cartProvider.cartItems.map((cartItem) {
+        return OrderItem(
+          productId: cartItem.product.id,
+          quantity: cartItem.quantity,
+        );
+      }).toList();
+
       final newOrder = OrderModel(
         id: orderId,
         userId: userId,
-        productIds: productIds,
+        items: orderItems,
         addressId: addressId,
         paymentId: paymentId,
         cityName: cityName,
@@ -58,6 +68,7 @@ class OrderProvider with ChangeNotifier {
         totalAmount: totalAmount,
         createdAt: DateTime.now(),
         orderNumber: orderNumber,
+        productIds: productIds,
       );
 
       await orderServices.createOrder(newOrder);
@@ -106,6 +117,7 @@ class OrderProvider with ChangeNotifier {
 
   Future<void> loadOrders(String userId) async {
     _state = OrderState.loading;
+    _errorMessage = '';
     notifyListeners();
 
     try {
