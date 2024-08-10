@@ -23,6 +23,7 @@ class AddToCartModel {
     required this.imgUrl,
     required this.name,
     required this.inStock,
+    String? color,
   });
 
   double get totalPrice => price * quantity;
@@ -116,4 +117,5 @@ class AddToCartModel {
   }
 }
 
+// ignore: constant_identifier_names
 enum Size { S, M, L, xL, OneSize }

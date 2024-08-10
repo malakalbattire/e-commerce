@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
@@ -86,29 +88,64 @@ class ProductDetailsProvider with ChangeNotifier {
   }
 
   double get totalPrice => _price * _quantity;
-
   Future<void> addToCart(String productId) async {
-    try {
-      final selectedProduct = _products[productId];
-      if (selectedProduct != null && _quantity <= selectedProduct.inStock) {
-        final cartItem = AddToCartModel(
-          id: selectedProduct.id,
-          product: selectedProduct,
-          size: _selectedSize ?? Size.OneSize,
-          quantity: _quantity,
-          price: _price,
-          imgUrl: selectedProduct.imgUrl,
-          name: selectedProduct.name,
-          inStock: selectedProduct.inStock,
-        );
-        await productDetailsServices.addToCart(cartItem);
-        _cartItems.add(cartItem);
-        notifyListeners();
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error adding to cart: $e');
-      }
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    final cartRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('cart');
+
+    final cartSnapshot = await cartRef
+        .where('product.id', isEqualTo: productId)
+        .where('size', isEqualTo: selectedSize?.name ?? 'One Size')
+        .get();
+
+    if (cartSnapshot.docs.isNotEmpty) {
+      // If the product with the same size exists in the cart, increment the quantity
+      final doc = cartSnapshot.docs.first;
+      final currentQuantity = doc['quantity'] as int;
+      doc.reference.update({
+        'quantity': currentQuantity + quantity,
+      });
+    } else {
+      // If not, add it as a new item
+      final newCartItem = AddToCartModel(
+        id: productId,
+        product: selectedProduct!,
+        size: selectedSize ?? Size.OneSize,
+        quantity: quantity,
+        price: selectedProduct!.price,
+        imgUrl: selectedProduct!.imgUrl,
+        name: selectedProduct!.name,
+        inStock: selectedProduct!.inStock,
+      );
+      cartRef.add(newCartItem.toMap());
     }
   }
+  // Future<void> addToCart(String productId) async {
+  //   try {
+  //     final selectedProduct = _products[productId];
+  //     if (selectedProduct != null && _quantity <= selectedProduct.inStock) {
+  //       final cartItem = AddToCartModel(
+  //         id: selectedProduct.id,
+  //         product: selectedProduct,
+  //         size: _selectedSize ?? Size.OneSize,
+  //         quantity: _quantity,
+  //         price: _price,
+  //         imgUrl: selectedProduct.imgUrl,
+  //         name: selectedProduct.name,
+  //         inStock: selectedProduct.inStock,
+  //       );
+  //       await productDetailsServices.addToCart(cartItem);
+  //       _cartItems.add(cartItem);
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('Error adding to cart: $e');
+  //     }
+  //   }
+  // }
 }
