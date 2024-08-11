@@ -29,6 +29,7 @@ class ProductDetailsPage extends StatelessWidget {
           final bool hasSize = product.size != null;
           final bool isSizeSelected = provider.selectedSize != null;
           final bool isColorSelected = provider.selectedColor != null;
+          final bool hasColors = product.colors != null;
 
           return Scaffold(
             appBar: AppBar(
@@ -124,7 +125,7 @@ class ProductDetailsPage extends StatelessWidget {
                               style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
-                            product.size == Size.OneSize
+                            product.size == null || product.size == Size.OneSize
                                 ? const Text(
                                     'One Size',
                                     style: TextStyle(fontSize: 18),
@@ -202,8 +203,8 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                           )
                         : ElevatedButton(
-                            onPressed: (!isColorSelected ||
-                                    (hasSize && !isSizeSelected))
+                            onPressed: ((hasSize && !isSizeSelected) ||
+                                    (hasColors && !isColorSelected))
                                 ? null
                                 : () async {
                                     if (currentUser == null) {
