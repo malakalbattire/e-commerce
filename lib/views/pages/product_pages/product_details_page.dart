@@ -124,14 +124,16 @@ class ProductDetailsPage extends StatelessWidget {
                               style: TextStyle(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
-                            product.size == null
+                            product.size == Size.OneSize
                                 ? const Text(
                                     'One Size',
                                     style: TextStyle(fontSize: 18),
                                   )
                                 : Wrap(
                                     spacing: 10.0,
-                                    children: Size.values.map((Size size) {
+                                    children: Size.values.where((size) {
+                                      return size != Size.OneSize;
+                                    }).map((Size size) {
                                       return ChoiceChip(
                                         label: Text(size.name),
                                         selected: provider.selectedSize == size,
