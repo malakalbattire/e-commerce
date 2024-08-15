@@ -26,6 +26,7 @@ dependencies:
   json_annotation: ^4.9.0
   shared_preferences: ^2.3.0
   fluttertoast: ^8.2.6
+  image_picker: ^1.1.2
 
 
 dev_dependencies:
