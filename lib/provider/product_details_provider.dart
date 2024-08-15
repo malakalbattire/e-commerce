@@ -87,7 +87,32 @@ class ProductDetailsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateProductDetails(
+      String productId, Map<String, dynamic> updatedFields) async {
+    try {
+      await productDetailsServices.updateProductDetails(
+          productId, updatedFields);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating product details: $e');
+      }
+    }
+  }
+
+  Future<void> updateProductStock(String productId, int newStock) async {
+    try {
+      await productDetailsServices.updateProductStock(productId, newStock);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating product stock: $e');
+      }
+    }
+  }
+
   double get totalPrice => _price * _quantity;
+
   Future<void> addToCart(String productId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) return;
@@ -121,5 +146,7 @@ class ProductDetailsProvider with ChangeNotifier {
       );
       cartRef.add(newCartItem.toMap());
     }
+    final newStock = selectedProduct!.inStock - quantity;
+    await updateProductStock(productId, newStock);
   }
 }

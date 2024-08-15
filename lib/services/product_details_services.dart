@@ -9,12 +9,16 @@ abstract class ProductDetailsServices {
   Future<ProductItemModel> getProductDetails(String id);
   Future<void> addToCart(AddToCartModel addToCartModel);
   Future<void> updateProductStock(String productId, int newStock);
+  Future<void> updateProductDetails(
+      String productId, Map<String, dynamic> updatedFields);
+
 // Future<void> fetchProductsByCategory(String category);
 }
 
 class ProductDetailsServicesImpl implements ProductDetailsServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
+
   @override
   Future<ProductItemModel> getProductDetails(String id) async =>
       await firestore.getDocument<ProductItemModel>(
@@ -22,24 +26,6 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
           builder: (data, documentId) =>
               ProductItemModel.fromMap(data, documentId));
 
-  // @override
-  // Future<List<ProductItemModel>> fetchProductsByCategory(String category) async {
-  //   try {
-  //     QuerySnapshot querySnapshot = await _firestore
-  //         .collection('products')
-  //         .where('category', isEqualTo: category)
-  //         .get();
-  //
-  //     List<ProductItemModel> products = querySnapshot.docs.map((doc) {
-  //       return ProductItemModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
-  //     }).toList();
-  //
-  //     return products;
-  //   } catch (e) {
-  //     throw Exception('Failed to load products: $e');
-  //   }
-  // }
-  //
   @override
   Future<void> updateProductStock(String productId, int newStock) async {
     await FirebaseFirestore.instance
@@ -55,5 +41,14 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
       path: ApiPath.addToCart(currentUser!.uid, addToCartModel.id),
       data: addToCartModel.toMap(),
     );
+  }
+
+  @override
+  Future<void> updateProductDetails(
+      String productId, Map<String, dynamic> updatedFields) async {
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .update(updatedFields);
   }
 }
