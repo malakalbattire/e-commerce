@@ -35,36 +35,46 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: false,
-        title: FutureBuilder<String?>(
-          future: authServices.getUsername(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data == null) {
-              return const Text('Hi, User');
-            } else {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Hi, ${snapshot.data}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    'Let\'s go shopping!',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .copyWith(color: Colors.grey),
-                  ),
-                ],
-              );
-            }
+        title: FutureBuilder<bool>(
+          future: isAdminFuture,
+          builder: (context, isAdminSnapshot) {
+            return StreamBuilder<String?>(
+              stream: authServices.usernameStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text('Loading...');
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Text('Hi, User');
+                } else if (isAdminSnapshot.hasData &&
+                    isAdminSnapshot.data == true) {
+                  return const Text(
+                    'Hi, Admin',
+                  );
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hi, ${snapshot.data}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        'Let\'s go shopping!',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  );
+                }
+              },
+            );
           },
         ),
         actions: [
@@ -112,7 +122,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                   screen: ProfilePage(),
                   item: ItemConfig(
                     icon: const Icon(Icons.person),
-                    title: "profile",
+                    title: "Profile",
                     activeForegroundColor: Theme.of(context).primaryColor,
                     inactiveForegroundColor: Colors.grey,
                   ),

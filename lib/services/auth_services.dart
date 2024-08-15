@@ -13,6 +13,7 @@ abstract class AuthServices {
   Future<User?> getUser();
   Future<String?> getUsername();
   Future<bool> isAdmin();
+  Stream<String?> usernameStream();
 }
 
 class AuthServicesImpl implements AuthServices {
@@ -83,6 +84,28 @@ class AuthServicesImpl implements AuthServices {
   @override
   Future<User?> getUser() async {
     return await _firebaseAuth.currentUser;
+  }
+
+  @override
+  Stream<String?> usernameStream() {
+    return _firebaseAuth.authStateChanges().asyncMap((User? user) async {
+      if (user != null) {
+        try {
+          final doc = await firestore.getDocument(
+            path: 'users/${user.uid}',
+            builder: (data, documentId) => data['username'] as String?,
+          );
+          return doc;
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error fetching username: $e');
+          }
+          return null;
+        }
+      } else {
+        return null;
+      }
+    });
   }
 
   @override
