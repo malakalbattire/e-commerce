@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final String productId;
@@ -15,6 +16,7 @@ class ProductDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
+    final bool isAdmin = currentUser?.email == 'admin@gmail.com';
 
     return ChangeNotifierProvider(
       create: (_) => ProductDetailsProvider()..getProductDetails(productId),
@@ -37,6 +39,19 @@ class ProductDetailsPage extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text('Product Details'),
               ),
+              actions: isAdmin
+                  ? [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            AppRoutes.search,
+                            arguments: productId,
+                          );
+                        },
+                      ),
+                    ]
+                  : null,
             ),
             body: Stack(
               children: [
@@ -146,31 +161,34 @@ class ProductDetailsPage extends StatelessWidget {
                                   ),
                             const SizedBox(height: 10),
                             const Divider(),
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                const Text(
-                                  'QTY:',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    provider.decrementQuantity();
-                                  },
-                                ),
-                                Text(
-                                  provider.quantity.toString(),
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: provider.quantity < product.inStock
-                                      ? () => provider.incrementQuantity()
-                                      : null,
-                                ),
-                              ],
-                            ),
+                            if (!isAdmin) ...[
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  const Text(
+                                    'QTY:',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.remove),
+                                    onPressed: () {
+                                      provider.decrementQuantity();
+                                    },
+                                  ),
+                                  Text(
+                                    provider.quantity.toString(),
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed:
+                                        provider.quantity < product.inStock
+                                            ? () => provider.incrementQuantity()
+                                            : null,
+                                  ),
+                                ],
+                              ),
+                            ],
                             Text(
                               'In Stock: ${product.inStock}',
                               style: const TextStyle(
@@ -185,64 +203,65 @@ class ProductDetailsPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    width: double.infinity,
-                    color: Colors.white,
-                    child: isOutOfStock
-                        ? ElevatedButton(
-                            onPressed: null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
+                if (!isAdmin)
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: isOutOfStock
+                          ? ElevatedButton(
+                              onPressed: null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey,
+                              ),
+                              child: const Text(
+                                'Sold Out',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                          : ElevatedButton(
+                              onPressed: ((hasSize && !isSizeSelected) ||
+                                      (hasColors && !isColorSelected))
+                                  ? null
+                                  : () async {
+                                      if (currentUser == null) {
+                                        Fluttertoast.showToast(
+                                          msg:
+                                              "Please sign in to add items to the cart",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor:
+                                              Colors.black.withOpacity(0.4),
+                                          textColor: Colors.white,
+                                          fontSize: 16.0,
+                                        );
+                                      } else {
+                                        await provider.addToCart(productId);
+                                        Fluttertoast.showToast(
+                                          msg: "Added to cart",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor:
+                                              Colors.black.withOpacity(0.4),
+                                          textColor: Colors.white,
+                                          fontSize: 16.0,
+                                        );
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                              ),
+                              child: const Text(
+                                'Add to Cart',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
-                            child: const Text(
-                              'Sold Out',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
-                        : ElevatedButton(
-                            onPressed: ((hasSize && !isSizeSelected) ||
-                                    (hasColors && !isColorSelected))
-                                ? null
-                                : () async {
-                                    if (currentUser == null) {
-                                      Fluttertoast.showToast(
-                                        msg:
-                                            "Please sign in to add items to the cart",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            Colors.black.withOpacity(0.4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0,
-                                      );
-                                    } else {
-                                      await provider.addToCart(productId);
-                                      Fluttertoast.showToast(
-                                        msg: "Added to cart",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            Colors.black.withOpacity(0.4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0,
-                                      );
-                                    }
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
-                            ),
-                            child: const Text(
-                              'Add to Cart',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                    ),
                   ),
-                ),
               ],
             ),
           );
