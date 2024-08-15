@@ -18,18 +18,23 @@ class FavoritesPage extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (favoriteProvider.state == FavoritesState.initial) {
-        favoriteProvider.subscribeToFavorites(currentUser!.uid);
+      if (currentUser != null &&
+          favoriteProvider.state == FavoritesState.initial) {
+        favoriteProvider.subscribeToFavorites(currentUser.uid);
       }
     });
 
+    if (currentUser == null) {
+      return SigninSignoutWidget();
+    }
+
     return StreamBuilder<List<FavoriteModel>>(
-      stream: favoriteProvider.favServices.getFavItemsStream(currentUser!.uid),
+      stream: favoriteProvider.favServices.getFavItemsStream(currentUser.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator.adaptive());
-        } else if (snapshot.hasError || currentUser == null) {
-          return SigninSignoutWidget();
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('An error occurred'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return EmptyFavoriteWidget();
         } else {
