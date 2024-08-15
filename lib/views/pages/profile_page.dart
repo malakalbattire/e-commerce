@@ -14,11 +14,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final AuthServicesImpl authServices = AuthServicesImpl();
   bool isLoggedIn = true;
+  bool isAdmin = false;
 
   Future<void> handleAuthState() async {
     final User? user = firebaseAuth.currentUser;
     setState(() {
       isLoggedIn = user != null;
+      isAdmin = user?.email == 'admin@gmail.com';
     });
   }
 
@@ -125,33 +127,35 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           const SizedBox(height: 30),
-          ListTile(
-            leading: const Icon(Icons.shopping_bag),
-            title: const Text('My Orders'),
-            onTap: () {
-              Navigator.of(context, rootNavigator: true)
-                  .pushNamed(AppRoutes.myOrders);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Address Book'),
-            onTap: () {
-              Navigator.of(context, rootNavigator: true)
-                  .pushNamed(AppRoutes.addressBook);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.payment),
-            title: const Text('Payment Cards'),
-            onTap: () {
-              Navigator.of(context, rootNavigator: true)
-                  .pushNamed(AppRoutes.paymentCard);
-            },
-          ),
-          const Divider(),
+          if (!isAdmin) ...[
+            ListTile(
+              leading: const Icon(Icons.shopping_bag),
+              title: const Text('My Orders'),
+              onTap: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed(AppRoutes.myOrders);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Address Book'),
+              onTap: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed(AppRoutes.addressBook);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.payment),
+              title: const Text('Payment Cards'),
+              onTap: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed(AppRoutes.paymentCard);
+              },
+            ),
+            const Divider(),
+          ],
           ListTile(
             leading:
                 isLoggedIn ? const Icon(Icons.logout) : const Icon(Icons.login),
