@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/admin_product_provider.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       if (_imageFile == null) {
@@ -40,9 +41,12 @@ class _AddProductPageState extends State<AddProductPage> {
         );
         return;
       }
+      final firestore = FirebaseFirestore.instance;
+
+      final docRef = firestore.collection('products').doc();
 
       final product = ProductItemModel(
-        id: UniqueKey().toString(),
+        id: docRef.id,
         name: _name,
         imgUrl: _imageFile!.path,
         price: _price,
@@ -51,7 +55,7 @@ class _AddProductPageState extends State<AddProductPage> {
         inStock: _inStock,
         colors: _selectedColors,
       );
-
+      await docRef.set(product.toMap());
       context.read<AdminProductProvider>().addProduct(product);
 
       Navigator.of(context).pop();
