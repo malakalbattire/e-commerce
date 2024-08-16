@@ -1,12 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
+import 'package:e_commerce_app_flutter/views/widgets/address_widget/address_card_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/address_widget/address_model_bottom_sheet.dart';
+import 'package:e_commerce_app_flutter/views/widgets/inline_headline_widget.dart';
+import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_card_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_model_bottom_sheet.dart';
+import 'package:e_commerce_app_flutter/views/widgets/total_amount_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,8 +59,7 @@ class CheckoutPage extends StatelessWidget {
                     if (cartProvider.state == CartState.error)
                       Text('Error: ${cartProvider.errorMessage}')
                     else ...[
-                      buildInlineHeadline(
-                        context: context,
+                      InlineHeadlineWidget(
                         title: 'Address',
                         onTap: () => showModalBottomSheet(
                           context: context,
@@ -82,29 +84,20 @@ class CheckoutPage extends StatelessWidget {
                             child: addressProvider.selectedAddress == null
                                 ? const Center(child: Text('Add Address'))
                                 : Center(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).firstName} ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).lastName}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium,
-                                        ),
-                                        Text(
-                                            '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).cityName} / ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).countryName}'),
-                                        Text(
-                                            '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).phoneNumber}'),
-                                      ],
+                                    child: AddressCardWidget(
+                                      address: addressProvider.addressItems
+                                          .firstWhere(
+                                        (address) =>
+                                            address.id ==
+                                            addressProvider.selectedAddress,
+                                      ),
                                     ),
                                   ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      buildInlineHeadline(
-                        context: context,
+                      InlineHeadlineWidget(
                         title: 'Products (${cartProvider.cartItemCount})',
                       ),
                       const SizedBox(height: 8.0),
@@ -118,8 +111,7 @@ class CheckoutPage extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16.0),
-                      buildInlineHeadline(
-                        context: context,
+                      InlineHeadlineWidget(
                         title: 'Payment Method',
                       ),
                       const SizedBox(height: 8.0),
@@ -142,33 +134,21 @@ class CheckoutPage extends StatelessWidget {
                                     ? const Center(
                                         child: Text('Add Payment Method'))
                                     : Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(16.0),
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                    'https://i.pinimg.com/564x/56/65/ac/5665acfeb0668fe3ffdeb3168d3b38a4.jpg',
-                                                height: 80,
-                                                width: 80,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            Text(
-                                                '${paymentProvider.paymentItems.firstWhere((payment) => payment.id == paymentProvider.selectedPaymentMethodId).cardNumber}'),
-                                          ],
+                                        child: PaymentCardWidget(
+                                          payment: paymentProvider.paymentItems
+                                              .firstWhere(
+                                            (payment) =>
+                                                payment.id ==
+                                                paymentProvider
+                                                    .selectedPaymentMethodId,
+                                          ),
                                         ),
                                       ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      buildTotalAmount(context, cartProvider.subtotal + 10),
+                      TotalAmountWidget(total: cartProvider.subtotal + 10),
                       const SizedBox(height: 16.0),
                       SizedBox(
                         width: double.infinity,
@@ -264,54 +244,6 @@ class CheckoutPage extends StatelessWidget {
                 child: CircularProgressIndicator.adaptive(),
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildInlineHeadline({
-    required BuildContext context,
-    required String title,
-    double? productsNumbers,
-    VoidCallback? onTap,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            if (productsNumbers != null)
-              Text(
-                ' ($productsNumbers)',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildTotalAmount(BuildContext context, double total) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Total Amount',
-            style: Theme.of(context)
-                .textTheme
-                .labelLarge!
-                .copyWith(color: AppColors.gray),
-          ),
-          Text(
-            '\$ $total',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
         ],
       ),
     );
