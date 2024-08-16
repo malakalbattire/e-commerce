@@ -36,9 +36,9 @@ class CounterWidget extends StatelessWidget {
           ),
           Text(value.toString()),
           IconButton(
-            onPressed: (value < inStock && inStock > 0)
-                ? () async {
-                    await cartProvider.incrementQuantity(productId);
+            onPressed: value < inStock
+                ? () {
+                    cartProvider.incrementQuantity(productId);
                   }
                 : null,
             icon: const Icon(Icons.add),

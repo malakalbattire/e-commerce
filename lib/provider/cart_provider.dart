@@ -73,22 +73,11 @@ class CartProvider with ChangeNotifier {
     _pageLoading = true;
     notifyListeners();
     try {
-      final cartItem =
-          _cartItems.firstWhere((item) => item.product.id == productId);
-      if (cartItem.quantity < cartItem.product.inStock &&
-          cartItem.product.inStock > 0) {
-        await cartServices.incrementCartItemQuantity(productId);
-        _cartItems = await cartServices.getCartItems();
-        _itemStates[productId] = ItemState.none;
-        _pageLoading = false;
-        notifyListeners();
-      } else {
-        _errorMessage = 'Cannot exceed available stock';
-        _state = CartState.error;
-        _itemStates[productId] = ItemState.none;
-        _pageLoading = false;
-        notifyListeners();
-      }
+      await cartServices.incrementCartItemQuantity(productId);
+      _cartItems = await cartServices.getCartItems();
+      _itemStates[productId] = ItemState.none;
+      _pageLoading = false;
+      notifyListeners();
     } catch (error) {
       _errorMessage = error.toString();
       _state = CartState.error;

@@ -76,12 +76,16 @@ class CartServicesImpl implements CartServices {
       path: ApiPath.addToCart(currentUser!.uid, productId),
       builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
     );
-    final newQuantity = (cartItem.quantity) + 1;
-    cartItem.quantity = newQuantity;
-    await firestore.setData(
-      path: ApiPath.addToCart(currentUser.uid, productId),
-      data: cartItem.toMap(),
-    );
+    if ((cartItem.quantity) < cartItem.inStock) {
+      final newQuantity = (cartItem.quantity) + 1;
+      cartItem.quantity = newQuantity;
+      await firestore.setData(
+        path: ApiPath.addToCart(currentUser.uid, productId),
+        data: cartItem.toMap(),
+      );
+    } else {
+      print('reach limit');
+    }
   }
 
   @override
