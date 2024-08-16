@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -149,20 +150,25 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               ),
                             ),
                           ] else ...[
-                            Text(
-                              product.name,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '\$${product.price.toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  product.name,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '\$${product.price.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 10),
                             Text(
@@ -173,16 +179,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text(
-                              'In Stock: ${product.inStock}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                            if (isAdmin)
+                              Text(
+                                'In Stock: ${product.inStock}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
                           ],
-                          const SizedBox(height: 30),
-                          if (product.colors != null)
+                          const SizedBox(height: 16),
+                          if (!isAdmin && product.colors != null)
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
@@ -211,34 +218,37 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               ),
                             ),
                           const SizedBox(height: 10),
-                          const Text(
-                            'Size:',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                          if (!isAdmin)
+                            const Text(
+                              'Size:',
+                              style: TextStyle(fontSize: 18),
+                            ),
                           const SizedBox(height: 10),
-                          product.size == null || product.size == Size.OneSize
-                              ? const Text(
-                                  'One Size',
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              : Wrap(
-                                  spacing: 10.0,
-                                  children: Size.values.where((size) {
-                                    return size != Size.OneSize;
-                                  }).map((Size size) {
-                                    return ChoiceChip(
-                                      label: Text(size.name),
-                                      selected: provider.selectedSize == size,
-                                      onSelected: (bool selected) {
-                                        provider.setSize(size);
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
+                          if (!isAdmin &&
+                              (product.size == null ||
+                                  product.size == Size.OneSize))
+                            const Text(
+                              'One Size',
+                              style: TextStyle(fontSize: 18),
+                            )
+                          else if (!isAdmin)
+                            Wrap(
+                              spacing: 10.0,
+                              children: Size.values.where((size) {
+                                return size != Size.OneSize;
+                              }).map((Size size) {
+                                return ChoiceChip(
+                                  label: Text(size.name),
+                                  selected: provider.selectedSize == size,
+                                  onSelected: (bool selected) {
+                                    provider.setSize(size);
+                                  },
+                                );
+                              }).toList(),
+                            ),
                           const SizedBox(height: 10),
-                          const Divider(),
                           if (!isAdmin) ...[
-                            const SizedBox(height: 20),
+                            const Divider(),
                             Row(
                               children: [
                                 const Text(
@@ -263,7 +273,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 ),
                               ],
                             ),
+                            Text(
+                              'In Stock: ${product.inStock}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ],
+                          SizedBox(height: 80),
                         ],
                       ),
                     ),
@@ -321,7 +339,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
+                              backgroundColor: (hasColors && isColorSelected)
+                                  ? AppColors.gray
+                                  : Theme.of(context).primaryColor,
                             ),
                             child: const Text(
                               'Add to Cart',
