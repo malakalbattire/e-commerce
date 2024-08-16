@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/views/widgets/empty_favorites_widget.dart';
@@ -28,6 +30,16 @@ class FavoritesPage extends StatelessWidget {
       return SigninSignoutWidget();
     }
 
+    Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds) {
+      return FirebaseFirestore.instance
+          .collection('products')
+          .where('id', whereIn: favoriteIds)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => ProductItemModel.fromMap(doc.data(), doc.id))
+              .toList());
+    }
+
     return StreamBuilder<List<FavoriteModel>>(
       stream: favoriteProvider.favServices.getFavItemsStream(currentUser.uid),
       builder: (context, snapshot) {
@@ -39,36 +51,63 @@ class FavoritesPage extends StatelessWidget {
           return EmptyFavoriteWidget();
         } else {
           final favorites = snapshot.data!;
-          return SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-            child: GridView.builder(
-              itemCount: favorites.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 18,
-              ),
-              itemBuilder: (context, index) => InkWell(
-                onTap: () =>
-                    Navigator.of(context, rootNavigator: true).pushNamed(
-                  AppRoutes.productDetails,
-                  arguments: favorites[index].id,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.gray1,
-                    borderRadius: BorderRadius.circular(16),
+          final favoriteIds = favorites.map((fav) => fav.id).toList();
+
+          return StreamBuilder<List<ProductItemModel>>(
+            stream: getProductStream(favoriteIds),
+            builder: (context, productSnapshot) {
+              if (productSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              } else if (productSnapshot.hasError) {
+                return const Center(child: Text('An error occurred'));
+              } else if (!productSnapshot.hasData ||
+                  productSnapshot.data!.isEmpty) {
+                return EmptyFavoriteWidget();
+              } else {
+                final products = productSnapshot.data!;
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 16.0),
+                  child: GridView.builder(
+                    itemCount: favorites.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 18,
+                    ),
+                    itemBuilder: (context, index) {
+                      final favorite = favorites[index];
+                      final product =
+                          products.firstWhere((p) => p.id == favorite.id);
+
+                      return InkWell(
+                        onTap: () => Navigator.of(context, rootNavigator: true)
+                            .pushNamed(
+                          AppRoutes.productDetails,
+                          arguments: favorite.id,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.gray1,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: FavProductItem(
+                            productId: favorite.id,
+                            productItem: favorite,
+                            inStockProduct: product,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  child: FavProductItem(
-                    productId: favorites[index].id,
-                    productItem: favorites[index],
-                  ),
-                ),
-              ),
-            ),
+                );
+              }
+            },
           );
         }
       },

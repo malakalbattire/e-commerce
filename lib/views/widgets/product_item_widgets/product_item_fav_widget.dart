@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,8 +9,13 @@ import 'package:provider/provider.dart';
 class FavProductItem extends StatelessWidget {
   final String productId;
   final FavoriteModel productItem;
-  const FavProductItem(
-      {super.key, required this.productItem, required this.productId});
+  final ProductItemModel inStockProduct;
+  const FavProductItem({
+    super.key,
+    required this.productItem,
+    required this.productId,
+    required this.inStockProduct,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +81,30 @@ class FavProductItem extends StatelessWidget {
                       icon: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
                         color: isFavorite ? Colors.red : Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 4.0,
+                  left: 4.0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: inStockProduct.inStock > 0
+                          ? Colors.green
+                          : Colors.red,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      inStockProduct.inStock > 0
+                          ? 'In Stock ${inStockProduct.inStock}'
+                          : 'Sold Out',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                       ),
                     ),
                   ),
