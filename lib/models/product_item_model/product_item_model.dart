@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'product_item_model.g.dart';
@@ -119,13 +118,5 @@ class ProductItemModel {
       inStock: inStock ?? this.inStock,
       colors: colors ?? this.colors,
     );
-  }
-
-  Stream<int> get stockStream {
-    return FirebaseFirestore.instance
-        .collection('products')
-        .doc(id)
-        .snapshots()
-        .map((snapshot) => snapshot['inStock'] as int);
   }
 }

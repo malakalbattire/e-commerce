@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -18,34 +19,44 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productItemProvider = Provider.of<ProductItemProvider>(context);
+
     return Consumer<FavoritesProvider>(
       builder: (context, provider, _) {
         bool isFavorite = provider.isFavorite(productId);
         final currentUser = FirebaseAuth.instance.currentUser;
 
         return StreamBuilder<int>(
-          stream: productItem.stockStream,
-          builder: (context, snapshot) {
-            bool isOutOfStock = !snapshot.hasData || snapshot.data! <= 0;
+          stream: productItemProvider.getStockStream(productId),
+          builder: (context, stockSnapshot) {
+            bool isOutOfStock =
+                !stockSnapshot.hasData || stockSnapshot.data! <= 0;
 
             return Stack(
               children: [
-                Container(
-                  height: 100,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: productItem.imgUrl,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                    fit: BoxFit.contain,
-                  ),
+                StreamBuilder<String>(
+                  stream: productItemProvider.getImgUrlStream(productId),
+                  builder: (context, imgSnapshot) {
+                    return Container(
+                      height: 100,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: imgSnapshot.hasData
+                          ? CachedNetworkImage(
+                              imageUrl: imgSnapshot.data!,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator.adaptive(),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              fit: BoxFit.contain,
+                            )
+                          : const SizedBox(),
+                    );
+                  },
                 ),
                 if (isOutOfStock)
                   Container(
@@ -125,7 +136,7 @@ class ProductItem extends StatelessWidget {
                           ),
                         ),
                 ),
-                if (!isOutOfStock) ...[
+                if (!isOutOfStock)
                   Positioned(
                     bottom: 0.0,
                     left: 0.0,
@@ -141,32 +152,49 @@ class ProductItem extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            productItem.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(fontWeight: FontWeight.w600),
+                          StreamBuilder<String>(
+                            stream:
+                                productItemProvider.getNameStream(productId),
+                            builder: (context, nameSnapshot) {
+                              return Text(
+                                nameSnapshot.data ?? '',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              );
+                            },
                           ),
-                          Text(
-                            productItem.category,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall!
-                                .copyWith(color: Colors.grey),
+                          StreamBuilder<String>(
+                            stream: productItemProvider
+                                .getCategoryStream(productId),
+                            builder: (context, categorySnapshot) {
+                              return Text(
+                                categorySnapshot.data ?? '',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .copyWith(color: Colors.grey),
+                              );
+                            },
                           ),
-                          Text(
-                            '\$ ${productItem.price}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(fontWeight: FontWeight.w600),
+                          StreamBuilder<double>(
+                            stream:
+                                productItemProvider.getPriceStream(productId),
+                            builder: (context, priceSnapshot) {
+                              return Text(
+                                '\$ ${priceSnapshot.data?.toStringAsFixed(2) ?? ''}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              );
+                            },
                           ),
                         ],
                       ),
                     ),
                   ),
-                ],
               ],
             );
           },

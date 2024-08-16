@@ -12,6 +12,7 @@ import 'provider/category_provider.dart';
 import 'provider/home_provider.dart';
 import 'provider/login_provider.dart';
 import 'provider/payment_provider.dart';
+import 'provider/product_item_provider.dart';
 import 'provider/product_provider.dart';
 import 'provider/register_provider.dart';
 import 'utils/app_colors.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => AdminProductProvider()),
         ChangeNotifierProvider(create: (_) => AdminOrdersProvider()),
+        ChangeNotifierProvider(create: (_) => ProductItemProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
