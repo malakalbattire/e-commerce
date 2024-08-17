@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:e_commerce_app_flutter/views/widgets/order_tile_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,33 +32,39 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Orders'),
-        centerTitle: true,
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await orderProvider.loadOrders(currentUser!.uid);
-        },
-        child: SingleChildScrollView(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
-              children: [
-                if (orderProvider.state == OrderState.loading)
-                  const CircularProgressIndicator.adaptive()
-                else if (orderProvider.state == OrderState.error ||
-                    currentUser == null)
-                  SigninSignoutWidget()
-                else if (orderProvider.orders.isEmpty)
-                  const Center(child: Text('No orders found'))
-                else ...[
-                  for (var order in orderProvider.orders)
-                    OrderTile(order: order),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushNamed(AppRoutes.home);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('My Orders'),
+          centerTitle: true,
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await orderProvider.loadOrders(currentUser!.uid);
+          },
+          child: SingleChildScrollView(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Column(
+                children: [
+                  if (orderProvider.state == OrderState.loading)
+                    const CircularProgressIndicator.adaptive()
+                  else if (orderProvider.state == OrderState.error ||
+                      currentUser == null)
+                    SigninSignoutWidget()
+                  else if (orderProvider.orders.isEmpty)
+                    const Center(child: Text('No orders found'))
+                  else ...[
+                    for (var order in orderProvider.orders)
+                      OrderTile(order: order),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
