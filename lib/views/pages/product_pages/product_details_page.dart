@@ -1,10 +1,8 @@
-import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -193,24 +191,36 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    'Select Color:',
+                                    'Colors:',
                                     style: TextStyle(fontSize: 18),
                                   ),
-                                  const SizedBox(width: 10),
-                                  DropdownButton<ProductColor>(
-                                    value: provider.selectedColor,
-                                    onChanged: (color) {
-                                      if (color != null) {
-                                        provider.setColor(color);
-                                      }
-                                    },
-                                    items: product.colors!.map((color) {
-                                      return DropdownMenuItem(
-                                        value: color,
-                                        child: Text(color.name),
+                                  const SizedBox(height: 10),
+                                  Wrap(
+                                    spacing: 10.0,
+                                    children: product.colors!.map((color) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          provider.setColor(color);
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: color.color,
+                                            border: Border.all(
+                                              color: provider.selectedColor ==
+                                                      color
+                                                  ? Colors.black
+                                                  : Colors.transparent,
+                                              width: 3,
+                                            ),
+                                          ),
+                                        ),
                                       );
                                     }).toList(),
                                   ),
@@ -340,7 +350,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: (hasColors && isColorSelected)
-                                  ? AppColors.gray
+                                  ? Theme.of(context).primaryColor
                                   : Theme.of(context).primaryColor,
                             ),
                             child: const Text(

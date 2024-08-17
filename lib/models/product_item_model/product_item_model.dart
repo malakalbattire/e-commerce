@@ -1,10 +1,26 @@
+import 'dart:ui';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'product_item_model.g.dart';
 
 enum ProductSize { S, M, L, xL }
 
-enum ProductColor { Red, Blue, Green, Black, White }
+// enum ProductColor { Red, Blue, Green, Black, White }
+enum ProductColor {
+  Red('#FF0000'),
+  Blue('#0000FF'),
+  Green('#00FF00'),
+  Black('#000000'),
+  White('#FFFFFF');
+
+  final String hexCode;
+
+  const ProductColor(this.hexCode);
+
+  // Method to convert hexCode to Color
+  Color get color => Color(int.parse(hexCode.replaceFirst('#', '0xFF')));
+}
 
 @JsonSerializable()
 class ProductItemModel {
