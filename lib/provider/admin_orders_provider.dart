@@ -59,6 +59,7 @@ class AdminOrdersProvider with ChangeNotifier {
                 createdAt: (orderData['createdAt'] as Timestamp?)?.toDate() ??
                     DateTime.now(),
                 orderNumber: orderData['orderNumber'] as int? ?? 0,
+                //  orderStatus: orderData['orderStatus'] as String??'',
               );
 
               loadedOrders.add(order);

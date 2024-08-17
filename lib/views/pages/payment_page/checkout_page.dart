@@ -209,6 +209,7 @@ class CheckoutPage extends StatelessWidget {
                               totalAmount: cartProvider.subtotal + 10,
                               cartProvider: cartProvider,
                               orderNumber: orderProvider.orders.length + 1,
+                              orderStatus: 'waiting',
                             );
 
                             if (orderProvider.state == OrderState.error) {

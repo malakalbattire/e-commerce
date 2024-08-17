@@ -4,6 +4,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'order_model.g.dart';
 
+enum OrderStatus {
+  waitingForConfirmation,
+  confirmed,
+  processing,
+  shipped,
+  delivered,
+  cancelled,
+}
+
 @JsonSerializable()
 class OrderModel {
   String id;
@@ -21,6 +30,7 @@ class OrderModel {
   final double totalAmount;
   final DateTime createdAt;
   final int orderNumber;
+  // final OrderStatus orderStatus; // Add this line
 
   OrderModel({
     required this.id,
@@ -38,6 +48,7 @@ class OrderModel {
     required this.totalAmount,
     required this.createdAt,
     required this.orderNumber,
+    // required this.orderStatus, // Add this line
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>
@@ -61,6 +72,7 @@ class OrderModel {
     double? totalAmount,
     DateTime? createdAt,
     int? orderNumber,
+    //OrderStatus? orderStatus, // Add this line
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -78,6 +90,7 @@ class OrderModel {
       totalAmount: totalAmount ?? this.totalAmount,
       createdAt: createdAt ?? this.createdAt,
       orderNumber: orderNumber ?? this.orderNumber,
+      // orderStatus: orderStatus ?? this.orderStatus, // Add this line
     );
   }
 
@@ -100,6 +113,8 @@ class OrderModel {
       totalAmount: (map['totalAmount'] as num).toDouble(),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       orderNumber: map['orderNumber'] as int,
+      // orderStatus: OrderStatus
+      //     .values[map['orderStatus'] as int], // Convert integer to enum
     );
   }
 
@@ -120,6 +135,7 @@ class OrderModel {
       'totalAmount': totalAmount,
       'createdAt': createdAt,
       'orderNumber': orderNumber,
+      // 'orderStatus': orderStatus.index, // Convert enum to integer
     };
   }
 }

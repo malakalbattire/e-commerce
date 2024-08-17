@@ -1,6 +1,6 @@
-import 'package:e_commerce_app_flutter/views/pages/order_pages%20/order_details_page.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/provider/admin_orders_provider.dart';
+import 'package:e_commerce_app_flutter/views/pages/order_pages%20/order_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,8 +39,14 @@ class AdminOrdersPage extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(16),
-                  title: Text('${order.firstName} ${order.lastName}',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  title: Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${order.firstName} ${order.lastName}',
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text('status'),
+                    ],
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -66,5 +72,25 @@ class AdminOrdersPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  // Function to convert OrderStatus to a readable text
+  String _getOrderStatusText(OrderStatus status) {
+    switch (status) {
+      case OrderStatus.waitingForConfirmation:
+        return 'Waiting for Confirmation';
+      case OrderStatus.confirmed:
+        return 'Confirmed';
+      case OrderStatus.processing:
+        return 'Processing';
+      case OrderStatus.shipped:
+        return 'Shipped';
+      case OrderStatus.delivered:
+        return 'Delivered';
+      case OrderStatus.cancelled:
+        return 'Cancelled';
+      default:
+        return 'Unknown Status';
+    }
   }
 }
