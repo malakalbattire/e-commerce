@@ -13,6 +13,7 @@ class AddToCartModel {
   final String imgUrl;
   final String name;
   final int inStock;
+  final String color;
 
   AddToCartModel({
     required this.id,
@@ -23,7 +24,7 @@ class AddToCartModel {
     required this.imgUrl,
     required this.name,
     required this.inStock,
-    String? color,
+    required this.color,
   });
 
   double get totalPrice => price * quantity;
@@ -37,6 +38,7 @@ class AddToCartModel {
     String? imgUrl,
     String? name,
     int? inStock,
+    String? color,
   }) {
     return AddToCartModel(
       id: id ?? this.id,
@@ -47,6 +49,7 @@ class AddToCartModel {
       imgUrl: imgUrl ?? this.imgUrl,
       name: name ?? this.name,
       inStock: inStock ?? this.inStock,
+      color: color ?? this.color,
     );
   }
 
@@ -66,6 +69,7 @@ class AddToCartModel {
       imgUrl: map['imgUrl'] as String,
       name: map['name'] as String,
       inStock: map['inStock'] as int,
+      color: map['color'] as String,
     );
   }
 
@@ -79,6 +83,7 @@ class AddToCartModel {
       'imgUrl': imgUrl,
       'name': name,
       'inStock': inStock,
+      'color': color,
     };
   }
 

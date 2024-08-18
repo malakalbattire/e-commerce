@@ -112,7 +112,6 @@ class ProductDetailsProvider with ChangeNotifier {
   }
 
   double get totalPrice => _price * _quantity;
-
   Future<void> addToCart(String productId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) return;
@@ -125,6 +124,7 @@ class ProductDetailsProvider with ChangeNotifier {
     final cartSnapshot = await cartRef
         .where('product.id', isEqualTo: productId)
         .where('size', isEqualTo: selectedSize?.name ?? 'One Size')
+        .where('color', isEqualTo: selectedColor?.name ?? 'DefaultColor')
         .get();
 
     if (cartSnapshot.docs.isNotEmpty) {
@@ -143,6 +143,7 @@ class ProductDetailsProvider with ChangeNotifier {
         imgUrl: selectedProduct!.imgUrl,
         name: selectedProduct!.name,
         inStock: selectedProduct!.inStock,
+        color: selectedColor?.name ?? 'DefaultColor',
       );
       cartRef.add(newCartItem.toMap());
     }

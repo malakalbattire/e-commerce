@@ -17,6 +17,7 @@ AddToCartModel _$AddToCartModelFromJson(Map<String, dynamic> json) =>
       imgUrl: json['imgUrl'] as String,
       name: json['name'] as String,
       inStock: (json['inStock'] as num).toInt(),
+      color: json['color'] as String,
     );
 
 Map<String, dynamic> _$AddToCartModelToJson(AddToCartModel instance) =>
@@ -29,6 +30,7 @@ Map<String, dynamic> _$AddToCartModelToJson(AddToCartModel instance) =>
       'imgUrl': instance.imgUrl,
       'name': instance.name,
       'inStock': instance.inStock,
+      'color': instance.color,
     };
 
 const _$SizeEnumMap = {
