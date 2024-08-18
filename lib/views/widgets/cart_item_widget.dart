@@ -90,16 +90,8 @@ class CartItemWidget extends StatelessWidget {
                   ),
                   Text.rich(
                     TextSpan(
-                      text: 'Size:',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: AppColors.gray,
-                          ),
-                      children: [
-                        TextSpan(
-                          text: '/${productItem.size.name}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        )
-                      ],
+                      text: '${productItem.color} / ${productItem.size.name} ',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                 ],
