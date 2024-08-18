@@ -6,7 +6,6 @@ part 'product_item_model.g.dart';
 
 enum ProductSize { S, M, L, xL }
 
-// enum ProductColor { Red, Blue, Green, Black, White }
 enum ProductColor {
   Red('#FF0000'),
   Blue('#0000FF'),
@@ -18,7 +17,6 @@ enum ProductColor {
 
   const ProductColor(this.hexCode);
 
-  // Method to convert hexCode to Color
   Color get color => Color(int.parse(hexCode.replaceFirst('#', '0xFF')));
 }
 

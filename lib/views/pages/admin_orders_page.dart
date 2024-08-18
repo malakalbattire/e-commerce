@@ -40,7 +40,7 @@ class AdminOrdersPage extends StatelessWidget {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(16),
                   title: Row(
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('${order.firstName} ${order.lastName}',
                           style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -74,7 +74,6 @@ class AdminOrdersPage extends StatelessWidget {
     );
   }
 
-  // Function to convert OrderStatus to a readable text
   String _getOrderStatusText(OrderStatus status) {
     switch (status) {
       case OrderStatus.waitingForConfirmation:
