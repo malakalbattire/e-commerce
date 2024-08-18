@@ -4,6 +4,8 @@ import 'package:e_commerce_app_flutter/models/product_item_model/product_item_mo
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
   Map<String, ProductItemModel> _products = {};
@@ -112,6 +114,7 @@ class ProductDetailsProvider with ChangeNotifier {
   }
 
   double get totalPrice => _price * _quantity;
+
   Future<void> addToCart(String productId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) return;
@@ -121,33 +124,67 @@ class ProductDetailsProvider with ChangeNotifier {
         .doc(currentUser.uid)
         .collection('cart');
 
+    final product = selectedProduct;
+    if (product == null) return;
+
+    final size = selectedSize?.name ?? 'One Size';
+    final color = selectedColor?.name ?? 'DefaultColor';
+
     final cartSnapshot = await cartRef
         .where('product.id', isEqualTo: productId)
-        .where('size', isEqualTo: selectedSize?.name ?? 'One Size')
-        .where('color', isEqualTo: selectedColor?.name ?? 'DefaultColor')
+        .where('size', isEqualTo: size)
+        .where('color', isEqualTo: color)
         .get();
 
     if (cartSnapshot.docs.isNotEmpty) {
       final doc = cartSnapshot.docs.first;
       final currentQuantity = doc['quantity'] as int;
-      doc.reference.update({
-        'quantity': currentQuantity + quantity,
+
+      if (currentQuantity + quantity > product.inStock) {
+        Fluttertoast.showToast(
+          msg: "Cannot add more items. Exceeds stock limit.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black.withOpacity(0.4),
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return;
+      }
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final docSnapshot = await transaction.get(doc.reference);
+
+        if (docSnapshot.exists) {
+          transaction.update(doc.reference, {
+            'quantity': currentQuantity + quantity,
+          });
+        }
       });
     } else {
       final newCartItem = AddToCartModel(
         id: productId,
-        product: selectedProduct!,
+        product: product,
         size: selectedSize ?? Size.OneSize,
         quantity: quantity,
-        price: selectedProduct!.price,
-        imgUrl: selectedProduct!.imgUrl,
-        name: selectedProduct!.name,
-        inStock: selectedProduct!.inStock,
+        price: product.price,
+        imgUrl: product.imgUrl,
+        name: product.name,
+        inStock: product.inStock,
         color: selectedColor?.name ?? 'DefaultColor',
       );
       cartRef.add(newCartItem.toMap());
     }
-    final newStock = selectedProduct!.inStock - quantity;
-    await updateProductStock(productId, newStock);
+
+    Fluttertoast.showToast(
+      msg: "Added to cart successfully.",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black.withOpacity(0.4),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 }

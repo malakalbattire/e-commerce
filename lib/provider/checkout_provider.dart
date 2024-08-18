@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
@@ -13,7 +12,6 @@ class CheckoutProvider with ChangeNotifier {
   List<AddToCartModel> _cartItems = [];
   List<AddressModel> _addressItems = [];
   List<PaymentModel> _paymentItems = [];
-  String _errorMessage = '';
   CheckoutState _state = CheckoutState.initial;
 
   List<AddToCartModel> get cartItems => _cartItems;

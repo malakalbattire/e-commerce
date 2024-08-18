@@ -389,16 +389,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     } else {
                                       await provider
                                           .addToCart(widget.productId);
-                                      Fluttertoast.showToast(
-                                        msg: "Added to cart",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            Colors.black.withOpacity(0.4),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0,
-                                      );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
