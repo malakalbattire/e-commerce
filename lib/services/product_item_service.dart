@@ -6,6 +6,7 @@ abstract class ProductItemService {
   Stream<double> getPriceStream(String productId);
   Stream<String> getCategoryStream(String productId);
   Stream<int> getStockStream(String productId);
+  Stream<String> getDescriptionStream(String productId);
 }
 
 class ProductItemServiceImpl implements ProductItemService {
@@ -40,6 +41,14 @@ class ProductItemServiceImpl implements ProductItemService {
     return _firestoreServices.documentStream(
       path: 'products/$productId',
       builder: (data, id) => data['category'] as String,
+    );
+  }
+
+  @override
+  Stream<String> getDescriptionStream(String productId) {
+    return _firestoreServices.documentStream(
+      path: 'products/$productId',
+      builder: (data, id) => data['description'] as String,
     );
   }
 

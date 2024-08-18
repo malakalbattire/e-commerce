@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app_flutter/provider/product_item_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -43,6 +45,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
     final bool isAdmin = currentUser?.email == 'admin@gmail.com';
+    final productItemProvider = Provider.of<ProductItemProvider>(context);
 
     return Consumer<ProductDetailsProvider>(
       builder: (context, provider, _) {
@@ -106,10 +109,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       child: PageView.builder(
                         itemCount: 1,
                         itemBuilder: (context, index) {
-                          return Image.network(
-                            product.imgUrl,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                          return StreamBuilder<String>(
+                            stream:
+                                productItemProvider.getImgUrlStream(product.id),
+                            builder: (context, imgSnapshot) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: imgSnapshot.hasData
+                                    ? CachedNetworkImage(
+                                        imageUrl: imgSnapshot.data!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator
+                                              .adaptive(),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      )
+                                    : const SizedBox(),
+                              );
+                            },
                           );
                         },
                       ),
@@ -151,39 +175,68 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  product.name,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                StreamBuilder<String>(
+                                  stream: productItemProvider
+                                      .getNameStream(product.id),
+                                  builder: (context, nameSnapshot) {
+                                    return Text(
+                                      nameSnapshot.data ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  },
                                 ),
-                                Text(
-                                  '\$${product.price.toStringAsFixed(2)}',
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
+                                StreamBuilder<double>(
+                                  stream: productItemProvider
+                                      .getPriceStream(product.id),
+                                  builder: (context, priceSnapshot) {
+                                    final price = priceSnapshot.data
+                                            ?.toStringAsFixed(2) ??
+                                        '';
+                                    return Text(
+                                      '\$${price}',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text(
-                              product.description,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
+                            StreamBuilder<String>(
+                              stream: productItemProvider
+                                  .getDescriptionStream(product.id),
+                              builder: (context, descriptionSnapshot) {
+                                return Text(
+                                  descriptionSnapshot.data ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                );
+                              },
                             ),
                             const SizedBox(height: 10),
                             if (isAdmin)
-                              Text(
-                                'In Stock: ${product.inStock}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
+                              StreamBuilder<int>(
+                                stream: productItemProvider
+                                    .getStockStream(product.id),
+                                builder: (context, inStockSnapshot) {
+                                  final inStock =
+                                      inStockSnapshot.data?.toString() ?? '';
+                                  return Text(
+                                    'In Stock:${inStock}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                },
                               ),
                           ],
                           const SizedBox(height: 16),

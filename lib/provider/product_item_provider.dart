@@ -20,6 +20,10 @@ class ProductItemProvider with ChangeNotifier {
     return productItemServices.getCategoryStream(productId);
   }
 
+  Stream<String> getDescriptionStream(String productId) {
+    return productItemServices.getDescriptionStream(productId);
+  }
+
   Stream<int> getStockStream(String productId) {
     return productItemServices.getStockStream(productId);
   }
