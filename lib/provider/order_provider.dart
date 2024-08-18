@@ -38,7 +38,7 @@ class OrderProvider with ChangeNotifier {
     required double totalAmount,
     required int orderNumber,
     required CartProvider cartProvider,
-    required String orderStatus,
+    // required String orderStatus,
   }) async {
     _state = OrderState.loading;
     _errorMessage = '';

@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/admin_orders_provider.dart';
 import 'package:e_commerce_app_flutter/provider/admin_product_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
+import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdminProductProvider()),
         ChangeNotifierProvider(create: (_) => AdminOrdersProvider()),
         ChangeNotifierProvider(create: (_) => ProductItemProvider()),
+        ChangeNotifierProvider(create: (_) => CheckoutProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

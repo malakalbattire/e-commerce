@@ -1,5 +1,6 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
+import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/add_product_page.dart';
@@ -67,7 +68,7 @@ class AppRouter {
       case AppRoutes.payment:
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(
-            value: Provider.of<CartProvider>(_, listen: false),
+            value: Provider.of<CheckoutProvider>(_, listen: false),
             child: CheckoutPage(),
           ),
           settings: settings,

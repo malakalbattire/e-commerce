@@ -1,12 +1,71 @@
-import 'package:e_commerce_app_flutter/models/checkout_model/checkout_model.dart';
-
-class CheckoutServicesImpl implements CheckoutServices {
-  @override
-  Future<void> processCheckout(CheckoutModel checkoutModel) async {
-    await Future.delayed(const Duration(seconds: 2));
-  }
-}
+import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
+import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
+import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
+import 'package:e_commerce_app_flutter/services/auth_services.dart';
+import 'package:e_commerce_app_flutter/services/firestore_services.dart';
+import 'package:e_commerce_app_flutter/utils/api_path.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class CheckoutServices {
-  Future<void> processCheckout(CheckoutModel checkoutModel);
+  Future<List<AddToCartModel>> getCartItems();
+  Future<List<AddressModel>> getAddressItems();
+  Future<List<PaymentModel>> getPaymentItems();
+}
+
+class CheckoutServicesImpl implements CheckoutServices {
+  final firestore = FirestoreServices.instance;
+  final authServices = AuthServicesImpl();
+
+  @override
+  Future<List<AddToCartModel>> getCartItems() async {
+    final currentUser = await authServices.getUser();
+    return await firestore.getCollection(
+      path: ApiPath.addToCartItems(currentUser!.uid),
+      builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
+    );
+  }
+
+  @override
+  Future<List<AddressModel>> getAddressItems() async {
+    final currentUser = await authServices.getUser();
+    final path = ApiPath.addAddressItems(currentUser!.uid);
+
+    try {
+      final addresses = await firestore.getCollection(
+        path: path,
+        builder: (data, documentId) {
+          return AddressModel.fromMap(data, documentId);
+        },
+      );
+
+      return addresses;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
+  @override
+  Future<List<PaymentModel>> getPaymentItems() async {
+    final currentUser = await authServices.getUser();
+    final path = ApiPath.addPaymentCardItems(currentUser!.uid);
+
+    try {
+      final payments = await firestore.getCollection(
+        path: path,
+        builder: (data, documentId) {
+          return PaymentModel.fromMap(data, documentId);
+        },
+      );
+
+      return payments;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
 }
