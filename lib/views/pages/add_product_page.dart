@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/admin_product_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +44,16 @@ class _AddProductPageState extends State<AddProductPage> {
     });
   }
 
+  Future<String> uploadImageToStorage(File image) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child('productsImg/$fileName');
+
+    UploadTask uploadTask = storageReference.putFile(image);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+    return await taskSnapshot.ref.getDownloadURL();
+  }
+
   void _toggleSize(ProductSize size) {
     setState(() {
       if (_selectedSizes.contains(size)) {
@@ -62,25 +73,28 @@ class _AddProductPageState extends State<AddProductPage> {
         );
         return;
       }
-      final firestore = FirebaseFirestore.instance;
+      try {
+        String imageUrl = await uploadImageToStorage(_imageFile!);
+        final firestore = FirebaseFirestore.instance;
 
-      final docRef = firestore.collection('products').doc();
+        final docRef = firestore.collection('products').doc();
 
-      final product = ProductItemModel(
-        id: docRef.id,
-        name: _name,
-        imgUrl: _imageFile!.path,
-        price: _price,
-        description: _description,
-        category: _category,
-        inStock: _inStock,
-        colors: _selectedColors,
-        sizes: _selectedSizes,
-      );
-      await docRef.set(product.toMap());
-      context.read<AdminProductProvider>().addProduct(product);
+        final product = ProductItemModel(
+          id: docRef.id,
+          name: _name,
+          imgUrl: imageUrl,
+          price: _price,
+          description: _description,
+          category: _category,
+          inStock: _inStock,
+          colors: _selectedColors,
+          sizes: _selectedSizes,
+        );
+        await docRef.set(product.toMap());
+        context.read<AdminProductProvider>().addProduct(product);
 
-      Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      } catch (e) {}
     }
   }
 
