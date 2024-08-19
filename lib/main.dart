@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/provider/add_product_provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/admin_orders_provider.dart';
 import 'package:e_commerce_app_flutter/provider/admin_product_provider.dart';
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdminOrdersProvider()),
         ChangeNotifierProvider(create: (_) => ProductItemProvider()),
         ChangeNotifierProvider(create: (_) => CheckoutProvider()),
+        ChangeNotifierProvider(create: (_) => AddProductProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
