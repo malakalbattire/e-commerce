@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/provider/home_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
@@ -44,26 +45,41 @@ class AdminHomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8.0),
-            GridView.builder(
-              itemCount: homeProvider.products.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 18,
-              ),
-              itemBuilder: (context, index) => InkWell(
-                onTap: () =>
-                    Navigator.of(context, rootNavigator: true).pushNamed(
-                  AppRoutes.productDetails,
-                  arguments: homeProvider.products[index].id,
-                ),
-                child: ProductItem(
-                  productId: homeProvider.products[index].id,
-                  productItem: homeProvider.products[index],
-                ),
-              ),
+            StreamBuilder<List<ProductItemModel>>(
+              stream: homeProvider.productsStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No products available'));
+                } else {
+                  final products = snapshot.data!;
+                  return GridView.builder(
+                    itemCount: products.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 18,
+                    ),
+                    itemBuilder: (context, index) => InkWell(
+                      onTap: () =>
+                          Navigator.of(context, rootNavigator: true).pushNamed(
+                        AppRoutes.productDetails,
+                        arguments: products[index].id,
+                      ),
+                      child: ProductItem(
+                        productId: products[index].id,
+                        productItem: products[index],
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),

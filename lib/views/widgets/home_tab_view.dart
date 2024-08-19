@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,15 +21,12 @@ class HomeTabView extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (homeProvider.state == HomeState.initial) {
         homeProvider.loadHomeData();
-        homeProvider.getProductsStream();
         favoritesProvider.subscribeToFavorites(currentUser!.uid);
       }
     });
 
     return RefreshIndicator(
-      onRefresh: () async {
-        homeProvider.getProductsStream();
-      },
+      onRefresh: () async {},
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -77,26 +75,41 @@ class HomeTabView extends StatelessWidget {
                   )
                 ],
               ),
-              GridView.builder(
-                itemCount: homeProvider.products.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 18,
-                ),
-                itemBuilder: (context, index) => InkWell(
-                  onTap: () =>
-                      Navigator.of(context, rootNavigator: true).pushNamed(
-                    AppRoutes.productDetails,
-                    arguments: homeProvider.products[index].id,
-                  ),
-                  child: ProductItem(
-                    productId: homeProvider.products[index].id,
-                    productItem: homeProvider.products[index],
-                  ),
-                ),
+              StreamBuilder<List<ProductItemModel>>(
+                stream: homeProvider.productsStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No products available'));
+                  } else {
+                    final products = snapshot.data!;
+                    return GridView.builder(
+                      itemCount: products.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 18,
+                      ),
+                      itemBuilder: (context, index) => InkWell(
+                        onTap: () => Navigator.of(context, rootNavigator: true)
+                            .pushNamed(
+                          AppRoutes.productDetails,
+                          arguments: products[index].id,
+                        ),
+                        child: ProductItem(
+                          productId: products[index].id,
+                          productItem: products[index],
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ],

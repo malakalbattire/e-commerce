@@ -35,6 +35,14 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<List<ProductItemModel>> get productsStream {
+    return _homeServices.getProductsStream().handleError((error) {
+      _errorMessage = error.toString();
+      _state = HomeState.error;
+      notifyListeners();
+    });
+  }
+
   Stream<void> getProductsStream() async* {
     try {
       _homeServices.getProductsStream().listen((products) {
