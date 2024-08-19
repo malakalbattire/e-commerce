@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 
 class AdminOrdersProvider with ChangeNotifier {
-  // Existing orders stream controller
   Stream<List<OrderModel>> get ordersStream => _ordersStreamController.stream;
   final _ordersStreamController =
       StreamController<List<OrderModel>>.broadcast();
 
-  // New stream controller for order status updates
   final _orderStatusStreamController =
       StreamController<Map<String, OrderStatus>>.broadcast();
 
@@ -86,7 +84,6 @@ class AdminOrdersProvider with ChangeNotifier {
 
               ordersMap[order.id] = order;
 
-              // Emit the current status for the order
               if (orderStatus.isNotEmpty) {
                 _orderStatusStreamController.add({order.id: orderStatus.last});
               }
@@ -115,7 +112,6 @@ class AdminOrdersProvider with ChangeNotifier {
           if (currentData != null && currentData['orderStatus'] is List) {
             final List<dynamic> statusList = currentData['orderStatus'];
             if (statusList.isNotEmpty) {
-              // Replace the last status with the new status
               statusList[statusList.length - 1] = newStatus.name;
             } else {
               statusList.add(newStatus.name);
@@ -124,7 +120,6 @@ class AdminOrdersProvider with ChangeNotifier {
               'orderStatus': statusList,
             });
 
-            // Emit the updated status for the order
             _orderStatusStreamController.add({orderId: newStatus});
           }
         }
