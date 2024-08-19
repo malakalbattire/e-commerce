@@ -1,5 +1,5 @@
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
-import 'package:e_commerce_app_flutter/models/order_item_model.dart';
+import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:flutter/foundation.dart';
@@ -38,7 +38,6 @@ class OrderProvider with ChangeNotifier {
     required double totalAmount,
     required int orderNumber,
     required CartProvider cartProvider,
-    // required String orderStatus,
   }) async {
     _state = OrderState.loading;
     _errorMessage = '';
@@ -70,7 +69,7 @@ class OrderProvider with ChangeNotifier {
         createdAt: DateTime.now(),
         orderNumber: orderNumber,
         productIds: productIds,
-        // orderStatus: orderStatus,
+        orderStatus: [OrderStatus.waitingForConfirmation],
       );
 
       await orderServices.createOrder(newOrder);

@@ -11,11 +11,19 @@ class OrderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String latestStatus = order.orderStatus?.last.name ?? 'Unknown';
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text('Order Number (${order.orderNumber})'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Order Number (${order.orderNumber})'),
+            Text('Order Status: $latestStatus'),
+          ],
+        ),
         subtitle: Text(
           'Date: ${order.createdAt.toLocal().toShortDateString()}\n'
           'Total: \$${order.totalAmount}',

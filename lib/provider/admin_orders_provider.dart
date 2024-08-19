@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:flutter/material.dart';
-import 'package:e_commerce_app_flutter/models/order_item_model.dart';
+import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 
 class AdminOrdersProvider with ChangeNotifier {
   Stream<List<OrderModel>> get ordersStream => _ordersStreamController.stream;
-
+  OrderStatus? _selectStatus;
   final _ordersStreamController =
       StreamController<List<OrderModel>>.broadcast();
+  OrderStatus? get selectStatus => _selectStatus;
 
   AdminOrdersProvider() {
     _initializeOrdersStream();
@@ -59,7 +60,12 @@ class AdminOrdersProvider with ChangeNotifier {
                 createdAt: (orderData['createdAt'] as Timestamp?)?.toDate() ??
                     DateTime.now(),
                 orderNumber: orderData['orderNumber'] as int? ?? 0,
-                //  orderStatus: orderData['orderStatus'] as String??'',
+                orderStatus: (orderData['orderStatus'] as List<dynamic>?)
+                    ?.map((status) => OrderStatus.values.firstWhere(
+                          (e) => e.name == status,
+                          orElse: () => OrderStatus.waitingForConfirmation,
+                        ))
+                    .toList(),
               );
 
               loadedOrders.add(order);

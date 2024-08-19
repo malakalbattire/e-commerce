@@ -26,6 +26,9 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
       totalAmount: (json['totalAmount'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       orderNumber: (json['orderNumber'] as num).toInt(),
+      orderStatus: (json['orderStatus'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$OrderStatusEnumMap, e))
+          .toList(),
     );
 
 Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
@@ -45,4 +48,15 @@ Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
       'totalAmount': instance.totalAmount,
       'createdAt': instance.createdAt.toIso8601String(),
       'orderNumber': instance.orderNumber,
+      'orderStatus':
+          instance.orderStatus?.map((e) => _$OrderStatusEnumMap[e]!).toList(),
     };
+
+const _$OrderStatusEnumMap = {
+  OrderStatus.waitingForConfirmation: 'waitingForConfirmation',
+  OrderStatus.confirmed: 'confirmed',
+  OrderStatus.processing: 'processing',
+  OrderStatus.shipped: 'shipped',
+  OrderStatus.delivered: 'delivered',
+  OrderStatus.cancelled: 'cancelled',
+};

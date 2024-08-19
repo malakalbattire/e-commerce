@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_app_flutter/models/order_item_model.dart';
+import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'order_model.g.dart';
@@ -30,7 +30,7 @@ class OrderModel {
   final double totalAmount;
   final DateTime createdAt;
   final int orderNumber;
-  // final OrderStatus orderStatus; // Add this line
+  final List<OrderStatus>? orderStatus;
 
   OrderModel({
     required this.id,
@@ -48,7 +48,7 @@ class OrderModel {
     required this.totalAmount,
     required this.createdAt,
     required this.orderNumber,
-    // required this.orderStatus, // Add this line
+    required this.orderStatus,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>
@@ -72,7 +72,7 @@ class OrderModel {
     double? totalAmount,
     DateTime? createdAt,
     int? orderNumber,
-    //OrderStatus? orderStatus, // Add this line
+    List<OrderStatus>? orderStatus,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -90,7 +90,7 @@ class OrderModel {
       totalAmount: totalAmount ?? this.totalAmount,
       createdAt: createdAt ?? this.createdAt,
       orderNumber: orderNumber ?? this.orderNumber,
-      // orderStatus: orderStatus ?? this.orderStatus, // Add this line
+      orderStatus: orderStatus ?? this.orderStatus,
     );
   }
 
@@ -113,8 +113,11 @@ class OrderModel {
       totalAmount: (map['totalAmount'] as num).toDouble(),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       orderNumber: map['orderNumber'] as int,
-      // orderStatus: OrderStatus
-      //     .values[map['orderStatus'] as int], // Convert integer to enum
+      orderStatus: map['orderStatus'] != null
+          ? List<OrderStatus>.from((map['orderStatus'] as List<dynamic>).map(
+              (e) => OrderStatus.values
+                  .firstWhere((status) => status.name == e as String)))
+          : null,
     );
   }
 
@@ -135,7 +138,7 @@ class OrderModel {
       'totalAmount': totalAmount,
       'createdAt': createdAt,
       'orderNumber': orderNumber,
-      // 'orderStatus': orderStatus.index, // Convert enum to integer
+      'orderStatus': orderStatus?.map((status) => status.name).toList(),
     };
   }
 }
