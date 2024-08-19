@@ -55,7 +55,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
         final product = provider.selectedProduct!;
         final bool isOutOfStock = provider.quantity > product.inStock;
-        final bool hasSize = product.size != null;
+        final bool hasSize = product.sizes != null;
         final bool isSizeSelected = provider.selectedSize != null;
         final bool isColorSelected = provider.selectedColor != null;
         final bool hasColors = product.colors != null;
@@ -288,8 +288,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             ),
                           const SizedBox(height: 10),
                           if (!isAdmin &&
-                              (product.size == null ||
-                                  product.size == Size.OneSize))
+                              (product.sizes == null ||
+                                  product.sizes == Size.OneSize))
                             const Text(
                               'One Size',
                               style: TextStyle(fontSize: 18),

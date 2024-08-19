@@ -17,7 +17,6 @@ import 'provider/payment_provider.dart';
 import 'provider/product_item_provider.dart';
 import 'provider/product_provider.dart';
 import 'provider/register_provider.dart';
-import 'services/firebase_messaging_service.dart';
 import 'utils/app_colors.dart';
 import 'utils/app_router.dart';
 import 'utils/app_routes.dart';

@@ -30,7 +30,8 @@ class ProductItemModel {
   final double price;
   final String category;
   final int quantity;
-  final ProductSize? size;
+  final List<ProductSize>?
+      sizes; // Changed from ProductSize? to List<ProductSize>?
   final bool isAddedToCart;
   final double averageRate;
   final int inStock;
@@ -45,7 +46,7 @@ class ProductItemModel {
     required this.price,
     required this.category,
     this.quantity = 0,
-    this.size,
+    this.sizes, // Updated here
     this.isAddedToCart = false,
     this.averageRate = 0.0,
     this.inStock = 0,
@@ -54,7 +55,7 @@ class ProductItemModel {
 
   @override
   String toString() {
-    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,inStock:$inStock,description:$description,price:$price,category:$category,quantity:$quantity,size:$size,isAddedToCart:$isAddedToCart, colors:$colors}';
+    return 'ProductItemModel{id:$id,name:$name,imgUrl: $imgUrl,isFavorite:$isFavorite,inStock:$inStock,description:$description,price:$price,category:$category,quantity:$quantity,sizes:$sizes,isAddedToCart:$isAddedToCart, colors:$colors}';
   }
 
   factory ProductItemModel.fromJson(Map<String, dynamic> json) =>
@@ -73,8 +74,9 @@ class ProductItemModel {
       category: data['category'] ?? '',
       quantity: data['quantity']?.toInt() ?? 0,
       averageRate: data['averageRate']?.toDouble() ?? 0.0,
-      size: data['size'] != null
-          ? ProductSize.values.firstWhere((e) => e.name == data['size'])
+      sizes: data['sizes'] != null
+          ? List<ProductSize>.from((data['sizes'] as List).map(
+              (e) => ProductSize.values.firstWhere((size) => size.name == e)))
           : null,
       isAddedToCart: data['isAddedToCart'] ?? false,
       inStock: data['inStock']?.toInt() ?? 0,
@@ -95,7 +97,7 @@ class ProductItemModel {
       'price': price,
       'category': category,
       'quantity': quantity,
-      'size': size?.name,
+      'sizes': sizes?.map((size) => size.name).toList(), // Updated here
       'isAddedToCart': isAddedToCart,
       'inStock': inStock,
       'colors': colors?.map((color) => color.name).toList(),
@@ -111,7 +113,7 @@ class ProductItemModel {
     double? price,
     String? category,
     int? quantity,
-    ProductSize? size,
+    List<ProductSize>? sizes, // Updated here
     bool? isAddedToCart,
     double? averageRate,
     int? inStock,
@@ -126,7 +128,7 @@ class ProductItemModel {
       price: price ?? this.price,
       category: category ?? this.category,
       quantity: quantity ?? this.quantity,
-      size: size ?? this.size,
+      sizes: sizes ?? this.sizes, // Updated here
       isAddedToCart: isAddedToCart ?? this.isAddedToCart,
       averageRate: averageRate ?? this.averageRate,
       inStock: inStock ?? this.inStock,

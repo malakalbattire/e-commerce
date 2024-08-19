@@ -20,6 +20,7 @@ class _AddProductPageState extends State<AddProductPage> {
   String _category = '';
   int _inStock = 0;
   List<ProductColor> _selectedColors = [];
+  List<ProductSize> _selectedSizes = [];
 
   final ImagePicker _picker = ImagePicker();
 
@@ -30,6 +31,26 @@ class _AddProductPageState extends State<AddProductPage> {
         _imageFile = File(pickedFile.path);
       });
     }
+  }
+
+  void _toggleColor(ProductColor color) {
+    setState(() {
+      if (_selectedColors.contains(color)) {
+        _selectedColors.remove(color);
+      } else {
+        _selectedColors.add(color);
+      }
+    });
+  }
+
+  void _toggleSize(ProductSize size) {
+    setState(() {
+      if (_selectedSizes.contains(size)) {
+        _selectedSizes.remove(size);
+      } else {
+        _selectedSizes.add(size);
+      }
+    });
   }
 
   Future<void> _submit() async {
@@ -54,6 +75,7 @@ class _AddProductPageState extends State<AddProductPage> {
         category: _category,
         inStock: _inStock,
         colors: _selectedColors,
+        sizes: _selectedSizes,
       );
       await docRef.set(product.toMap());
       context.read<AdminProductProvider>().addProduct(product);
@@ -223,6 +245,50 @@ class _AddProductPageState extends State<AddProductPage> {
                     onSaved: (value) {
                       _inStock = int.parse(value!);
                     },
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Colors',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: ProductColor.values.map((color) {
+                      return ChoiceChip(
+                        label: Text(color.toString().split('.').last),
+                        selected: _selectedColors.contains(color),
+                        onSelected: (selected) {
+                          _toggleColor(color);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Sizes',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: ProductSize.values.map((size) {
+                      return ChoiceChip(
+                        label: Text(size.toString().split('.').last),
+                        selected: _selectedSizes.contains(size),
+                        onSelected: (selected) {
+                          _toggleSize(size);
+                        },
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
