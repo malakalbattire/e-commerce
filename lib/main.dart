@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessagingService().init();
+  await FirebaseApi().initNotifications();
   runApp(const MyApp());
 }
 
