@@ -7,13 +7,16 @@ class AdminProductProvider with ChangeNotifier {
 
   List<ProductItemModel> _products = [];
   List<ProductItemModel> get products => _products;
-
+  Future<void> _sendNotification(
+      String userId, String title, String body) async {}
   Future<void> addProduct(ProductItemModel product) async {
     try {
       await _productService.addProduct(
         path: 'products',
         data: product.toMap(),
       );
+      await _sendNotification('admin', 'New Product Added',
+          'A new product "${product.name}" has been added.');
       _products.add(product);
       notifyListeners();
     } catch (e) {
