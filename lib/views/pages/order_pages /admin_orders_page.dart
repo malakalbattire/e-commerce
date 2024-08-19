@@ -22,7 +22,7 @@ class AdminOrdersPage extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No orders found.'));
+            return const Center(child: Text('No orders found.'));
           }
 
           final orders = snapshot.data!;
@@ -34,6 +34,10 @@ class AdminOrdersPage extends StatelessWidget {
             itemCount: sortedOrders.length,
             itemBuilder: (ctx, index) {
               final order = sortedOrders[index];
+              final currentStatus = order.orderStatus!.isNotEmpty
+                  ? order.orderStatus?.first
+                  : OrderStatus.waitingForConfirmation;
+
               return Card(
                 elevation: 4,
                 margin: const EdgeInsets.only(bottom: 16),
@@ -42,9 +46,47 @@ class AdminOrdersPage extends StatelessWidget {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${order.firstName} ${order.lastName}',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text('status'),
+                      Expanded(
+                        child: Text(
+                          '${order.firstName} ${order.lastName}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: StreamBuilder<Map<String, OrderStatus>>(
+                          stream: Provider.of<AdminOrdersProvider>(context)
+                              .orderStatusStream,
+                          builder: (context, statusSnapshot) {
+                            final orderStatusMap = statusSnapshot.data;
+                            final orderStatus =
+                                orderStatusMap?[order.id] ?? currentStatus;
+
+                            return DropdownButton<OrderStatus>(
+                              isExpanded: true,
+                              value: orderStatus,
+                              items:
+                                  OrderStatus.values.map((OrderStatus status) {
+                                return DropdownMenuItem<OrderStatus>(
+                                  value: status,
+                                  child: Text(Provider.of<AdminOrdersProvider>(
+                                          context,
+                                          listen: false)
+                                      .getOrderStatusText(status)),
+                                );
+                              }).toList(),
+                              onChanged: (OrderStatus? newStatus) {
+                                if (newStatus != null) {
+                                  Provider.of<AdminOrdersProvider>(context,
+                                          listen: false)
+                                      .updateOrderStatus(order.id, newStatus);
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                   subtitle: Column(
@@ -72,24 +114,5 @@ class AdminOrdersPage extends StatelessWidget {
         },
       ),
     );
-  }
-
-  String _getOrderStatusText(OrderStatus status) {
-    switch (status) {
-      case OrderStatus.waitingForConfirmation:
-        return 'Waiting for Confirmation';
-      case OrderStatus.confirmed:
-        return 'Confirmed';
-      case OrderStatus.processing:
-        return 'Processing';
-      case OrderStatus.shipped:
-        return 'Shipped';
-      case OrderStatus.delivered:
-        return 'Delivered';
-      case OrderStatus.cancelled:
-        return 'Cancelled';
-      default:
-        return 'Unknown Status';
-    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/order_services.dart';
@@ -24,6 +25,11 @@ class OrderProvider with ChangeNotifier {
   OrderState get state => _state;
   String get errorMessage => _errorMessage;
 
+  OrderModel? _currentOrder;
+  Stream<OrderModel>? _orderStatusStream;
+
+  OrderModel? get currentOrder => _currentOrder;
+
   Future<void> placeOrder({
     required String userId,
     required String addressId,
@@ -43,6 +49,14 @@ class OrderProvider with ChangeNotifier {
     _errorMessage = '';
     notifyListeners();
 
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      _errorMessage = 'You are signed out. Please sign in to place an order.';
+      _state = OrderState.error;
+      notifyListeners();
+      return;
+    }
     try {
       final orderId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -129,6 +143,11 @@ class OrderProvider with ChangeNotifier {
       _errorMessage = error.toString();
     }
     notifyListeners();
+  }
+
+  Stream<OrderModel>? listenToOrderStatus(String userId, String orderId) {
+    _orderStatusStream = orderServices.getOrderStatusStream(userId, orderId);
+    return _orderStatusStream;
   }
 
   void clearOrders() {

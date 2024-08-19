@@ -1,6 +1,7 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
+import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/add_product_page.dart';
@@ -59,12 +60,15 @@ class AppRouter {
           },
           settings: settings,
         );
+
       case AppRoutes.myOrders:
         return MaterialPageRoute(
-          builder: (_) => MyOrdersPage(),
+          builder: (_) => ChangeNotifierProvider.value(
+            value: Provider.of<OrderProvider>(_, listen: false),
+            child: MyOrdersPage(),
+          ),
           settings: settings,
         );
-
       case AppRoutes.payment:
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(
@@ -73,7 +77,6 @@ class AppRouter {
           ),
           settings: settings,
         );
-
       case AppRoutes.search:
         return MaterialPageRoute(
           builder: (_) => SearchPage(),

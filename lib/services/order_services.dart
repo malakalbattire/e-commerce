@@ -9,6 +9,8 @@ abstract class OrderServices {
   Future<void> updateOrder(OrderModel order);
   Future<void> deleteOrder(String orderId);
   Future<List<OrderModel>> getUserOrders(String userId);
+
+  Stream<OrderModel> getOrderStatusStream(String userId, String orderId);
 }
 
 class OrderServicesImpl implements OrderServices {
@@ -39,6 +41,14 @@ class OrderServicesImpl implements OrderServices {
     await firestore.setData(
       path: ApiPath.createOrder(order.userId, order.id),
       data: order.toMap(),
+    );
+  }
+
+  @override
+  Stream<OrderModel> getOrderStatusStream(String userId, String orderId) {
+    return firestore.documentStream(
+      path: ApiPath.createOrder(userId, orderId),
+      builder: (data, documentId) => OrderModel.fromMap(data),
     );
   }
 
