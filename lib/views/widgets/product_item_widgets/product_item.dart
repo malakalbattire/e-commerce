@@ -25,7 +25,6 @@ class ProductItem extends StatelessWidget {
     return Consumer<FavoritesProvider>(
       builder: (context, provider, _) {
         bool isFavorite = provider.isFavorite(productId);
-
         bool isAdmin =
             currentUser != null && currentUser.email == 'admin@gmail.com';
 
@@ -84,17 +83,19 @@ class ProductItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (!isAdmin)
-                  Positioned(
-                    top: 4.0,
-                    right: 4.0,
-                    child: DecoratedBox(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white60,
-                      ),
-                      child: IconButton(
-                        onPressed: () async {
+                Positioned(
+                  top: 4.0,
+                  right: 4.0,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white60,
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        if (isAdmin) {
+                          await _deleteProduct(context);
+                        } else {
                           if (currentUser == null) {
                             Fluttertoast.showToast(
                               msg: "Please log in to add items to favorites",
@@ -130,14 +131,20 @@ class ProductItem extends StatelessWidget {
                               );
                             }
                           }
-                        },
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.black,
-                        ),
+                        }
+                      },
+                      icon: Icon(
+                        isAdmin
+                            ? Icons.delete
+                            : (isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border),
+                        color:
+                            isAdmin || isFavorite ? Colors.red : Colors.black,
                       ),
                     ),
                   ),
+                ),
                 Positioned(
                   bottom: 0.0,
                   left: 0.0,
@@ -200,5 +207,33 @@ class ProductItem extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _deleteProduct(BuildContext context) async {
+    final productItemProvider =
+        Provider.of<ProductItemProvider>(context, listen: false);
+
+    try {
+      await productItemProvider.deleteProduct(productId);
+      Fluttertoast.showToast(
+        msg: "Product Deleted",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black.withOpacity(0.4),
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Failed to Delete Product",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black.withOpacity(0.4),
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 }

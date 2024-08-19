@@ -24,6 +24,15 @@ class ProductItemProvider with ChangeNotifier {
     return productItemServices.getDescriptionStream(productId);
   }
 
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await productItemServices.deleteProduct(productId);
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to delete product: $e');
+    }
+  }
+
   Stream<int> getStockStream(String productId) {
     return productItemServices.getStockStream(productId);
   }

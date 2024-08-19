@@ -7,6 +7,7 @@ abstract class ProductItemService {
   Stream<String> getCategoryStream(String productId);
   Stream<int> getStockStream(String productId);
   Stream<String> getDescriptionStream(String productId);
+  Future<void> deleteProduct(String productId);
 }
 
 class ProductItemServiceImpl implements ProductItemService {
@@ -58,5 +59,10 @@ class ProductItemServiceImpl implements ProductItemService {
       path: 'products/$productId',
       builder: (data, id) => data['inStock'] as int,
     );
+  }
+
+  @override
+  Future<void> deleteProduct(String productId) async {
+    await _firestoreServices.deleteData(path: 'products/$productId');
   }
 }
