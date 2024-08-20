@@ -3,6 +3,7 @@ import 'package:e_commerce_app_flutter/models/product_item_model/product_item_mo
 import 'package:e_commerce_app_flutter/services/favorites_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:collection/collection.dart';
 
 enum FavoritesState { initial, loading, loaded, error }
 
@@ -44,9 +45,21 @@ class FavoritesProvider with ChangeNotifier {
     _state = FavoritesState.loading;
     notifyListeners();
 
-    favServices.getFavItemsStream(userId).listen((favorites) {
-      _favoritesProducts = favorites;
-      _favItems = favorites;
+    favServices.getFavItemsStream(userId).listen((favorites) async {
+      List<FavoriteModel> updatedFavorites = [];
+
+      for (var fav in favorites) {
+        try {
+          updatedFavorites.add(fav);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error checking product existence: $e');
+          }
+        }
+      }
+
+      _favoritesProducts = updatedFavorites;
+      _favItems = updatedFavorites;
       _state = FavoritesState.loaded;
       notifyListeners();
     }, onError: (error) {
@@ -58,25 +71,15 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> addToFav(String productId) async {
     try {
-      final existingFav = _favItems.firstWhere(
-        (fav) => fav.id == productId,
-        orElse: () => FavoriteModel(
-          id: '',
-          name: '',
-          imgUrl: '',
-          isFavorite: false,
-          description: '',
-          price: 0.0,
-          category: '',
-        ),
-      );
+      final existingFav =
+          _favItems.firstWhereOrNull((fav) => fav.id == productId);
 
-      if (existingFav.id.isNotEmpty) {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          await favServices.removeFromFav(productId);
-          _favItems.removeWhere((fav) => fav.id == productId);
-        }
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      if (existingFav != null) {
+        await favServices.removeFromFav(productId);
+        _favItems.removeWhere((fav) => fav.id == productId);
       } else {
         final selectedProduct = await favServices.getProductDetails(productId);
         final favItem = FavoriteModel(
@@ -88,12 +91,10 @@ class FavoritesProvider with ChangeNotifier {
           price: selectedProduct.price,
           category: selectedProduct.category,
         );
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          await favServices.addToFav(favItem);
-          _favItems.add(favItem);
-        }
+        await favServices.addToFav(favItem);
+        _favItems.add(favItem);
       }
+
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {

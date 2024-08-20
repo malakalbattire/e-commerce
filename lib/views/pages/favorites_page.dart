@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utils/app_routes.dart';
+import 'package:collection/collection.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -83,7 +84,14 @@ class FavoritesPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final favorite = favorites[index];
                       final product =
-                          products.firstWhere((p) => p.id == favorite.id);
+                          products.firstWhereOrNull((p) => p.id == favorite.id);
+
+                      if (product == null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          favoriteProvider.removeFromFav(favorite.id);
+                        });
+                        return const SizedBox.shrink();
+                      }
 
                       return InkWell(
                         onTap: () => Navigator.of(context, rootNavigator: true)
