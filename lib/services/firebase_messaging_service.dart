@@ -6,6 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseNotifications {
   final _firebaseMessaging = FirebaseMessaging.instance;
+
+  AndroidInitializationSettings initializationSettingsAndroid =
+      const AndroidInitializationSettings('app_icon');
+
   final _androidChannel = const AndroidNotificationChannel(
     'high_importance_channel',
     'High Importance Notifications',
@@ -16,6 +20,23 @@ class FirebaseNotifications {
 
   FirebaseNotifications() {
     initializeLocalNotifications();
+  }
+  Future<void> initNotifications() async {
+    await FirebaseMessaging.instance
+        .requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    )
+        .then((settings) {
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        print('User granted permission');
+      } else {
+        print('User declined or has not accepted permission');
+      }
+    });
+
+    initFirestoreListeners();
   }
 
   Future<void> initializeLocalNotifications() async {
@@ -28,12 +49,6 @@ class FirebaseNotifications {
     );
 
     await _localNotifications.initialize(initializationSettings);
-  }
-
-  Future<void> initNotifications() async {
-    await _firebaseMessaging.requestPermission();
-
-    initFirestoreListeners();
   }
 
   Future<void> initFirestoreListeners() async {
@@ -67,14 +82,15 @@ class FirebaseNotifications {
   }
 
   void _showLocalNotification(
-      DocumentSnapshot doc, String title, String body) async {
-    final data = doc.data() as Map<String, dynamic>;
-    final documentTitle = data['title'] ?? 'Unknown title';
+      DocumentSnapshot? doc, String title, String body) async {
+    final String documentTitle = doc != null
+        ? (doc.data() as Map<String, dynamic>)['title'] ?? 'Unknown title'
+        : 'Test Product';
 
-    await _storeNotificationToFirestore(title, body, doc.id);
+    await _storeNotificationToFirestore(title, body, doc?.id ?? 'test_doc_id');
 
     _localNotifications.show(
-      doc.hashCode,
+      doc?.hashCode ?? DateTime.now().millisecondsSinceEpoch,
       title,
       "$body Product: $documentTitle",
       NotificationDetails(
@@ -85,7 +101,7 @@ class FirebaseNotifications {
           icon: '@drawable/ic_launcher',
         ),
       ),
-      payload: jsonEncode({'documentId': doc.id}),
+      payload: jsonEncode({'documentId': doc?.id ?? 'test_doc_id'}),
     );
   }
 
@@ -97,5 +113,14 @@ class FirebaseNotifications {
       'documentId': documentId,
       'timestamp': FieldValue.serverTimestamp(),
     });
+    print('Notification stored to Firestore for doc ID: $documentId');
+  }
+
+  void testNotification() {
+    _showLocalNotification(
+      null,
+      'Test Notification',
+      'This is a test notification to verify setup.',
+    );
   }
 }

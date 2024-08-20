@@ -7,6 +7,7 @@ import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/services/firebase_messaging_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -25,17 +26,10 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-  final InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
-
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
   await Firebase.initializeApp();
 
+  FirebaseNotifications firebaseNotifications = FirebaseNotifications();
+  await firebaseNotifications.initNotifications();
   runApp(const MyApp());
 }
 
