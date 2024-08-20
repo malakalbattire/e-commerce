@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/provider/register_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
@@ -45,6 +46,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Future<void> _register() async {
     final registerProvider =
         Provider.of<RegisterProvider>(context, listen: false);
+    final notificationProvider =
+        Provider.of<NotificationProvider>(context, listen: false);
 
     if (_formKey.currentState!.validate()) {
       final user = await registerProvider.register(
@@ -53,6 +56,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
         _usernameController.text,
       );
       if (user != null) {
+        await notificationProvider.clearAllNotifications();
+
         Fluttertoast.showToast(msg: 'Register Success!');
 
         Navigator.pushNamed(context, AppRoutes.home);

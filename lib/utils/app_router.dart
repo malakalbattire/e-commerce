@@ -1,12 +1,14 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
+import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/add_product_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_book_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/address_page/address_page.dart';
+import 'package:e_commerce_app_flutter/views/pages/notifications_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/payment_cards_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/product_pages/product_list_page.dart';
 import 'package:e_commerce_app_flutter/views/pages/search_page.dart';
@@ -60,7 +62,16 @@ class AppRouter {
           },
           settings: settings,
         );
-
+      case AppRoutes.notification:
+        return MaterialPageRoute(
+          builder: (context) {
+            return ChangeNotifierProvider(
+              create: (_) => NotificationProvider(),
+              child: NotificationPage(),
+            );
+          },
+          settings: settings,
+        );
       case AppRoutes.myOrders:
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(

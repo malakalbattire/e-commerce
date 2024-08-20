@@ -15,4 +15,5 @@ class AppRoutes {
   static const String category = '/category';
   static const String productsList = '/productsList';
   static const String addProduct = '/add-product';
+  static const String notification = '/notification';
 }

@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/provider/login_provider.dart';
+import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    final notificationProvider =
+        Provider.of<NotificationProvider>(context, listen: false);
 
     if (_formKey.currentState!.validate()) {
       final user = await loginProvider.login(
@@ -47,6 +50,8 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (user != null) {
+        await notificationProvider.clearAllNotifications();
+
         Fluttertoast.showToast(msg: 'Login Success!');
 
         if (_emailController.text == 'admin@gmail.com') {

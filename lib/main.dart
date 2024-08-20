@@ -10,11 +10,11 @@ import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/services/firebase_messaging_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'provider/cart_provider.dart';
 import 'provider/category_provider.dart';
 import 'provider/home_provider.dart';
 import 'provider/login_provider.dart';
+import 'provider/notification_provider.dart';
 import 'provider/payment_provider.dart';
 import 'provider/product_item_provider.dart';
 import 'provider/product_provider.dart';
@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductItemProvider()),
         ChangeNotifierProvider(create: (_) => CheckoutProvider()),
         ChangeNotifierProvider(create: (_) => AddProductProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
