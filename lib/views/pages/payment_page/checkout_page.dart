@@ -26,12 +26,32 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  String? lastUserId;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final checkoutProvider =
           Provider.of<CheckoutProvider>(context, listen: false);
+      final user = FirebaseAuth.instance.currentUser;
+      final addressProvider =
+          Provider.of<AddressProvider>(context, listen: false);
+      final paymentProvider =
+          Provider.of<CardPaymentProvider>(context, listen: false);
+      if (user == null) {
+        await addressProvider.clearAddresses();
+        await paymentProvider.clearPaymentCards();
+        Navigator.pushNamed(context, AppRoutes.login);
+        return;
+      } else if ((addressProvider.state == AddressState.initial &&
+              paymentProvider.state == PaymentState.initial) ||
+          user.uid != lastUserId) {
+        lastUserId = user.uid;
+        addressProvider.clearAddresses();
+        addressProvider.loadAddressData(user.uid);
+        paymentProvider.clearPaymentCards();
+        paymentProvider.loadPaymentData(user.uid);
+      }
       checkoutProvider.loadCartItems();
       checkoutProvider.loadAddressItems();
       checkoutProvider.loadPaymentItems();

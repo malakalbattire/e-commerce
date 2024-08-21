@@ -18,11 +18,11 @@ class AddressProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   String? get selectedAddress => _selectedAddress;
 
-  Future<void> loadAddressData() async {
+  Future<void> loadAddressData(String userId) async {
     _state = AddressState.loading;
     notifyListeners();
     try {
-      final fetchedAddresses = await addressServices.getAddressItems();
+      final fetchedAddresses = await addressServices.getAddressItems(userId);
       _addressItems = fetchedAddresses;
       _state = AddressState.loaded;
     } catch (error) {
@@ -64,6 +64,18 @@ class AddressProvider with ChangeNotifier {
     // _selectedAddress = _addressItems.firstWhere((item) => item.id == addressId);
     _selectedAddress = addressId;
     notifyListeners();
+  }
+
+  Future<void> clearAddresses() async {
+    try {
+      _addressItems.clear();
+      _state = AddressState.initial;
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = AddressState.error;
+      notifyListeners();
+    }
   }
 
   Future<void> removeAddress(String addressId) async {

@@ -1,5 +1,6 @@
 import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
@@ -17,16 +18,20 @@ class _PaymentCardsPageState extends State<PaymentCardsPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+
       final paymentProvider =
           Provider.of<CardPaymentProvider>(context, listen: false);
       if (paymentProvider.state == PaymentState.initial) {
-        paymentProvider.loadPaymentData();
+        paymentProvider.loadPaymentData(currentUser!.uid);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return Consumer<CardPaymentProvider>(
       builder: (context, paymentProvider, child) {
         return SafeArea(
@@ -37,7 +42,7 @@ class _PaymentCardsPageState extends State<PaymentCardsPage> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                await paymentProvider.loadPaymentData();
+                await paymentProvider.loadPaymentData(currentUser!.uid);
               },
               child: paymentProvider.state == PaymentState.loading
                   ? const Center(child: CircularProgressIndicator.adaptive())

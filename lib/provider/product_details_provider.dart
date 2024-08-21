@@ -6,7 +6,6 @@ import 'package:e_commerce_app_flutter/services/product_details_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductDetailsProvider with ChangeNotifier {
@@ -127,9 +126,6 @@ class ProductDetailsProvider with ChangeNotifier {
           .collection('users')
           .doc(currentUser.uid)
           .collection('cart');
-
-      final existingItem =
-          _cartItems.firstWhereOrNull((product) => product.id == productId);
 
       final product = selectedProduct;
       if (product == null) return;

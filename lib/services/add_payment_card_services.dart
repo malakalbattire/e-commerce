@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 abstract class PaymentServices {
   Future<void> addPayment(PaymentModel paymentModel);
   Future<void> removePayment(String paymentId);
-  Future<List<PaymentModel>> getPaymentItems();
+  Future<List<PaymentModel>> getPaymentItems(String userId);
 }
 
 class PaymentServicesImpl implements PaymentServices {
@@ -32,7 +32,7 @@ class PaymentServicesImpl implements PaymentServices {
   }
 
   @override
-  Future<List<PaymentModel>> getPaymentItems() async {
+  Future<List<PaymentModel>> getPaymentItems(String userId) async {
     final currentUser = await authServices.getUser();
     final path = ApiPath.addPaymentCardItems(currentUser!.uid);
 

@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 abstract class AddressServices {
   Future<void> addAddress(AddressModel addressModel);
   Future<void> removeAddress(String addressId);
-  Future<List<AddressModel>> getAddressItems();
+  Future<List<AddressModel>> getAddressItems(String userId);
   Future<AddressModel> getAddressById(String addressId);
 }
 
@@ -47,9 +47,8 @@ class AddressServicesImpl implements AddressServices {
   }
 
   @override
-  Future<List<AddressModel>> getAddressItems() async {
-    final currentUser = await authServices.getUser();
-    final path = ApiPath.addAddressItems(currentUser!.uid);
+  Future<List<AddressModel>> getAddressItems(String userId) async {
+    final path = ApiPath.addAddressItems(userId);
 
     try {
       final addresses = await firestore.getCollection(

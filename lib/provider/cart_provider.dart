@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:collection/collection.dart';
 
 enum CartState { initial, loading, loaded, error }
 
@@ -23,7 +22,7 @@ class CartProvider with ChangeNotifier {
   CartState _state = CartState.initial;
   final Map<String, ItemState> _itemStates = {};
   int _quantity = 1;
-  double _price = 0.0;
+
   Size? _selectedSize;
   ProductColor? _selectedColor;
   String _errorMessage = '';
@@ -90,11 +89,6 @@ class CartProvider with ChangeNotifier {
           .collection('users')
           .doc(currentUser.uid)
           .collection('cart');
-
-      final existingItem = _cartItems.firstWhereOrNull((item) =>
-          item.id == productId &&
-          item.size == selectedSize?.name &&
-          item.color == selectedColor?.name);
 
       final product = selectedProduct;
       if (product == null) return;

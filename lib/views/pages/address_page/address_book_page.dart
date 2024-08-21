@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
@@ -19,14 +20,17 @@ class _AddressBookPageState extends State<AddressBookPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final addressProvider =
           Provider.of<AddressProvider>(context, listen: false);
+      final currentUser = FirebaseAuth.instance.currentUser;
       if (addressProvider.state == AddressState.initial) {
-        addressProvider.loadAddressData();
+        addressProvider.loadAddressData(currentUser!.uid);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return Consumer<AddressProvider>(
       builder: (context, addressProvider, child) {
         return SafeArea(
@@ -37,7 +41,7 @@ class _AddressBookPageState extends State<AddressBookPage> {
             ),
             body: RefreshIndicator(
               onRefresh: () async {
-                await addressProvider.loadAddressData();
+                await addressProvider.loadAddressData(currentUser!.uid);
               },
               child: addressProvider.state == AddressState.loading
                   ? const Center(child: CircularProgressIndicator.adaptive())
@@ -113,8 +117,4 @@ class _AddressBookPageState extends State<AddressBookPage> {
       ),
     );
   }
-
-  // void _showAddAddressDialog(BuildContext context) {
-  //
-  // }
 }

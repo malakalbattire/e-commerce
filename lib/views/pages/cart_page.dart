@@ -12,7 +12,6 @@ import '../../utils/app_routes.dart';
 import '../widgets/cart_item_widget.dart';
 import 'package:collection/collection.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartPage extends StatelessWidget {

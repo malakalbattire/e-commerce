@@ -18,11 +18,11 @@ class CardPaymentProvider with ChangeNotifier {
   // String? get selectedPaymentId => _selectedPaymentId;
   String? get selectedPaymentMethodId => _selectedPaymentMethodId;
 
-  Future<void> loadPaymentData() async {
+  Future<void> loadPaymentData(String userId) async {
     _state = PaymentState.loading;
     notifyListeners();
     try {
-      final fetchedPayments = await paymentServices.getPaymentItems();
+      final fetchedPayments = await paymentServices.getPaymentItems(userId);
       _paymentItems = fetchedPayments;
       _state = PaymentState.loaded;
     } catch (error) {
@@ -36,6 +36,18 @@ class CardPaymentProvider with ChangeNotifier {
     try {
       await paymentServices.addPayment(paymentModel);
       _paymentItems.add(paymentModel);
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+      _state = PaymentState.error;
+      notifyListeners();
+    }
+  }
+
+  Future<void> clearPaymentCards() async {
+    try {
+      _paymentItems.clear();
+      _state = PaymentState.initial;
       notifyListeners();
     } catch (error) {
       _errorMessage = error.toString();

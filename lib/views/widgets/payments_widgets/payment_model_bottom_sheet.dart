@@ -1,6 +1,7 @@
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_item_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,11 +10,12 @@ class PaymentModelBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Consumer<CardPaymentProvider>(
       builder: (context, paymentProvider, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (paymentProvider.state == PaymentState.initial) {
-            paymentProvider.loadPaymentData();
+            paymentProvider.loadPaymentData(currentUser!.uid);
           }
         });
 
