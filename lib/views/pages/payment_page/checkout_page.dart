@@ -122,6 +122,24 @@ class _CheckoutPageState extends State<CheckoutPage> {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
+
+        if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No addresses available.'));
+        }
+
+        final selectedAddressId = addressProvider.selectedAddress;
+        final selectedAddress = snapshot.data!.firstWhere(
+          (address) => address.id == selectedAddressId,
+          orElse: () => AddressModel(
+            id: '',
+            firstName: '',
+            lastName: '',
+            countryName: '',
+            cityName: '',
+            phoneNumber: '',
+          ),
+        );
+
         return Column(
           children: [
             InlineHeadlineWidget(
@@ -146,20 +164,19 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: addressProvider.selectedAddress == null
+                  child: selectedAddress.id.isEmpty
                       ? const Center(child: Text('Add Address'))
                       : Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).firstName} ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).lastName}',
+                                '${selectedAddress.firstName} ${selectedAddress.lastName}',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                               Text(
-                                  '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).cityName} / ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).countryName}'),
-                              Text(
-                                  '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).phoneNumber}'),
+                                  '${selectedAddress.cityName} / ${selectedAddress.countryName}'),
+                              Text('${selectedAddress.phoneNumber}'),
                             ],
                           ),
                         ),
@@ -217,16 +234,35 @@ class _CheckoutPageState extends State<CheckoutPage> {
           return Text('Error: ${snapshot.error}');
         }
 
+        if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No payment methods available.'));
+        }
+
+        final selectedPaymentId = paymentProvider.selectedPaymentMethodId;
+        final selectedPayment = snapshot.data!.firstWhere(
+          (payment) => payment.id == selectedPaymentId,
+          orElse: () => PaymentModel(
+            id: '',
+            cardNumber: '',
+            cvv: '',
+            expiryDate: '',
+          ),
+        );
+
         return Column(
           children: [
             InlineHeadlineWidget(
               title: 'Payment Method',
+              onTap: () => showModalBottomSheet(
+                context: context,
+                builder: (context) => PaymentModelBottomSheet(),
+              ),
             ),
             const SizedBox(height: 8.0),
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => const PaymentModelBottomSheet(),
+                builder: (context) => PaymentModelBottomSheet(),
               ),
               child: Container(
                 width: double.infinity,
@@ -237,7 +273,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: paymentProvider.selectedPaymentMethodId == null
+                  child: selectedPayment.id.isEmpty
                       ? const Center(child: Text('Add Payment Method'))
                       : Center(
                           child: Row(
@@ -252,11 +288,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                   width: 80,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                  '${paymentProvider.paymentItems.firstWhere((payment) => payment.id == paymentProvider.selectedPaymentMethodId).cardNumber}'),
+                              Text(' ${selectedPayment.cardNumber}'),
                             ],
                           ),
                         ),
