@@ -26,15 +26,15 @@ class OrderTile extends StatelessWidget {
                   .listenToOrderStatus(order.userId, order.id),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text('Order Status: Loading...');
+                  return const Text('Order Status: Loading...');
                 } else if (snapshot.hasData) {
                   String latestStatus =
                       snapshot.data?.orderStatus?.last.name ?? 'Unknown';
                   return Text('Order Status: $latestStatus');
                 } else if (snapshot.hasError) {
-                  return Text('Order Status: Error');
+                  return const Text('Order Status: Error');
                 } else {
-                  return Text('Order Status: Unknown');
+                  return const Text('Order Status: Unknown');
                 }
               },
             ),

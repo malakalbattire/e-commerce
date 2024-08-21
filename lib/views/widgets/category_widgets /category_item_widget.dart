@@ -6,7 +6,7 @@ class CategoryItemWidget extends StatelessWidget {
   final String name;
   final String imgUrl;
 
-  CategoryItemWidget({required this.name, required this.imgUrl});
+  CategoryItemWidget({super.key, required this.name, required this.imgUrl});
 
   void selectCategory(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushNamed(
@@ -41,7 +41,7 @@ class CategoryItemWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

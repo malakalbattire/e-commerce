@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class PaymentCardWidget extends StatelessWidget {
   final PaymentModel payment;
 
-  const PaymentCardWidget({Key? key, required this.payment}) : super(key: key);
+  const PaymentCardWidget({super.key, required this.payment});
 
   @override
   Widget build(BuildContext context) {

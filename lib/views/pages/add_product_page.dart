@@ -6,6 +6,8 @@ import 'package:e_commerce_app_flutter/provider/add_product_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
+  const AddProductPage({super.key});
+
   @override
   _AddProductPageState createState() => _AddProductPageState();
 }

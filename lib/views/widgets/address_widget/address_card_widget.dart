@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AddressCardWidget extends StatelessWidget {
   final AddressModel address;
 
-  const AddressCardWidget({Key? key, required this.address}) : super(key: key);
+  const AddressCardWidget({super.key, required this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class AddressCardWidget extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         Text('${address.cityName} / ${address.countryName}'),
-        Text('${address.phoneNumber}'),
+        Text(address.phoneNumber),
       ],
     );
   }

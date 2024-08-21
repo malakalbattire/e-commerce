@@ -3,6 +3,8 @@ import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class SigninSignoutWidget extends StatelessWidget {
+  const SigninSignoutWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

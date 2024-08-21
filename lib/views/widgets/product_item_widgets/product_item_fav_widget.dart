@@ -101,7 +101,7 @@ class FavProductItem extends StatelessWidget {
                       inStockProduct.inStock > 0
                           ? 'In Stock ${inStockProduct.inStock}'
                           : 'Sold Out',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,

@@ -73,7 +73,7 @@ class AuthServicesImpl implements AuthServices {
 
   @override
   Future<bool> isLoggedIn() async {
-    User? user = await _firebaseAuth.currentUser;
+    User? user = _firebaseAuth.currentUser;
     if (user != null) {
       return true;
     } else {
@@ -83,7 +83,7 @@ class AuthServicesImpl implements AuthServices {
 
   @override
   Future<User?> getUser() async {
-    return await _firebaseAuth.currentUser;
+    return _firebaseAuth.currentUser;
   }
 
   @override

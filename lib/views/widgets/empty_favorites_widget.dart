@@ -3,6 +3,8 @@ import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class EmptyFavoriteWidget extends StatelessWidget {
+  const EmptyFavoriteWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

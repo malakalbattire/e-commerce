@@ -10,8 +10,7 @@ import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
 class ProductDetailsPage extends StatefulWidget {
   final String productId;
 
-  const ProductDetailsPage({Key? key, required this.productId})
-      : super(key: key);
+  const ProductDetailsPage({super.key, required this.productId});
 
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
@@ -196,7 +195,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             ?.toStringAsFixed(2) ??
                                         '';
                                     return Text(
-                                      '\$${price}',
+                                      '\$ $price',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -230,7 +229,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   final inStock =
                                       inStockSnapshot.data?.toString() ?? '';
                                   return Text(
-                                    'In Stock:${inStock}',
+                                    'In Stock: $inStock',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey,
@@ -344,7 +343,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               ),
                             ),
                           ],
-                          SizedBox(height: 80),
+                          const SizedBox(height: 80),
                         ],
                       ),
                     ),

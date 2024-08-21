@@ -84,7 +84,7 @@ class CheckoutAddressWidget extends StatelessWidget {
                               ),
                               Text(
                                   '${selectedAddress.cityName} / ${selectedAddress.countryName}'),
-                              Text('${selectedAddress.phoneNumber}'),
+                              Text(selectedAddress.phoneNumber),
                             ],
                           ),
                         ),

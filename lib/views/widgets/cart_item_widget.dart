@@ -110,7 +110,7 @@ class CartItemWidget extends StatelessWidget {
                 builder: (context, priceSnapshot) {
                   final price = priceSnapshot.data?.toStringAsFixed(2) ?? '';
                   return Text(
-                    '\$${price}',
+                    '\$ $price',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
