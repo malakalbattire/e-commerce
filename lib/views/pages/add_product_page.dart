@@ -71,8 +71,8 @@ class _AddProductPageState extends State<AddProductPage> {
         _description,
         _category,
         _inStock,
-        // _selectedColors,
-        // _selectedSizes,
+        _selectedColors,
+        _selectedSizes,
       );
 
       if (provider.state == AddProductState.loaded) {
@@ -251,28 +251,27 @@ class _AddProductPageState extends State<AddProductPage> {
                         },
                       ),
                       const SizedBox(height: 24),
-                      // Text(
-                      //   'Colors',
-                      //   style: Theme.of(context)
-                      //       .textTheme
-                      //       .titleMedium!
-                      //       .copyWith(fontWeight: FontWeight.w600),
-                      // ),
-                      // const SizedBox(height: 12),
-                      // Wrap(
-                      //   spacing: 8,
-                      //   runSpacing: 8,
-                      //   children: ProductColor.values.map((color) {
-                      //     return ChoiceChip(
-                      //       label: Text(color.toString().split('.').last),
-                      //       selected: _selectedColors.contains(color),
-                      //       onSelected: (selected) {
-                      //         _toggleColor(color);
-                      //       },
-                      //     );
-                      //   }).toList(),
-                      // ),
-                      //
+                      Text(
+                        'Colors',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: ProductColor.values.map((color) {
+                          return ChoiceChip(
+                            label: Text(color.toString().split('.').last),
+                            selected: _selectedColors.contains(color),
+                            onSelected: (selected) {
+                              _toggleColor(color);
+                            },
+                          );
+                        }).toList(),
+                      ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
