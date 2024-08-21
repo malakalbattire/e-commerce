@@ -44,17 +44,23 @@ class _AddProductPageState extends State<AddProductPage> {
     });
   }
 
-  void _toggleSize(ProductSize size) {
-    setState(() {
-      if (_selectedSizes.contains(size)) {
-        _selectedSizes.remove(size);
-      } else {
-        _selectedSizes.add(size);
-      }
-    });
-  }
+  // void _toggleSize(ProductSize size) {
+  //   setState(() {
+  //     if (_selectedSizes.contains(size)) {
+  //       _selectedSizes.remove(size);
+  //     } else {
+  //       _selectedSizes.add(size);
+  //     }
+  //   });
+  // }
 
   Future<void> _submit() async {
+    if (_selectedColors.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one color')),
+      );
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       if (_imageFile == null) {

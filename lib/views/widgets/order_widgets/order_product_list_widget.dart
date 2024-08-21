@@ -1,6 +1,6 @@
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
-import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_providers/product_details_provider.dart';
 import 'package:flutter/material.dart';
 
 class OrderProductListWidget extends StatelessWidget {

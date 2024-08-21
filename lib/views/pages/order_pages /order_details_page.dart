@@ -1,4 +1,4 @@
-import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_providers/product_details_provider.dart';
 import 'package:e_commerce_app_flutter/views/widgets/order_widgets/order_address_and_payment_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/order_widgets/order_info_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/order_widgets/order_product_list_widget.dart';

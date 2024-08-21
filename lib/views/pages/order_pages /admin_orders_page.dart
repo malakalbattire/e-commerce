@@ -1,5 +1,5 @@
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
-import 'package:e_commerce_app_flutter/provider/admin_orders_provider.dart';
+import 'package:e_commerce_app_flutter/provider/admin_providers/admin_orders_provider.dart';
 import 'package:e_commerce_app_flutter/views/pages/order_pages%20/order_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

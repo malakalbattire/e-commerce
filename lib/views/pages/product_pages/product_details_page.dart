@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_app_flutter/provider/product_item_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_providers/product_item_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/provider/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_providers/product_details_provider.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final String productId;

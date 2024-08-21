@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
-import 'package:e_commerce_app_flutter/provider/product_item_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_providers/product_item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';

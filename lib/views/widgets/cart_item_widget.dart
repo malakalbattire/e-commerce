@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/provider/product_item_provider.dart';
+import 'package:e_commerce_app_flutter/provider/product_providers/product_item_provider.dart';
 import 'package:e_commerce_app_flutter/views/widgets/counter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
