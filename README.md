@@ -23,21 +23,21 @@ Flutter 3.7
 Firebase account.
 
 Setup Instructions:
-1. Clone the Repository
+1. Clone the Repository:
 git clone https://github.com/malakalbattire/e-commerce
 cd e-commerce
 
-2. Install Dependencies
+2. Install Dependencies:
 flutter pub get
 
 
-3. Set Up Firebase
+3. Set Up Firebase:
 Go to the Firebase Console and set up.
 
-4.Configure the App
+4.Configure the App:
 Update the Firebase configuration files.
 
-5. Run the App
+5. Run the App:
 run the app by writing:
 flutter run
 
