@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
@@ -11,10 +12,8 @@ import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
-import 'package:e_commerce_app_flutter/views/widgets/address_widget/address_card_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/address_widget/address_model_bottom_sheet.dart';
 import 'package:e_commerce_app_flutter/views/widgets/inline_headline_widget.dart';
-import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_card_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/payments_widgets/payment_model_bottom_sheet.dart';
 import 'package:e_commerce_app_flutter/views/widgets/total_amount_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/product_item_widgets/product_item_payment_widget.dart';
@@ -92,6 +91,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _buildAddressSection(CheckoutProvider checkoutProvider) {
+    final addressProvider = Provider.of<AddressProvider>(context);
+
     return StreamBuilder<List<AddressModel>>(
       stream: Stream.fromFuture(Future.value(checkoutProvider.addressItems)),
       builder: (context, snapshot) {
@@ -101,21 +102,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-        final addressItems = snapshot.data ?? [];
         return Column(
           children: [
             InlineHeadlineWidget(
               title: 'Address',
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => const AddressModelBottomSheet(),
+                builder: (context) => AddressModelBottomSheet(),
               ),
             ),
             const SizedBox(height: 8.0),
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => const AddressModelBottomSheet(),
+                builder: (context) => AddressModelBottomSheet(),
               ),
               child: Container(
                 width: double.infinity,
@@ -126,11 +126,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: addressItems.isEmpty
+                  child: addressProvider.selectedAddress == null
                       ? const Center(child: Text('Add Address'))
                       : Center(
-                          child: AddressCardWidget(
-                            address: addressItems.first,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).firstName} ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).lastName}',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Text(
+                                  '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).cityName} / ${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).countryName}'),
+                              Text(
+                                  '${addressProvider.addressItems.firstWhere((address) => address.id == addressProvider.selectedAddress).phoneNumber}'),
+                            ],
                           ),
                         ),
                 ),
@@ -175,6 +185,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _buildPaymentSection(CheckoutProvider checkoutProvider) {
+    final paymentProvider = Provider.of<CardPaymentProvider>(context);
+
     return StreamBuilder<List<PaymentModel>>(
       stream: Stream.fromFuture(Future.value(checkoutProvider.paymentItems)),
       builder: (context, snapshot) {
@@ -184,7 +196,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-        final paymentItems = snapshot.data ?? [];
+
         return Column(
           children: [
             InlineHeadlineWidget(
@@ -205,11 +217,27 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: paymentItems.isEmpty
+                  child: paymentProvider.selectedPaymentMethodId == null
                       ? const Center(child: Text('Add Payment Method'))
                       : Center(
-                          child: PaymentCardWidget(
-                            payment: paymentItems.first,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      'https://i.pinimg.com/564x/56/65/ac/5665acfeb0668fe3ffdeb3168d3b38a4.jpg',
+                                  height: 80,
+                                  width: 80,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                  '${paymentProvider.paymentItems.firstWhere((payment) => payment.id == paymentProvider.selectedPaymentMethodId).cardNumber}'),
+                            ],
                           ),
                         ),
                 ),
