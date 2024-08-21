@@ -1,6 +1,9 @@
 Project: E-Commerce App
 
-Introduction: This Flutter application offers an extensive e-commerce platform, featuring product exploration, shopping cart functionality, user authentication, and supplementary options such as favourites and address management. This README serves as a guide for setting up and utilising the application.
+Introduction:
+This Flutter application offers an extensive e-commerce platform, featuring product exploration, shopping cart functionality, user authentication, and supplementary options such as favourites and address management. This README serves as a guide for setting up and utilising the application.
+
+
 
 Features:
 User Authentication: Sign up and log in.
@@ -20,13 +23,11 @@ Flutter 3.7
 Firebase account.
 
 Setup Instructions:
-
-Getting Started
 1. Clone the Repository
 git clone https://github.com/malakalbattire/e-commerce
 cd e-commerce
 
-.2. Install Dependencies
+2. Install Dependencies
 flutter pub get
 
 
