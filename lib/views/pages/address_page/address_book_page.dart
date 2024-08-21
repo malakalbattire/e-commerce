@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/views/widgets/address_card_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,89 +32,42 @@ class _AddressBookPageState extends State<AddressBookPage> {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
 
-    return Consumer<AddressProvider>(
-      builder: (context, addressProvider, child) {
-        return SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Address Book'),
-              centerTitle: true,
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await addressProvider.loadAddressData(currentUser!.uid);
-              },
-              child: addressProvider.state == AddressState.loading
-                  ? const Center(child: CircularProgressIndicator.adaptive())
-                  : addressProvider.state == AddressState.error
-                      ? SigninSignoutWidget()
-                      : addressProvider.addressItems.isEmpty
-                          ? const Center(child: Text('No addresses available.'))
-                          : SingleChildScrollView(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 16.0),
-                              child: Column(
-                                children: [
-                                  ...addressProvider.addressItems.map(
-                                    (address) => _buildAddressCard(address),
-                                  ),
-                                ],
+    return Scaffold(
+      body: Consumer<AddressProvider>(
+        builder: (context, addressProvider, child) {
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Address Book'),
+                centerTitle: true,
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  await addressProvider.loadAddressData(currentUser!.uid);
+                },
+                child: addressProvider.state == AddressState.loading
+                    ? const Center(child: CircularProgressIndicator.adaptive())
+                    : addressProvider.state == AddressState.error
+                        ? SigninSignoutWidget()
+                        : addressProvider.addressItems.isEmpty
+                            ? const Center(
+                                child: Text('No addresses available.'))
+                            : SingleChildScrollView(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 16.0),
+                                child: Column(
+                                  children: [
+                                    ...addressProvider.addressItems.map(
+                                      (address) => AddressCardWidget(
+                                          context: context, address: address),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAddressCard(AddressModel address) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${address.firstName} ${address.lastName}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
               ),
             ),
-            const SizedBox(height: 8.0),
-            Text(
-              '${address.cityName}, ${address.countryName}',
-              style: TextStyle(
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              address.phoneNumber,
-              style: TextStyle(
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    Provider.of<AddressProvider>(context, listen: false)
-                        .removeAddress(address.id);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
