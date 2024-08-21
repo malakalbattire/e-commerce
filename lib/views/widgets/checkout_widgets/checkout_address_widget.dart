@@ -54,14 +54,14 @@ class CheckoutAddressWidget extends StatelessWidget {
               title: 'Address',
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => AddressModelBottomSheet(),
+                builder: (context) => const AddressModelBottomSheet(),
               ),
             ),
             const SizedBox(height: 8.0),
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => AddressModelBottomSheet(),
+                builder: (context) => const AddressModelBottomSheet(),
               ),
               child: Container(
                 width: double.infinity,

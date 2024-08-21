@@ -32,40 +32,42 @@ class _PaymentCardsPageState extends State<PaymentCardsPage> {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
 
-    return Consumer<CardPaymentProvider>(
-      builder: (context, paymentProvider, child) {
-        return SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Payment Cards'),
-              centerTitle: true,
-            ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                await paymentProvider.loadPaymentData(currentUser!.uid);
-              },
-              child: paymentProvider.state == PaymentState.loading
-                  ? const Center(child: CircularProgressIndicator.adaptive())
-                  : paymentProvider.state == PaymentState.error
-                      ? SigninSignoutWidget()
-                      : paymentProvider.paymentItems.isEmpty
-                          ? const Center(
-                              child: Text('No payment cards available.'))
-                          : SingleChildScrollView(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 16.0),
-                              child: Column(
-                                children: [
-                                  ...paymentProvider.paymentItems.map(
-                                    (payment) => _buildPaymentCard(payment),
-                                  ),
-                                ],
+    return Scaffold(
+      body: Consumer<CardPaymentProvider>(
+        builder: (context, paymentProvider, child) {
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Payment Cards'),
+                centerTitle: true,
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  await paymentProvider.loadPaymentData(currentUser!.uid);
+                },
+                child: paymentProvider.state == PaymentState.loading
+                    ? const Center(child: CircularProgressIndicator.adaptive())
+                    : paymentProvider.state == PaymentState.error
+                        ? const SigninSignoutWidget()
+                        : paymentProvider.paymentItems.isEmpty
+                            ? const Center(
+                                child: Text('No payment cards available.'))
+                            : SingleChildScrollView(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 16.0),
+                                child: Column(
+                                  children: [
+                                    ...paymentProvider.paymentItems.map(
+                                      (payment) => _buildPaymentCard(payment),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

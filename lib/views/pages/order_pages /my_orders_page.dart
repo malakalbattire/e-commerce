@@ -56,7 +56,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                     const CircularProgressIndicator.adaptive()
                   else if (orderProvider.state == OrderState.error ||
                       currentUser == null)
-                    SigninSignoutWidget()
+                    const SigninSignoutWidget()
                   else if (orderProvider.orders.isEmpty)
                     const Center(child: Text('No orders found'))
                   else ...[

@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 24,
           ),
           Expanded(
-            child: TabBarView(controller: _tabController, children: [
+            child: TabBarView(controller: _tabController, children: const [
               HomeTabView(),
               CategoryTabView(),
             ]),

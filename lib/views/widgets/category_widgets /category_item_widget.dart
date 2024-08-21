@@ -6,7 +6,8 @@ class CategoryItemWidget extends StatelessWidget {
   final String name;
   final String imgUrl;
 
-  CategoryItemWidget({super.key, required this.name, required this.imgUrl});
+  const CategoryItemWidget(
+      {super.key, required this.name, required this.imgUrl});
 
   void selectCategory(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushNamed(

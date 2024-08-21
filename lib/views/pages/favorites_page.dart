@@ -28,7 +28,7 @@ class FavoritesPage extends StatelessWidget {
     });
 
     if (currentUser == null) {
-      return SigninSignoutWidget();
+      return const SigninSignoutWidget();
     }
 
     Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds) {
@@ -49,7 +49,7 @@ class FavoritesPage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return const Center(child: Text('An error occurred'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return EmptyFavoriteWidget();
+          return const EmptyFavoriteWidget();
         } else {
           final favorites = snapshot.data!;
           final favoriteIds = favorites.map((fav) => fav.id).toList();
@@ -64,7 +64,7 @@ class FavoritesPage extends StatelessWidget {
                 return const Center(child: Text('An error occurred'));
               } else if (!productSnapshot.hasData ||
                   productSnapshot.data!.isEmpty) {
-                return EmptyFavoriteWidget();
+                return const EmptyFavoriteWidget();
               } else {
                 final products = productSnapshot.data!;
 

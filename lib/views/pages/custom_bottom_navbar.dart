@@ -104,7 +104,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
             return PersistentTabView(
               tabs: [
                 PersistentTabConfig(
-                  screen: AdminHomePage(),
+                  screen: const AdminHomePage(),
                   item: ItemConfig(
                     icon: const Icon(Icons.home),
                     title: "Admin Home",
@@ -115,7 +115,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 PersistentTabConfig(
                   screen: ChangeNotifierProvider(
                     create: (context) => AdminOrdersProvider(),
-                    child: AdminOrdersPage(),
+                    child: const AdminOrdersPage(),
                   ),
                   item: ItemConfig(
                     icon: const Icon(Icons.list),
@@ -125,7 +125,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                   ),
                 ),
                 PersistentTabConfig(
-                  screen: ProfilePage(),
+                  screen: const ProfilePage(),
                   item: ItemConfig(
                     icon: const Icon(Icons.person),
                     title: "Profile",
@@ -142,7 +142,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
             return PersistentTabView(
               tabs: [
                 PersistentTabConfig(
-                  screen: HomePage(),
+                  screen: const HomePage(),
                   item: ItemConfig(
                     icon: const Icon(Icons.home),
                     title: "Home",
@@ -153,7 +153,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 PersistentTabConfig(
                   screen: ChangeNotifierProvider(
                     create: (_) => CartProvider(),
-                    child: CartPage(),
+                    child: const CartPage(),
                   ),
                   item: ItemConfig(
                     icon: const Icon(Icons.shopping_cart),
@@ -165,7 +165,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 PersistentTabConfig(
                   screen: ChangeNotifierProvider(
                     create: (_) => FavoritesProvider(),
-                    child: FavoritesPage(),
+                    child: const FavoritesPage(),
                   ),
                   item: ItemConfig(
                     icon: const Icon(Icons.favorite_border),
@@ -175,7 +175,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                   ),
                 ),
                 PersistentTabConfig(
-                  screen: ProfilePage(),
+                  screen: const ProfilePage(),
                   item: ItemConfig(
                     icon: const Icon(Icons.person),
                     title: "Profile",

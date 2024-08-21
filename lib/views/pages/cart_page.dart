@@ -29,7 +29,7 @@ class CartPage extends StatelessWidget {
     });
 
     if (currentUser == null) {
-      return SigninSignoutWidget();
+      return const SigninSignoutWidget();
     }
 
     Stream<List<ProductItemModel>> getProductStream(List<String> cartIds) {
@@ -50,7 +50,7 @@ class CartPage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return const Center(child: Text('An error occurred'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return EmptyCartWidget();
+          return const EmptyCartWidget();
         } else {
           final cartItems = snapshot.data!;
           final cartIds = cartItems.map((item) => item.id).toList();
@@ -65,7 +65,7 @@ class CartPage extends StatelessWidget {
                 return const Center(child: Text('An error occurred'));
               } else if (!productSnapshot.hasData ||
                   productSnapshot.data!.isEmpty) {
-                return EmptyCartWidget();
+                return const EmptyCartWidget();
               } else {
                 final products = productSnapshot.data!;
 

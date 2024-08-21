@@ -47,7 +47,7 @@ class _AddressBookPageState extends State<AddressBookPage> {
                 child: addressProvider.state == AddressState.loading
                     ? const Center(child: CircularProgressIndicator.adaptive())
                     : addressProvider.state == AddressState.error
-                        ? SigninSignoutWidget()
+                        ? const SigninSignoutWidget()
                         : addressProvider.addressItems.isEmpty
                             ? const Center(
                                 child: Text('No addresses available.'))
