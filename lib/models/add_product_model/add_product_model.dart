@@ -6,6 +6,7 @@ enum ProductColor {
   red,
   blue,
   green,
+  defaultColor,
 }
 
 enum ProductSize {
@@ -13,6 +14,7 @@ enum ProductSize {
   M,
   L,
   XL,
+  OneSize,
 }
 
 @JsonSerializable()
@@ -24,8 +26,8 @@ class AddProductModel {
   String description;
   String category;
   int inStock;
-  List<ProductColor> colors;
-  List<ProductSize> sizes;
+  // List<ProductColor> colors;
+  // List<ProductSize> sizes;
 
   AddProductModel({
     required this.id,
@@ -35,8 +37,8 @@ class AddProductModel {
     required this.description,
     required this.category,
     required this.inStock,
-    required this.colors,
-    required this.sizes,
+    // required this.colors,
+    // required this.sizes,
   });
 
   factory AddProductModel.fromJson(Map<String, dynamic> json) =>
@@ -52,8 +54,8 @@ class AddProductModel {
     String? description,
     String? category,
     int? inStock,
-    List<ProductColor>? colors,
-    List<ProductSize>? sizes,
+    // List<ProductColor>? colors,
+    // List<ProductSize>? sizes,
   }) {
     return AddProductModel(
       id: id ?? this.id,
@@ -63,8 +65,8 @@ class AddProductModel {
       description: description ?? this.description,
       category: category ?? this.category,
       inStock: inStock ?? this.inStock,
-      colors: colors ?? this.colors,
-      sizes: sizes ?? this.sizes,
+      // colors: colors ?? this.colors,
+      // sizes: sizes ?? this.sizes,
     );
   }
 
@@ -77,20 +79,20 @@ class AddProductModel {
       description: map['description'] as String,
       category: map['category'] as String,
       inStock: map['inStock'] as int,
-      colors: List<ProductColor>.from(
-        (map['colors'] as List<dynamic>).map(
-          (e) => ProductColor.values.firstWhere(
-            (color) => color.name == e as String,
-          ),
-        ),
-      ),
-      sizes: List<ProductSize>.from(
-        (map['sizes'] as List<dynamic>).map(
-          (e) => ProductSize.values.firstWhere(
-            (size) => size.name == e as String,
-          ),
-        ),
-      ),
+      // colors: List<ProductColor>.from(
+      //   (map['colors'] as List<dynamic>).map(
+      //     (e) => ProductColor.values.firstWhere(
+      //       (color) => color.name == e as String,
+      //     ),
+      //   ),
+      // ),
+      // sizes: List<ProductSize>.from(
+      //   (map['sizes'] as List<dynamic>).map(
+      //     (e) => ProductSize.values.firstWhere(
+      //       (size) => size.name == e as String,
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -103,8 +105,8 @@ class AddProductModel {
       'description': description,
       'category': category,
       'inStock': inStock,
-      'colors': colors.map((color) => color.name).toList(),
-      'sizes': sizes.map((size) => size.name).toList(),
+      // 'colors': colors.map((color) => color.name).toList(),
+      // 'sizes': sizes.map((size) => size.name).toList(),
     };
   }
 }

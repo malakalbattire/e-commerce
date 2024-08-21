@@ -15,12 +15,12 @@ AddProductModel _$AddProductModelFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String,
       category: json['category'] as String,
       inStock: (json['inStock'] as num).toInt(),
-      colors: (json['colors'] as List<dynamic>)
-          .map((e) => $enumDecode(_$ProductColorEnumMap, e))
-          .toList(),
-      sizes: (json['sizes'] as List<dynamic>)
-          .map((e) => $enumDecode(_$ProductSizeEnumMap, e))
-          .toList(),
+      // colors: (json['colors'] as List<dynamic>)
+      //     .map((e) => $enumDecode(_$ProductColorEnumMap, e))
+      //     .toList(),
+      // sizes: (json['sizes'] as List<dynamic>)
+      //     .map((e) => $enumDecode(_$ProductSizeEnumMap, e))
+      //     .toList(),
     );
 
 Map<String, dynamic> _$AddProductModelToJson(AddProductModel instance) =>
@@ -32,8 +32,8 @@ Map<String, dynamic> _$AddProductModelToJson(AddProductModel instance) =>
       'description': instance.description,
       'category': instance.category,
       'inStock': instance.inStock,
-      'colors': instance.colors.map((e) => _$ProductColorEnumMap[e]!).toList(),
-      'sizes': instance.sizes.map((e) => _$ProductSizeEnumMap[e]!).toList(),
+      // 'colors': instance.colors.map((e) => _$ProductColorEnumMap[e]!).toList(),
+      // 'sizes': instance.sizes.map((e) => _$ProductSizeEnumMap[e]!).toList(),
     };
 
 const _$ProductColorEnumMap = {

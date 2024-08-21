@@ -22,8 +22,8 @@ class AddProductProvider with ChangeNotifier {
     String description,
     String category,
     int inStock,
-    List<ProductColor> selectedColors,
-    List<ProductSize> selectedSizes,
+    // List<ProductColor> selectedColors,
+    // List<ProductSize> selectedSizes,
   ) async {
     if (_isSubmitting) return;
     if (imageFile == null) {
@@ -47,9 +47,9 @@ class AddProductProvider with ChangeNotifier {
         price: price,
         description: description,
         category: category,
-        sizes: selectedSizes,
+        // sizes: selectedSizes,
         inStock: inStock,
-        colors: selectedColors,
+        // colors: selectedColors,
       );
 
       await addProductServices.addProduct(product);
