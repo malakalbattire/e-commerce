@@ -54,31 +54,6 @@ class LoginProvider with ChangeNotifier {
     }
   }
 
-  Future<User?> register(String email, String password, String username) async {
-    _state = LoginState.loading;
-    notifyListeners();
-
-    try {
-      final result = await _authServices.register(email, password, username);
-      if (result) {
-        final user = await _authServices.getUser();
-        _state = LoginState.loaded;
-        notifyListeners();
-        return user;
-      } else {
-        _state = LoginState.error;
-        _errorMessage = 'Login failed: Invalid credentials.';
-        notifyListeners();
-        return null;
-      }
-    } catch (e) {
-      _state = LoginState.error;
-      _errorMessage = e.toString();
-      notifyListeners();
-      return null;
-    }
-  }
-
   Future<void> logout() async {
     _state = LoginState.loading;
     notifyListeners();
