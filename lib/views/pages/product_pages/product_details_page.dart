@@ -154,31 +154,63 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (_isEditing) ...[
+                                const SizedBox(height: 28),
+                                Text(
+                                  'Product Name',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ),
                                 TextField(
                                   controller: _nameController,
                                   decoration: const InputDecoration(
-                                    labelText: 'Product Name',
+                                    prefixIcon: Icon(Icons.text_fields),
                                   ),
+                                ),
+                                const SizedBox(height: 18),
+                                Text(
+                                  'Price',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontWeight: FontWeight.w600),
                                 ),
                                 TextField(
                                   controller: _priceController,
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
-                                    labelText: 'Price',
+                                    prefixIcon: Icon(Icons.attach_money),
                                   ),
+                                ),
+                                const SizedBox(height: 18),
+                                Text(
+                                  'Description',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontWeight: FontWeight.w600),
                                 ),
                                 TextField(
                                   controller: _descriptionController,
                                   maxLines: 3,
                                   decoration: const InputDecoration(
-                                    labelText: 'Description',
+                                    prefixIcon: Icon(Icons.description),
                                   ),
                                 ),
-                                TextField(
+                                const SizedBox(height: 18),
+                                Text(
+                                  'In Stock',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                TextFormField(
                                   controller: _stockController,
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
-                                    labelText: 'Stock',
+                                    prefixIcon: Icon(Icons.store),
                                   ),
                                 ),
                               ] else ...[
