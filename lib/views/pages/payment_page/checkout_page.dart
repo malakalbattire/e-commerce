@@ -76,14 +76,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     if (checkoutProvider.state == CheckoutState.error)
                       const Text('Error: An error occurred while loading data')
                     else ...[
-                      CheckoutAddressWidget(
-                          context: context, checkoutProvider: checkoutProvider),
+                      CheckoutAddressWidget(checkoutProvider: checkoutProvider),
                       const SizedBox(height: 16.0),
                       CheckoutCartItemsWidget(
                           checkoutProvider: checkoutProvider),
                       const SizedBox(height: 16.0),
-                      CheckoutPaymentWidget(
-                          context: context, checkoutProvider: checkoutProvider),
+                      CheckoutPaymentWidget(checkoutProvider: checkoutProvider),
                       const SizedBox(height: 16.0),
                       CheckoutTotalAmountWidget(
                           checkoutProvider: checkoutProvider),

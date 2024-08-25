@@ -10,88 +10,114 @@ import 'package:provider/provider.dart';
 class CheckoutAddressWidget extends StatelessWidget {
   const CheckoutAddressWidget({
     super.key,
-    required this.context,
     required this.checkoutProvider,
   });
 
-  final BuildContext context;
   final CheckoutProvider checkoutProvider;
 
   @override
   Widget build(BuildContext context) {
-    final addressProvider = Provider.of<AddressProvider>(context);
+    return Consumer<AddressProvider>(
+      builder: (context, addressProvider, child) {
+        return StreamBuilder<List<AddressModel>>(
+          stream: Stream.fromFuture(Future.value(addressProvider.addressItems)),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Column(
+                children: [
+                  InlineHeadlineWidget(
+                    title: 'Address',
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) => const AddressModelBottomSheet(),
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  InkWell(
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) => const AddressModelBottomSheet(),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: AppColors.gray.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(child: Text('Add Address')),
+                    ),
+                  ),
+                ],
+              );
+            }
 
-    return StreamBuilder<List<AddressModel>>(
-      stream: Stream.fromFuture(Future.value(checkoutProvider.addressItems)),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        if (snapshot.data == null || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No addresses available.'));
-        }
-
-        final selectedAddressId = addressProvider.selectedAddress;
-        final selectedAddress = snapshot.data!.firstWhere(
-          (address) => address.id == selectedAddressId,
-          orElse: () => AddressModel(
-            id: '',
-            firstName: '',
-            lastName: '',
-            countryName: '',
-            cityName: '',
-            phoneNumber: '',
-          ),
-        );
-
-        return Column(
-          children: [
-            InlineHeadlineWidget(
-              title: 'Address',
-              onTap: () => showModalBottomSheet(
-                context: context,
-                builder: (context) => const AddressModelBottomSheet(),
+            final selectedAddressId = addressProvider.selectedAddress;
+            final selectedAddress = snapshot.data!.firstWhere(
+              (address) => address.id == selectedAddressId,
+              orElse: () => AddressModel(
+                id: '',
+                firstName: '',
+                lastName: '',
+                countryName: '',
+                cityName: '',
+                phoneNumber: '',
               ),
-            ),
-            const SizedBox(height: 8.0),
-            InkWell(
-              onTap: () => showModalBottomSheet(
-                context: context,
-                builder: (context) => const AddressModelBottomSheet(),
-              ),
-              child: Container(
-                width: double.infinity,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: AppColors.gray.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(16),
+            );
+
+            return Column(
+              children: [
+                InlineHeadlineWidget(
+                  title: 'Address',
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) => const AddressModelBottomSheet(),
+                  ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: selectedAddress.id.isEmpty
-                      ? const Center(child: Text('Add Address'))
-                      : Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${selectedAddress.firstName} ${selectedAddress.lastName}',
-                                style: Theme.of(context).textTheme.titleMedium,
+                const SizedBox(height: 8.0),
+                InkWell(
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) => const AddressModelBottomSheet(),
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: AppColors.gray.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: selectedAddress.id.isEmpty
+                          ? const Center(child: Text('Add Address'))
+                          : Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${selectedAddress.firstName} ${selectedAddress.lastName}',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  Text(
+                                      '${selectedAddress.cityName} / ${selectedAddress.countryName}'),
+                                  Text(selectedAddress.phoneNumber),
+                                ],
                               ),
-                              Text(
-                                  '${selectedAddress.cityName} / ${selectedAddress.countryName}'),
-                              Text(selectedAddress.phoneNumber),
-                            ],
-                          ),
-                        ),
+                            ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );
