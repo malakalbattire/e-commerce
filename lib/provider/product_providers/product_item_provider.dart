@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/services/product_item_service.dart';
 
+enum ProductItemState { initial, loading, loaded, error }
+
 class ProductItemProvider with ChangeNotifier {
   final ProductItemServiceImpl productItemServices = ProductItemServiceImpl();
 
