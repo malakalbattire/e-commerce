@@ -57,7 +57,7 @@ class AppRouter {
           builder: (context) {
             return ChangeNotifierProvider(
               create: (_) => CardPaymentProvider(),
-              child: const PaymentCardsPage(),
+              child: PaymentCardsPage(),
             );
           },
           settings: settings,
@@ -84,7 +84,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(
             value: Provider.of<CheckoutProvider>(_, listen: false),
-            child: const CheckoutPage(),
+            child: CheckoutPage(),
           ),
           settings: settings,
         );
@@ -97,7 +97,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(
             value: Provider.of<CartProvider>(_, listen: false),
-            child: const AddPaymentCard(),
+            child: AddPaymentCard(),
           ),
           settings: settings,
         );
@@ -121,7 +121,7 @@ class AppRouter {
         );
       case AppRoutes.register:
         return MaterialPageRoute(
-          builder: (_) => const RegistrationPage(),
+          builder: (_) => RegistrationPage(),
           settings: settings,
         );
       case AppRoutes.address:

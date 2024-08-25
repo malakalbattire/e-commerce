@@ -1,9 +1,7 @@
 import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/provider/register_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
-import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../widgets/login_social_item.dart';
@@ -43,36 +41,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
     super.dispose();
   }
 
-  Future<void> _register() async {
-    final registerProvider =
-        Provider.of<RegisterProvider>(context, listen: false);
-    final notificationProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
-
-    if (_formKey.currentState!.validate()) {
-      final user = await registerProvider.register(
-        _emailController.text,
-        _passwordController.text,
-        _usernameController.text,
-      );
-      if (user != null) {
-        await notificationProvider.clearAllNotifications();
-
-        Fluttertoast.showToast(msg: 'Register Success!');
-
-        Navigator.pushNamed(context, AppRoutes.home);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(registerProvider.errorMessage),
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final notificationProvider = Provider.of<NotificationProvider>(context);
     return Consumer<RegisterProvider>(
         builder: (context, registerProvider, child) {
       return Scaffold(
@@ -179,8 +150,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       controller: _passwordController,
                       focusNode: _passwordFocusNode,
                       onEditingComplete: () {
-                        _passwordFocusNode.unfocus();
-                        _register();
+                        if (_formKey.currentState!.validate()) {
+                          registerProvider.register(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                              username: _usernameController.text,
+                              notificationProvider: notificationProvider,
+                              context: context);
+                        }
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -216,7 +193,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         onPressed:
                             registerProvider.state == RegisterState.loading
                                 ? null
-                                : () => _register(),
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      registerProvider.register(
+                                          email: _emailController.text,
+                                          password: _passwordController.text,
+                                          username: _usernameController.text,
+                                          notificationProvider:
+                                              notificationProvider,
+                                          context: context);
+                                    }
+                                  },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: AppColors.white),

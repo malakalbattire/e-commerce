@@ -1,12 +1,10 @@
 import 'package:e_commerce_app_flutter/provider/login_provider.dart';
-import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../widgets/login_social_item.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,37 +34,6 @@ class _LoginPageState extends State<LoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  Future<void> _login() async {
-    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
-    final notificationProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
-
-    if (_formKey.currentState!.validate()) {
-      final user = await loginProvider.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      if (user != null) {
-        await notificationProvider.clearAllNotifications();
-
-        Fluttertoast.showToast(msg: 'Login Success!');
-
-        if (_emailController.text == 'admin@gmail.com') {
-          Navigator.pushNamed(context, AppRoutes.home);
-        } else {
-          Navigator.pushNamed(context, AppRoutes.home);
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(loginProvider.errorMessage),
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -147,7 +114,15 @@ class _LoginPageState extends State<LoginPage> {
                       TextFormField(
                         controller: _passwordController,
                         focusNode: _passwordFocusNode,
-                        onEditingComplete: () => _login(),
+                        onEditingComplete: () {
+                          if (_formKey.currentState!.validate()) {
+                            loginProvider.login(
+                              context,
+                              _emailController.text,
+                              _passwordController.text,
+                            );
+                          }
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
@@ -202,7 +177,15 @@ class _LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           onPressed: loginProvider.state == LoginState.loading
                               ? null
-                              : () => _login(),
+                              : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    loginProvider.login(
+                                      context,
+                                      _emailController.text,
+                                      _passwordController.text,
+                                    );
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: AppColors.white,
