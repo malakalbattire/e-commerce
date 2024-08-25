@@ -43,6 +43,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     final AuthServicesImpl authServices = AuthServicesImpl();
     Future<bool> isAdminFuture = authServices.isAdmin();
 
@@ -349,15 +350,79 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 10),
-                                ElevatedButton(
-                                  onPressed: isColorSelected && !isOutOfStock
-                                      ? () {
-                                          provider.addToCart(product.id);
-                                        }
-                                      : null,
-                                  child: const Text('Add to Cart'),
+                                Text(
+                                  'In Stock: ${product.inStock}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
                                 ),
+                                const SizedBox(height: 10),
+                                if (!isAdmin)
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16.0),
+                                      width: double.infinity,
+                                      color: Colors.white,
+                                      child: isOutOfStock
+                                          ? ElevatedButton(
+                                              onPressed: null,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.grey,
+                                              ),
+                                              child: const Text(
+                                                'Sold Out',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          : ElevatedButton(
+                                              onPressed: ((hasSize &&
+                                                          !isSizeSelected) ||
+                                                      (hasColors &&
+                                                          !isColorSelected))
+                                                  ? null
+                                                  : () async {
+                                                      if (currentUser == null) {
+                                                        Fluttertoast.showToast(
+                                                          msg:
+                                                              "Please sign in to add items to the cart",
+                                                          toastLength: Toast
+                                                              .LENGTH_SHORT,
+                                                          gravity: ToastGravity
+                                                              .CENTER,
+                                                          timeInSecForIosWeb: 1,
+                                                          backgroundColor:
+                                                              Colors.black
+                                                                  .withOpacity(
+                                                                      0.4),
+                                                          textColor:
+                                                              Colors.white,
+                                                          fontSize: 16.0,
+                                                        );
+                                                      } else {
+                                                        await provider
+                                                            .addToCart(widget
+                                                                .productId);
+                                                      }
+                                                    },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: (hasColors &&
+                                                        isColorSelected)
+                                                    ? Theme.of(context)
+                                                        .primaryColor
+                                                    : Theme.of(context)
+                                                        .primaryColor,
+                                              ),
+                                              child: const Text(
+                                                'Add to Cart',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
                               ],
                             ],
                           ),
