@@ -18,10 +18,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> handleAuthState() async {
     final User? user = firebaseAuth.currentUser;
-    setState(() {
-      isLoggedIn = user != null;
-      isAdmin = user?.email == 'admin@gmail.com';
-    });
+    if (user != null) {
+      final bool adminStatus = await authServices.isAdmin();
+      setState(() {
+        isLoggedIn = true;
+        isAdmin = adminStatus;
+      });
+    } else {
+      setState(() {
+        isLoggedIn = false;
+        isAdmin = false;
+      });
+    }
   }
 
   @override
@@ -77,101 +85,113 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final User? user = firebaseAuth.currentUser;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          Center(
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage: user != null && user.photoURL != null
-                  ? NetworkImage(user.photoURL!)
-                  : null,
-              child: user?.photoURL == null
-                  ? const Icon(Icons.person, size: 50)
-                  : null,
-            ),
-          ),
-          const SizedBox(height: 20),
-          if (user != null)
-            Center(
-              child: FutureBuilder<String?>(
-                future: authServices.getUsername(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text('Loading...');
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-                    return const Text('Hi, User');
-                  } else {
-                    return Text(
-                      ' ${snapshot.data}'.toUpperCase(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w600),
-                    );
+    return FutureBuilder<bool>(
+      future: authServices.isAdmin(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final bool isAdmin = snapshot.data ?? false;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: user != null && user.photoURL != null
+                      ? NetworkImage(user.photoURL!)
+                      : null,
+                  child: user?.photoURL == null
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 20),
+              if (user != null)
+                Center(
+                  child: FutureBuilder<String?>(
+                    future: authServices.getUsername(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading...');
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data == null) {
+                        return const Text('Hi, User');
+                      } else {
+                        return Text(
+                          ' ${snapshot.data}'.toUpperCase(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(fontWeight: FontWeight.w600),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              const SizedBox(height: 10),
+              if (user != null)
+                Center(
+                  child: Text(
+                    user.email ?? 'No Email',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              const SizedBox(height: 30),
+              if (!isAdmin) ...[
+                ListTile(
+                  leading: const Icon(Icons.shopping_bag),
+                  title: const Text('My Orders'),
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true)
+                        .pushNamed(AppRoutes.myOrders);
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('Address Book'),
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true)
+                        .pushNamed(AppRoutes.addressBook);
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.payment),
+                  title: const Text('Payment Cards'),
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true)
+                        .pushNamed(AppRoutes.paymentCard);
+                  },
+                ),
+                const Divider(),
+              ],
+              ListTile(
+                leading: isLoggedIn
+                    ? const Icon(Icons.logout)
+                    : const Icon(Icons.login),
+                title: Text(isLoggedIn ? 'Logout' : 'Login'),
+                onTap: () async {
+                  if (isLoggedIn) {
+                    await _showLogoutConfirmationDialog();
+                  } else if (!isLoggedIn) {
+                    Navigator.of(context, rootNavigator: true)
+                        .pushNamed(AppRoutes.login);
                   }
                 },
               ),
-            ),
-          const SizedBox(height: 10),
-          if (user != null)
-            Center(
-              child: Text(
-                user.email ?? 'No Email',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-          const SizedBox(height: 30),
-          if (!isAdmin) ...[
-            ListTile(
-              leading: const Icon(Icons.shopping_bag),
-              title: const Text('My Orders'),
-              onTap: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed(AppRoutes.myOrders);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Address Book'),
-              onTap: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed(AppRoutes.addressBook);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.payment),
-              title: const Text('Payment Cards'),
-              onTap: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed(AppRoutes.paymentCard);
-              },
-            ),
-            const Divider(),
-          ],
-          ListTile(
-            leading:
-                isLoggedIn ? const Icon(Icons.logout) : const Icon(Icons.login),
-            title: Text(isLoggedIn ? 'Logout' : 'Login'),
-            onTap: () async {
-              if (isLoggedIn) {
-                await _showLogoutConfirmationDialog();
-              } else if (!isLoggedIn) {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed(AppRoutes.login);
-              }
-            },
+              const SizedBox(height: 100),
+            ],
           ),
-          const SizedBox(height: 100),
-        ],
-      ),
+        );
+      },
     );
   }
 }
