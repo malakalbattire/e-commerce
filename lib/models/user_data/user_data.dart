@@ -7,11 +7,13 @@ class UserData {
   final String id;
   final String email;
   final String username;
+  final String userRole;
 
   UserData({
     required this.id,
     required this.email,
     required this.username,
+    this.userRole = 'customer',
   });
 
   factory UserData.fromJson(Map<String, dynamic> json) =>
@@ -23,11 +25,13 @@ class UserData {
         id: map['id'] as String,
         email: map['email'] as String,
         username: map['username'] as String,
+        userRole: map['userRole'] as String? ?? 'customer',
       );
 
   Map<String, dynamic> toMap() => {
         'id': id,
         'email': email,
         'username': username,
+        'userRole': userRole,
       };
 }

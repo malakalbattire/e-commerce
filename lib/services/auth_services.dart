@@ -29,7 +29,7 @@ class AuthServicesImpl implements AuthServices {
         .collection('users')
         .doc(user.uid)
         .get();
-    final isAdmin = userDoc.data()?['role'] == 'admin';
+    final isAdmin = userDoc.data()?['userRole'] == 'admin';
     print('Is Admin: $isAdmin');
     return isAdmin;
   }
@@ -55,6 +55,7 @@ class AuthServicesImpl implements AuthServices {
         id: userData.user!.uid,
         email: email,
         username: username,
+        userRole: 'customer',
       );
       await firestore.setData(
         path: ApiPath.user(currentUserData.id),

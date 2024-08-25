@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,27 +27,42 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final user = await _authServices.login(email, password);
+      final isLoggedIn = await _authServices.login(email, password);
 
-      if (user != null) {
-        await notificationProvider.clearAllNotifications();
-        Fluttertoast.showToast(msg: 'Login Success!');
+      if (isLoggedIn) {
+        final user = await _authServices.getUser();
+        if (user != null) {
+          final userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
 
-        if (email == 'admin@gmail.com') {
-          Navigator.pushNamed(context, AppRoutes.home);
+          final userRole = userDoc.data()?['userRole'] as String? ?? 'customer';
+
+          await notificationProvider.clearAllNotifications();
+          Fluttertoast.showToast(msg: 'Login Success!');
+
+          if (userRole == 'admin') {
+            Navigator.pushNamed(context, AppRoutes.home);
+          } else {
+            Navigator.pushNamed(context, AppRoutes.home);
+          }
         } else {
-          Navigator.pushNamed(context, AppRoutes.home);
+          _errorMessage = 'Login failed. User data could not be retrieved.';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_errorMessage)),
+          );
         }
       } else {
         _errorMessage = 'Login failed. Please check your credentials.';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
+          SnackBar(content: Text(_errorMessage)),
         );
       }
     } catch (e) {
       _errorMessage = e.toString();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
+        SnackBar(content: Text(_errorMessage)),
       );
     } finally {
       _state = LoginState.initial;
