@@ -19,9 +19,11 @@ class HomeTabView extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (homeProvider.state == HomeState.initial) {
-        homeProvider.loadHomeData();
-        favoritesProvider.subscribeToFavorites(currentUser!.uid);
+      if (currentUser != null) {
+        if (homeProvider.state == HomeState.initial) {
+          homeProvider.loadHomeData();
+          favoritesProvider.subscribeToFavorites(currentUser.uid);
+        }
       }
     });
 

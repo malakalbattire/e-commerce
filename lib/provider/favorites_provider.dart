@@ -35,6 +35,10 @@ class FavoritesProvider with ChangeNotifier {
     });
   }
 
+  Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds) {
+    return favServices.getProductStream(favoriteIds);
+  }
+
   void _clearFavorites() {
     _favItems.clear();
     _favoritesProducts.clear();

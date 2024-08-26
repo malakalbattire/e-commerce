@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
@@ -31,16 +30,6 @@ class FavoritesPage extends StatelessWidget {
       return const SigninSignoutWidget();
     }
 
-    Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds) {
-      return FirebaseFirestore.instance
-          .collection('products')
-          .where('id', whereIn: favoriteIds)
-          .snapshots()
-          .map((snapshot) => snapshot.docs
-              .map((doc) => ProductItemModel.fromMap(doc.data(), doc.id))
-              .toList());
-    }
-
     return StreamBuilder<List<FavoriteModel>>(
       stream: favoriteProvider.favServices.getFavItemsStream(currentUser.uid),
       builder: (context, snapshot) {
@@ -55,7 +44,7 @@ class FavoritesPage extends StatelessWidget {
           final favoriteIds = favorites.map((fav) => fav.id).toList();
 
           return StreamBuilder<List<ProductItemModel>>(
-            stream: getProductStream(favoriteIds),
+            stream: favoriteProvider.getProductStream(favoriteIds),
             builder: (context, productSnapshot) {
               if (productSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(

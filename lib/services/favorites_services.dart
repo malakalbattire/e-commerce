@@ -10,6 +10,7 @@ abstract class FavoritesServices {
   Future<void> removeFromFav(String productId);
   Future<List<FavoriteModel>> getFavItems(String userId);
   Stream<List<FavoriteModel>> getFavItemsStream(String userId);
+  Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds);
 }
 
 class FavServicesImpl implements FavoritesServices {
@@ -22,6 +23,15 @@ class FavServicesImpl implements FavoritesServices {
       throw Exception('No user is signed in.');
     }
     return currentUser.uid;
+  }
+
+  @override
+  Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds) {
+    return firestore.collectionStream<ProductItemModel>(
+      path: 'products',
+      builder: (data, id) => ProductItemModel.fromMap(data, id),
+      queryBuilder: (query) => query.where('id', whereIn: favoriteIds),
+    );
   }
 
   @override
