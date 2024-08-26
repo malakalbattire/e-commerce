@@ -1,107 +1,118 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
+import 'package:e_commerce_app_flutter/provider/search_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 
-class SearchPage extends StatefulWidget {
+class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
   @override
-  SearchPageState createState() => SearchPageState();
-}
-
-class SearchPageState extends State<SearchPage> {
-  final TextEditingController _searchController = TextEditingController();
-  List<ProductItemModel> _searchResults = [];
-
-  void _searchProducts(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
-      });
-      return;
-    }
-
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('products')
-        .where('name', isGreaterThanOrEqualTo: query)
-        .where('name', isLessThanOrEqualTo: '$query\uf8ff')
-        .get();
-
-    final products = querySnapshot.docs.map((doc) {
-      final data = doc.data();
-      return ProductItemModel.fromMap(data, doc.id);
-    }).toList();
-
-    setState(() {
-      _searchResults = products;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(() {
-      _searchProducts(_searchController.text);
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                prefixIcon: const Icon(Icons.search),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                final product = _searchResults[index];
-                return ListTile(
-                  contentPadding: const EdgeInsets.all(8.0),
-                  leading: CachedNetworkImage(
-                    imageUrl: product.imgUrl,
-                    height: 50,
-                    width: 50,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
+    return ChangeNotifierProvider(
+      create: (_) => SearchProvider(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 1.0,
+          title: Consumer<SearchProvider>(
+            builder: (context, searchProvider, child) {
+              return TextField(
+                controller: searchProvider.searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search for products...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 16.0,
                   ),
-                  title: Text(product.name),
-                  subtitle: Text('\$${product.price}'),
-                  onTap: () {
-                    Navigator.of(context).pushNamed(
-                      AppRoutes.productDetails,
-                      arguments: product.id,
-                    );
-                  },
-                );
-              },
-            ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.grey[600],
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                ),
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              );
+            },
           ),
-        ],
+        ),
+        body: Consumer<SearchProvider>(
+          builder: (context, searchProvider, child) {
+            final searchResults = searchProvider.searchResults;
+
+            return searchResults.isEmpty
+                ? Center(
+                    child: Text(
+                      'No results found',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.grey[600],
+                            fontSize: 16.0,
+                          ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      final product = searchResults[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        elevation: 1.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12.0),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: CachedNetworkImage(
+                              imageUrl: product.imgUrl,
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                            ),
+                          ),
+                          title: Text(
+                            product.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          subtitle: Text(
+                            '\$${product.price}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              AppRoutes.productDetails,
+                              arguments: product.id,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+          },
+        ),
       ),
     );
   }
