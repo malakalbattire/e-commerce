@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AddProductProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

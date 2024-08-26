@@ -1,21 +1,36 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'category_model.g.dart';
+
+@JsonSerializable()
 class CategoryModel {
+  final String id;
   final String name;
   final String imgUrl;
 
-  CategoryModel({required this.name, required this.imgUrl});
-}
+  CategoryModel({
+    required this.id,
+    required this.name,
+    required this.imgUrl,
+  });
 
-List<CategoryModel> categories = [
-  CategoryModel(
-      name: 'Drinks',
-      imgUrl:
-          'https://www.supermarketcy.com.cy/images/styles/medium/FROZEN%20%282%29-page-1.jpg'),
-  CategoryModel(
-      name: 'Chips',
-      imgUrl:
-          'https://www.supermarketcy.com.cy/images/styles/medium/FROZEN%20%281%29-page-001%20%281%29.jpg'),
-  CategoryModel(
-      name: 'Makeup',
-      imgUrl:
-          'https://www.supermarketcy.com.cy/images/styles/medium/FROZEN-page-001.jpg'),
-];
+  factory CategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$CategoryModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
+
+  factory CategoryModel.fromMap(Map<String, dynamic> data, String documentId) {
+    return CategoryModel(
+      id: documentId,
+      name: data['name'] ?? '',
+      imgUrl: data['imgUrl'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'imgUrl': imgUrl,
+    };
+  }
+}

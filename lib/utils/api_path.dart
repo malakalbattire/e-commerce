@@ -20,4 +20,7 @@ class ApiPath {
   static String createOrder(String uid, String orderId) =>
       'users/$uid/orders/$orderId';
   static String orderItems(String uid) => 'users/$uid/orders/';
+
+  static String categories() => 'categories/';
+  static String category(String categoryId) => 'category/$categoryId';
 }

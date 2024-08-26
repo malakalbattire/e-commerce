@@ -23,24 +23,10 @@ class HomeTabView extends StatelessWidget {
         homeProvider.loadHomeData();
         favoritesProvider.subscribeToFavorites(currentUser!.uid);
       }
-      if (currentUser != null) {
-        homeProvider.loadHomeData();
-        favoritesProvider.subscribeToFavorites(currentUser.uid);
-      }
     });
 
     return RefreshIndicator(
-      onRefresh: () async {
-        if (homeProvider.state == HomeState.initial) {
-          homeProvider.loadHomeData();
-          favoritesProvider.subscribeToFavorites(currentUser!.uid);
-
-          if (currentUser != null) {
-            homeProvider.loadHomeData();
-            favoritesProvider.subscribeToFavorites(currentUser.uid);
-          }
-        }
-      },
+      onRefresh: () async {},
       child: SingleChildScrollView(
         child: Column(
           children: [
