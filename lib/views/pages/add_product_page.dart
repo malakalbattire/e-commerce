@@ -219,46 +219,62 @@ class _AddProductPageState extends State<AddProductPage> {
                             .copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 12),
-                      DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          hintText: 'Select category',
-                          prefixIcon: const Icon(Icons.category),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: () async {
-                              final newCategory = await Navigator.push<String>(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddCategoryPage(),
-                                ),
-                              );
-                              if (newCategory != null &&
-                                  newCategory.isNotEmpty) {
-                                setState(() {
-                                  _category = newCategory;
-                                });
-                                categoryProvider.fetchCategories();
-                              }
-                            },
-                          ),
-                        ),
-                        value: _category.isEmpty ? null : _category,
-                        items: categoryProvider.categories.map((category) {
-                          return DropdownMenuItem<String>(
-                            value: category.name,
-                            child: Text(category.name),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _category = value ?? '';
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select a category';
+                      Consumer<CategoryProvider>(
+                        builder: (context, categoryProvider, child) {
+                          if (categoryProvider.isLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
-                          return null;
+
+                          if (categoryProvider.errorMessage != null) {
+                            return Center(
+                                child: Text(
+                                    'Error: ${categoryProvider.errorMessage}'));
+                          }
+
+                          return DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              hintText: 'Select category',
+                              prefixIcon: const Icon(Icons.category),
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () async {
+                                  final newCategory =
+                                      await Navigator.push<String>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddCategoryPage(),
+                                    ),
+                                  );
+                                  if (newCategory != null &&
+                                      newCategory.isNotEmpty) {
+                                    setState(() {
+                                      _category = newCategory;
+                                    });
+                                    categoryProvider.fetchCategories();
+                                  }
+                                },
+                              ),
+                            ),
+                            value: _category.isEmpty ? null : _category,
+                            items: categoryProvider.categories.map((category) {
+                              return DropdownMenuItem<String>(
+                                value: category.name,
+                                child: Text(category.name),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _category = value ?? '';
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a category';
+                              }
+                              return null;
+                            },
+                          );
                         },
                       ),
                       const SizedBox(height: 16),

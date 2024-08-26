@@ -1,44 +1,38 @@
+import 'dart:async';
 import 'dart:io';
-
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
-import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/category_services.dart';
 
 class CategoryProvider with ChangeNotifier {
   final CategoryServices _categoryServices = CategoryServicesImpl();
+  final StreamController<List<CategoryModel>> _categoryStreamController =
+      StreamController<List<CategoryModel>>.broadcast();
 
   List<CategoryModel> _categories = [];
-  List<ProductItemModel> _productsByCategory = [];
   bool _isLoading = false;
   String? _errorMessage;
 
   List<CategoryModel> get categories => _categories;
-  List<ProductItemModel> get productsByCategory => _productsByCategory;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  Stream<List<CategoryModel>> get categoryStream =>
+      _categoryStreamController.stream;
+
+  CategoryProvider() {
+    fetchCategories();
+  }
 
   Future<void> fetchCategories() async {
     _isLoading = true;
     notifyListeners();
     try {
       _categories = await _categoryServices.getCategoryItems();
+      _categoryStreamController.add(_categories);
     } catch (e) {
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> fetchProductsByCategory(String category) async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      _productsByCategory =
-          await _categoryServices.getProductsByCategory(category);
-    } catch (e) {
+      _categoryStreamController.addError('Failed to load categories');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -61,8 +55,7 @@ class CategoryProvider with ChangeNotifier {
       );
 
       await _categoryServices.addCategory(newCategory);
-
-      await fetchCategories();
+      fetchCategories();
     } catch (e) {
       print('Error adding category: $e');
     } finally {
@@ -97,8 +90,9 @@ class CategoryProvider with ChangeNotifier {
     notifyListeners();
     try {
       await _categoryServices.removeCategory(categoryId);
-      await fetchCategories();
+      fetchCategories();
     } catch (e) {
+      print('Error removing category: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -111,5 +105,11 @@ class CategoryProvider with ChangeNotifier {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  void dispose() {
+    _categoryStreamController.close();
+    super.dispose();
   }
 }
