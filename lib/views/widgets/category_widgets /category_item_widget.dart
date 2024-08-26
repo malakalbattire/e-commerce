@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_app_flutter/utils/app_routes.dart';
+import 'package:e_commerce_app_flutter/provider/category_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CategoryItemWidget extends StatelessWidget {
   final String name;
@@ -9,17 +10,12 @@ class CategoryItemWidget extends StatelessWidget {
   const CategoryItemWidget(
       {super.key, required this.name, required this.imgUrl});
 
-  void selectCategory(BuildContext context) {
-    Navigator.of(context, rootNavigator: true).pushNamed(
-      AppRoutes.productsList,
-      arguments: name,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final categoryProvider = Provider.of<CategoryProvider>(context);
+
     return GestureDetector(
-      onTap: () => selectCategory(context),
+      onTap: () => categoryProvider.selectCategory(context, name),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Stack(
