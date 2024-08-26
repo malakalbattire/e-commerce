@@ -109,10 +109,13 @@ class CartPage extends StatelessWidget {
                           );
                         },
                       ),
-                      buildCartTotalAndSubtotalItem(
-                          context, 'Subtotal', cartProvider.subtotal),
+                      CartTotalAndSubtotalItemWidget(
+                          context: context,
+                          title: 'Subtotal',
+                          amount: cartProvider.subtotal),
                       const SizedBox(height: 8),
-                      buildCartTotalAndSubtotalItem(context, 'Shipping', 10),
+                      CartTotalAndSubtotalItemWidget(
+                          context: context, title: 'Shipping', amount: 10),
                       const SizedBox(height: 16),
                       Dash(
                         length: MediaQuery.of(context).size.width - 32,
@@ -120,8 +123,10 @@ class CartPage extends StatelessWidget {
                         dashColor: AppColors.gray,
                       ),
                       const SizedBox(height: 16),
-                      buildCartTotalAndSubtotalItem(
-                          context, 'Total Amount', cartProvider.subtotal + 10),
+                      CartTotalAndSubtotalItemWidget(
+                          context: context,
+                          title: 'Total Amount',
+                          amount: cartProvider.subtotal + 10),
                       const SizedBox(height: 16),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -168,9 +173,22 @@ class CartPage extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget buildCartTotalAndSubtotalItem(
-      BuildContext context, String title, double amount) {
+class CartTotalAndSubtotalItemWidget extends StatelessWidget {
+  const CartTotalAndSubtotalItemWidget({
+    super.key,
+    required this.context,
+    required this.title,
+    required this.amount,
+  });
+
+  final BuildContext context;
+  final String title;
+  final double amount;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
