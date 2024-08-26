@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
@@ -42,16 +45,43 @@ class CategoryProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addCategory(CategoryModel category) async {
+  Future<void> addCategory(String name, File? imageFile) async {
     _isLoading = true;
     notifyListeners();
     try {
-      await _categoryServices.addCategory(category);
+      String? imgUrl;
+      if (imageFile != null) {
+        imgUrl = await uploadImage(imageFile);
+      }
+
+      final newCategory = CategoryModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: name,
+        imgUrl: imgUrl ?? '',
+      );
+
+      await _categoryServices.addCategory(newCategory);
+
       await fetchCategories();
     } catch (e) {
+      print('Error adding category: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<String> uploadImage(File image) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+          'categories/${DateTime.now().millisecondsSinceEpoch.toString()}');
+      final uploadTask = storageRef.putFile(image);
+      final snapshot = await uploadTask.whenComplete(() => {});
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return '';
     }
   }
 

@@ -19,10 +19,15 @@ class CategoryServicesImpl implements CategoryServices {
 
   @override
   Future<void> addCategory(CategoryModel categoryModel) async {
-    return await firestore.setData(
-      path: ApiPath.category(categoryModel.id),
-      data: categoryModel.toJson(),
-    );
+    try {
+      await _firestore
+          .collection('categories')
+          .doc(categoryModel.id)
+          .set(categoryModel.toJson());
+    } catch (e) {
+      print('Error adding category: $e');
+      throw Exception('Failed to add category');
+    }
   }
 
   @override

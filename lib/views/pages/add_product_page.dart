@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:e_commerce_app_flutter/views/pages/add_category_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
@@ -219,9 +220,27 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Select category',
-                          prefixIcon: Icon(Icons.category),
+                          prefixIcon: const Icon(Icons.category),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () async {
+                              final newCategory = await Navigator.push<String>(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddCategoryPage(),
+                                ),
+                              );
+                              if (newCategory != null &&
+                                  newCategory.isNotEmpty) {
+                                setState(() {
+                                  _category = newCategory;
+                                });
+                                categoryProvider.fetchCategories();
+                              }
+                            },
+                          ),
                         ),
                         value: _category.isEmpty ? null : _category,
                         items: categoryProvider.categories.map((category) {
@@ -242,7 +261,6 @@ class _AddProductPageState extends State<AddProductPage> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
                       const SizedBox(height: 16),
                       Text(
                         'In Stock',
