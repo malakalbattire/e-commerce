@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
 import 'package:e_commerce_app_flutter/provider/add_product_provider.dart';
+import 'package:e_commerce_app_flutter/provider/category_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
@@ -43,16 +44,6 @@ class _AddProductPageState extends State<AddProductPage> {
       }
     });
   }
-
-  // void _toggleSize(ProductSize size) {
-  //   setState(() {
-  //     if (_selectedSizes.contains(size)) {
-  //       _selectedSizes.remove(size);
-  //     } else {
-  //       _selectedSizes.add(size);
-  //     }
-  //   });
-  // }
 
   Future<void> _submit() async {
     if (_selectedColors.isEmpty) {
@@ -106,8 +97,17 @@ class _AddProductPageState extends State<AddProductPage> {
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
-            child: Consumer<AddProductProvider>(
-              builder: (context, provider, child) {
+            child: Consumer2<AddProductProvider, CategoryProvider>(
+              builder: (context, addProductProvider, categoryProvider, child) {
+                if (categoryProvider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (categoryProvider.errorMessage != null) {
+                  return Center(
+                      child: Text('Error: ${categoryProvider.errorMessage}'));
+                }
+
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,21 +218,31 @@ class _AddProductPageState extends State<AddProductPage> {
                             .copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
+                      DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
-                          hintText: 'Enter category',
+                          hintText: 'Select category',
                           prefixIcon: Icon(Icons.category),
                         ),
+                        value: _category.isEmpty ? null : _category,
+                        items: categoryProvider.categories.map((category) {
+                          return DropdownMenuItem<String>(
+                            value: category.name,
+                            child: Text(category.name),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _category = value ?? '';
+                          });
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a category';
+                            return 'Please select a category';
                           }
                           return null;
                         },
-                        onSaved: (value) {
-                          _category = value!;
-                        },
                       ),
+                      const SizedBox(height: 16),
                       const SizedBox(height: 16),
                       Text(
                         'In Stock',

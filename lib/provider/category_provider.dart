@@ -10,10 +10,12 @@ class CategoryProvider with ChangeNotifier {
   List<CategoryModel> _categories = [];
   List<ProductItemModel> _productsByCategory = [];
   bool _isLoading = false;
+  String? _errorMessage;
 
   List<CategoryModel> get categories => _categories;
   List<ProductItemModel> get productsByCategory => _productsByCategory;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   Future<void> fetchCategories() async {
     _isLoading = true;
