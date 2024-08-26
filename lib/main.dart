@@ -7,6 +7,7 @@ import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/provider/order_provider.dart';
 import 'package:e_commerce_app_flutter/provider/product_providers/product_details_provider.dart';
+import 'package:e_commerce_app_flutter/provider/profile_provider.dart';
 import 'package:e_commerce_app_flutter/services/firebase_messaging_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CheckoutProvider()),
         ChangeNotifierProvider(create: (_) => AddProductProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
