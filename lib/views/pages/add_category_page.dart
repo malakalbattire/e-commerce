@@ -1,8 +1,7 @@
-import 'dart:io';
-import 'package:e_commerce_app_flutter/provider/category_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:e_commerce_app_flutter/provider/category_provider.dart';
 
 class AddCategoryPage extends StatefulWidget {
   @override
@@ -12,59 +11,12 @@ class AddCategoryPage extends StatefulWidget {
 class _AddCategoryPageState extends State<AddCategoryPage> {
   final _formKey = GlobalKey<FormState>();
   String _categoryName = '';
-  File? _imageFile;
   bool _isSubmitting = false;
-
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
-
-  Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      if (_imageFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select an image')),
-        );
-        return;
-      }
-
-      setState(() {
-        _isSubmitting = true;
-      });
-
-      final categoryProvider =
-          Provider.of<CategoryProvider>(context, listen: false);
-
-      try {
-        await categoryProvider.addCategory(_categoryName, _imageFile);
-        Navigator.pop(context, _categoryName);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
-      } finally {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
-    }
-  }
-
-  Future<String> uploadImage(File image) async {
-    return 'https://example.com/your-uploaded-image-url.jpg';
-  }
 
   @override
   Widget build(BuildContext context) {
+    final categoryProvider = Provider.of<CategoryProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Category'),
@@ -87,7 +39,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                 ),
                 SizedBox(height: 12),
                 TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Enter category name',
                     prefixIcon: Icon(Icons.category),
                   ),
@@ -111,10 +63,12 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                 ),
                 SizedBox(height: 12),
                 GestureDetector(
-                  onTap: _pickImage,
-                  child: _imageFile != null
+                  onTap: () async {
+                    await categoryProvider.pickImage(ImageSource.gallery);
+                  },
+                  child: categoryProvider.imageFile != null
                       ? Image.file(
-                          _imageFile!,
+                          categoryProvider.imageFile!,
                           height: 200,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -136,7 +90,31 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: _isSubmitting ? null : _submit,
+                    onPressed: _isSubmitting
+                        ? null
+                        : () async {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+
+                              setState(() {
+                                _isSubmitting = true;
+                              });
+
+                              try {
+                                await categoryProvider.submitCategory(
+                                    _categoryName, context);
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Error: ${e.toString()}')),
+                                );
+                              } finally {
+                                setState(() {
+                                  _isSubmitting = false;
+                                });
+                              }
+                            }
+                          },
                     child: _isSubmitting
                         ? CircularProgressIndicator(
                             valueColor:

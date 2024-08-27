@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/services/category_services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CategoryProvider with ChangeNotifier {
   final CategoryServices _categoryServices = CategoryServicesImpl();
@@ -14,7 +15,9 @@ class CategoryProvider with ChangeNotifier {
   List<CategoryModel> _categories = [];
   bool _isLoading = false;
   String? _errorMessage;
+  File? _imageFile;
 
+  File? get imageFile => _imageFile;
   List<CategoryModel> get categories => _categories;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
@@ -39,13 +42,13 @@ class CategoryProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addCategory(String name, File? imageFile) async {
+  Future<void> addCategory(String name) async {
     _isLoading = true;
     notifyListeners();
     try {
       String? imgUrl;
-      if (imageFile != null) {
-        imgUrl = await uploadImage(imageFile);
+      if (_imageFile != null) {
+        imgUrl = await uploadImage(_imageFile!);
       }
 
       final newCategory = CategoryModel(
@@ -75,6 +78,33 @@ class CategoryProvider with ChangeNotifier {
     } catch (e) {
       print('Error uploading image: $e');
       return '';
+    }
+  }
+
+  Future<void> submitCategory(String categoryName, BuildContext context) async {
+    if (imageFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an image')),
+      );
+      return;
+    }
+
+    try {
+      await addCategory(categoryName);
+      Navigator.pop(context, categoryName);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+      notifyListeners();
     }
   }
 
