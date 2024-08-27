@@ -92,6 +92,13 @@ class ProductDetailsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<List<ProductSize>> get sizesStream {
+    final product = selectedProduct;
+    if (product == null) return Stream.value([]);
+
+    return productDetailsServices.getProductSizes(product.id);
+  }
+
   Future<void> updateProductDetails(
       String productId, Map<String, dynamic> updatedFields) async {
     try {

@@ -36,6 +36,16 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
+  void _toggleSize(ProductSize size) {
+    setState(() {
+      if (_selectedSizes.contains(size)) {
+        _selectedSizes.remove(size);
+      } else {
+        _selectedSizes.add(size);
+      }
+    });
+  }
+
   void _toggleColor(ProductColor color) {
     setState(() {
       if (_selectedColors.contains(color)) {
@@ -47,12 +57,6 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   Future<void> _submit() async {
-    if (_selectedColors.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one color')),
-      );
-      return;
-    }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       if (_imageFile == null) {
@@ -325,6 +329,27 @@ class _AddProductPageState extends State<AddProductPage> {
                         }).toList(),
                       ),
                       const SizedBox(height: 24),
+                      Text(
+                        'Sizes',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: ProductSize.values.map((size) {
+                          return ChoiceChip(
+                            label: Text(size.toString().split('.').last),
+                            selected: _selectedSizes.contains(size),
+                            onSelected: (selected) {
+                              _toggleSize(size);
+                            },
+                          );
+                        }).toList(),
+                      ),
                       SizedBox(
                         width: double.infinity,
                         height: 60,

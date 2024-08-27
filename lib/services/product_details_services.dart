@@ -8,6 +8,7 @@ import 'package:e_commerce_app_flutter/utils/api_path.dart';
 abstract class ProductDetailsServices {
   Future<ProductItemModel> getProductDetails(String id);
   Future<void> addToCart(AddToCartModel addToCartModel);
+  Stream<List<ProductSize>> getProductSizes(String productId);
   Future<void> updateProductStock(String productId, int newStock);
   Future<void> updateProductDetails(
       String productId, Map<String, dynamic> updatedFields);
@@ -41,6 +42,26 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
       path: ApiPath.addToCart(currentUser!.uid, addToCartModel.id),
       data: addToCartModel.toMap(),
     );
+  }
+
+  @override
+  Stream<List<ProductSize>> getProductSizes(String productId) {
+    return FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        final sizes = (data['sizes'] as List<dynamic>)
+            .map((item) => ProductSize.values
+                .firstWhere((size) => size.name == item as String))
+            .toList();
+        return sizes;
+      } else {
+        return [];
+      }
+    });
   }
 
   @override

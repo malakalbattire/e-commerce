@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_providers/product_item_provider.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -62,10 +63,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
             final product = provider.selectedProduct!;
             final bool isOutOfStock = provider.quantity > product.inStock;
-            final bool hasSize = product.sizes != null;
+            final bool hasSize =
+                product.sizes != null && product.sizes!.isNotEmpty;
             final bool isSizeSelected = provider.selectedSize != null;
             final bool isColorSelected = provider.selectedColor != null;
-            final bool hasColors = product.colors != null;
+            final bool hasColors =
+                product.colors != null && product.colors!.isNotEmpty;
 
             return Scaffold(
               appBar: AppBar(
@@ -284,7 +287,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   ),
                               ],
                               const SizedBox(height: 16),
-                              if (!isAdmin && product.colors != null)
+                              if (!isAdmin && hasColors)
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
@@ -327,70 +330,82 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   ),
                                 ),
                               const SizedBox(height: 10),
-                              if (!isAdmin)
+                              if (!isAdmin) ...[
                                 const Text(
                                   'Size:',
                                   style: TextStyle(fontSize: 18),
                                 ),
-                              const SizedBox(height: 10),
-                              if (!isAdmin &&
-                                  (product.sizes == null ||
-                                      product.sizes == Size.OneSize))
-                                const Text(
-                                  'One Size',
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              else if (!isAdmin)
-                                Wrap(
-                                  spacing: 10.0,
-                                  children: Size.values.where((size) {
-                                    return size != Size.OneSize;
-                                  }).map((Size size) {
-                                    return ChoiceChip(
-                                      label: Text(size.name),
-                                      selected: provider.selectedSize == size,
-                                      onSelected: (bool selected) {
-                                        provider.setSize(size);
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
-                              const SizedBox(height: 10),
-                              if (!isAdmin) ...[
-                                const Divider(),
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'QTY:',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.remove),
-                                      onPressed: () {
-                                        provider.decrementQuantity();
-                                      },
-                                    ),
-                                    Text(
-                                      provider.quantity.toString(),
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.add),
-                                      onPressed: () {
-                                        provider.incrementQuantity();
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  'In Stock: ${product.inStock}',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
+                                const SizedBox(height: 10),
+                                StreamBuilder<List<ProductSize>>(
+                                  stream: provider.sizesStream,
+                                  builder: (context, sizesSnapshot) {
+                                    if (!sizesSnapshot.hasData) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    final productSizes = sizesSnapshot.data!;
+                                    final sizes =
+                                        productSizes.map((productSize) {
+                                      return convertProductSizeToSize(
+                                          productSize);
+                                    }).toList();
+
+                                    return sizes.isEmpty
+                                        ? const Text(
+                                            'One Size',
+                                            style: TextStyle(fontSize: 18),
+                                          )
+                                        : Wrap(
+                                            spacing: 10.0,
+                                            children: sizes.map((Size size) {
+                                              return ChoiceChip(
+                                                label: Text(size.name),
+                                                selected:
+                                                    provider.selectedSize ==
+                                                        size,
+                                                onSelected: (bool selected) {
+                                                  provider.setSize(size);
+                                                },
+                                              );
+                                            }).toList(),
+                                          );
+                                  },
                                 ),
                                 const SizedBox(height: 10),
-                                if (!isAdmin)
+                                if (!isAdmin) ...[
+                                  const Divider(),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'QTY:',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          provider.decrementQuantity();
+                                        },
+                                      ),
+                                      Text(
+                                        provider.quantity.toString(),
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          provider.incrementQuantity();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    'In Stock: ${product.inStock}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
                                   Align(
                                     alignment: Alignment.bottomCenter,
                                     child: Container(
@@ -455,6 +470,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             ),
                                     ),
                                   ),
+                                ],
                               ],
                             ],
                           ),
@@ -469,5 +485,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         );
       },
     );
+  }
+}
+
+Size convertProductSizeToSize(ProductSize productSize) {
+  switch (productSize) {
+    case ProductSize.S:
+      return Size.S;
+    case ProductSize.M:
+      return Size.M;
+    case ProductSize.L:
+      return Size.L;
+    case ProductSize.xL:
+      return Size.xL;
   }
 }
