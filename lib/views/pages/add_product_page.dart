@@ -1,11 +1,11 @@
-import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
+import 'dart:io';
 import 'package:e_commerce_app_flutter/views/pages/add_category_page.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
 import 'package:e_commerce_app_flutter/provider/add_product_provider.dart';
 import 'package:e_commerce_app_flutter/provider/category_provider.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -252,6 +252,9 @@ class _AddProductPageState extends State<AddProductPage> {
                                   );
                                   if (newCategory != null &&
                                       newCategory.isNotEmpty) {
+                                    setState(() {
+                                      _category = newCategory;
+                                    });
                                     categoryProvider.fetchCategories();
                                   }
                                 },
@@ -296,12 +299,6 @@ class _AddProductPageState extends State<AddProductPage> {
                                         if (shouldRemove ?? false) {
                                           await categoryProvider
                                               .removeCategory(category.id);
-                                          setState(() {
-                                            if (_category == category.name) {
-                                              _category = '';
-                                            }
-                                          });
-                                          categoryProvider.fetchCategories();
                                         }
                                       },
                                     ),
@@ -335,7 +332,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       TextFormField(
                         decoration: const InputDecoration(
                           hintText: 'Enter stock quantity',
-                          prefixIcon: Icon(Icons.inventory),
+                          prefixIcon: Icon(Icons.store),
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
@@ -348,7 +345,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           _inStock = int.parse(value!);
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       Text(
                         'Colors',
                         style: Theme.of(context)
@@ -358,10 +355,11 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                       const SizedBox(height: 12),
                       Wrap(
-                        spacing: 8.0,
+                        spacing: 8,
+                        runSpacing: 8,
                         children: ProductColor.values.map((color) {
                           return ChoiceChip(
-                            label: Text(color.name),
+                            label: Text(color.toString().split('.').last),
                             selected: _selectedColors.contains(color),
                             onSelected: (selected) {
                               _toggleColor(color);
@@ -369,7 +367,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       Text(
                         'Sizes',
                         style: Theme.of(context)
@@ -379,10 +377,11 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                       const SizedBox(height: 12),
                       Wrap(
-                        spacing: 8.0,
+                        spacing: 8,
+                        runSpacing: 8,
                         children: ProductSize.values.map((size) {
                           return ChoiceChip(
-                            label: Text(size.name),
+                            label: Text(size.toString().split('.').last),
                             selected: _selectedSizes.contains(size),
                             onSelected: (selected) {
                               _toggleSize(size);
@@ -390,19 +389,31 @@ class _AddProductPageState extends State<AddProductPage> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
                         height: 60,
                         child: ElevatedButton(
-                          onPressed: _submit,
-                          child: const Text('Add Product'),
+                          onPressed:
+                              context.watch<AddProductProvider>().isSubmitting
+                                  ? null
+                                  : _submit,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: Colors.white,
                           ),
+                          child: Text(
+                            'Add Product',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 24),
                     ],
                   ),
                 );

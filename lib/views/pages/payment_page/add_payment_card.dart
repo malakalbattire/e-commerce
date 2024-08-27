@@ -1,4 +1,3 @@
-import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,40 +25,9 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
   }
 
   @override
-  void dispose() {
-    _cardNumberController.dispose();
-    _expiryDateController.dispose();
-    _cvvController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submitCard() async {
-    if (_formKey.currentState!.validate()) {
-      final payment = PaymentModel(
-        id: DateTime.now().toIso8601String(),
-        cardNumber: _cardNumberController.text,
-        expiryDate: _expiryDateController.text,
-        cvv: _cvvController.text,
-      );
-
-      final provider = Provider.of<CardPaymentProvider>(context, listen: false);
-      await provider.addPayment(payment);
-
-      if (provider.state == PaymentState.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(provider.errorMessage)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Card added successfully!')),
-        );
-        Navigator.pop(context);
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final cardPaymentProvider = Provider.of<CardPaymentProvider>(context);
+
     return ChangeNotifierProvider(
       create: (_) => CardPaymentProvider(),
       child: Scaffold(
@@ -158,7 +126,13 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
                       width: double.infinity,
                       height: 60,
                       child: ElevatedButton(
-                        onPressed: _submitCard,
+                        onPressed: () async {
+                          await cardPaymentProvider.submitCard(
+                              cardNumber: _cardNumberController.text,
+                              cvv: _cvvController.text,
+                              expiryDate: _expiryDateController.text,
+                              context: context);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
                           foregroundColor: Colors.white,

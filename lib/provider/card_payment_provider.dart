@@ -1,6 +1,7 @@
 import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/services/add_payment_card_services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 enum PaymentState { initial, loading, loaded, error }
 
@@ -9,13 +10,14 @@ class CardPaymentProvider with ChangeNotifier {
   PaymentState _state = PaymentState.initial;
   String _errorMessage = '';
   final paymentServices = PaymentServicesImpl();
-  // String? _selectedPaymentId;
   String? _selectedPaymentMethodId;
+  final TextEditingController cardNumberController = TextEditingController();
+  final TextEditingController expiryDateController = TextEditingController();
+  final TextEditingController cvvController = TextEditingController();
 
   List<PaymentModel> get paymentItems => _paymentItems;
   PaymentState get state => _state;
   String get errorMessage => _errorMessage;
-  // String? get selectedPaymentId => _selectedPaymentId;
   String? get selectedPaymentMethodId => _selectedPaymentMethodId;
 
   Future<void> loadPaymentData(String userId) async {
@@ -41,6 +43,33 @@ class CardPaymentProvider with ChangeNotifier {
       _errorMessage = error.toString();
       _state = PaymentState.error;
       notifyListeners();
+    }
+  }
+
+  Future<void> submitCard({
+    required String cardNumber,
+    required String expiryDate,
+    required String cvv,
+    required BuildContext context,
+  }) async {
+    final payment = PaymentModel(
+      id: DateTime.now().toIso8601String(),
+      cardNumber: cardNumber,
+      expiryDate: expiryDate,
+      cvv: cvv,
+    );
+
+    await addPayment(payment);
+
+    if (state == PaymentState.error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Card added successfully!')),
+      );
+      Navigator.pop(context);
     }
   }
 
@@ -87,5 +116,13 @@ class CardPaymentProvider with ChangeNotifier {
       _state = PaymentState.error;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    cardNumberController.dispose();
+    expiryDateController.dispose();
+    cvvController.dispose();
+    super.dispose();
   }
 }
