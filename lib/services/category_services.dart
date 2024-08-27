@@ -46,7 +46,7 @@ class CategoryServicesImpl implements CategoryServices {
   @override
   Future<void> removeCategory(String categoryId) async {
     await firestore.deleteData(
-      path: ApiPath.category(categoryId),
+      path: 'categories/$categoryId',
     );
   }
 

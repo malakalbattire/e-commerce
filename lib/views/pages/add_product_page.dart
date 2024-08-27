@@ -264,7 +264,46 @@ class _AddProductPageState extends State<AddProductPage> {
                             items: categoryProvider.categories.map((category) {
                               return DropdownMenuItem<String>(
                                 value: category.name,
-                                child: Text(category.name),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(category.name),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () async {
+                                        final shouldRemove =
+                                            await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title:
+                                                const Text('Remove Category'),
+                                            content: Text(
+                                                'Are you sure you want to remove the category "${category.name}"?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, false),
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, true),
+                                                child: const Text('Remove'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (shouldRemove ?? false) {
+                                          await categoryProvider
+                                              .removeCategory(category.id);
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               );
                             }).toList(),
                             onChanged: (value) {
