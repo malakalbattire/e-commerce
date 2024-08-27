@@ -389,6 +389,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           );
                         }).toList(),
                       ),
+                      SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
                         height: 60,
