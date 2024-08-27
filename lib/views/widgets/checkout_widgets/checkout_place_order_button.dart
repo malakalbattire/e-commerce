@@ -30,69 +30,78 @@ class CheckoutPlaceOrderButton extends StatelessWidget {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: () async {
-          if (addressProvider.selectedAddress == null ||
-              paymentProvider.selectedPaymentMethodId == null ||
-              cartProvider.cartItemCount == 0) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please select address and payment method'),
-              ),
-            );
-            return;
-          }
+        onPressed: orderProvider.state == OrderState.loading
+            ? null
+            : () async {
+                if (addressProvider.selectedAddress == null ||
+                    paymentProvider.selectedPaymentMethodId == null ||
+                    cartProvider.cartItemCount == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please select address and payment method'),
+                    ),
+                  );
+                  return;
+                }
 
-          await orderProvider.placeOrder(
-            userId: FirebaseAuth.instance.currentUser!.uid,
-            productIds:
-                cartProvider.cartItems.map((item) => item.product.id).toList(),
-            addressId: addressProvider.selectedAddress!,
-            paymentId: paymentProvider.selectedPaymentMethodId!,
-            firstName: addressProvider.addressItems
-                .firstWhere(
-                    (address) => address.id == addressProvider.selectedAddress)
-                .firstName,
-            countryName: addressProvider.addressItems
-                .firstWhere(
-                    (address) => address.id == addressProvider.selectedAddress)
-                .countryName,
-            cityName: addressProvider.addressItems
-                .firstWhere(
-                    (address) => address.id == addressProvider.selectedAddress)
-                .cityName,
-            lastName: addressProvider.addressItems
-                .firstWhere(
-                    (address) => address.id == addressProvider.selectedAddress)
-                .lastName,
-            phoneNumber: addressProvider.addressItems
-                .firstWhere(
-                    (address) => address.id == addressProvider.selectedAddress)
-                .phoneNumber,
-            cardNumber: paymentProvider.paymentItems
-                .firstWhere((payment) =>
-                    payment.id == paymentProvider.selectedPaymentMethodId)
-                .cardNumber,
-            totalAmount: cartProvider.subtotal + 10,
-            cartProvider: cartProvider,
-            orderNumber: orderProvider.orders.length + 1,
-          );
+                await orderProvider.placeOrder(
+                  userId: FirebaseAuth.instance.currentUser!.uid,
+                  productIds: cartProvider.cartItems
+                      .map((item) => item.product.id)
+                      .toList(),
+                  addressId: addressProvider.selectedAddress!,
+                  paymentId: paymentProvider.selectedPaymentMethodId!,
+                  firstName: addressProvider.addressItems
+                      .firstWhere((address) =>
+                          address.id == addressProvider.selectedAddress)
+                      .firstName,
+                  countryName: addressProvider.addressItems
+                      .firstWhere((address) =>
+                          address.id == addressProvider.selectedAddress)
+                      .countryName,
+                  cityName: addressProvider.addressItems
+                      .firstWhere((address) =>
+                          address.id == addressProvider.selectedAddress)
+                      .cityName,
+                  lastName: addressProvider.addressItems
+                      .firstWhere((address) =>
+                          address.id == addressProvider.selectedAddress)
+                      .lastName,
+                  phoneNumber: addressProvider.addressItems
+                      .firstWhere((address) =>
+                          address.id == addressProvider.selectedAddress)
+                      .phoneNumber,
+                  cardNumber: paymentProvider.paymentItems
+                      .firstWhere((payment) =>
+                          payment.id == paymentProvider.selectedPaymentMethodId)
+                      .cardNumber,
+                  totalAmount: cartProvider.subtotal + 10,
+                  cartProvider: cartProvider,
+                  orderNumber: orderProvider.orders.length + 1,
+                );
 
-          if (orderProvider.state == OrderState.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error: ${orderProvider.errorMessage}'),
-              ),
-            );
-          } else {
-            await cartProvider.clearCart();
-            Navigator.pushNamed(context, AppRoutes.myOrders);
-          }
-        },
+                if (orderProvider.state == OrderState.error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${orderProvider.errorMessage}'),
+                    ),
+                  );
+                } else {
+                  await cartProvider.clearCart();
+                  Navigator.pushNamed(context, AppRoutes.myOrders);
+                }
+              },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: orderProvider.state == OrderState.loading
+              ? Colors.grey
+              : Theme.of(context).primaryColor,
           foregroundColor: AppColors.white,
         ),
-        child: const Text('Place Order'),
+        child: orderProvider.state == OrderState.loading
+            ? const CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
+              )
+            : const Text('Place Order'),
       ),
     );
   }
