@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,9 +61,12 @@ class FirebaseNotifications {
         .snapshots()
         .listen((snapshot) {
       for (var change in snapshot.docChanges) {
+        final product = ProductItemModel.fromMap(
+            change.doc.data() as Map<String, dynamic>, change.doc.id);
+
         if (change.type == DocumentChangeType.added &&
-            !addedProductIds.contains(change.doc.id)) {
-          addedProductIds.add(change.doc.id);
+            !addedProductIds.contains(product.id)) {
+          addedProductIds.add(product.id);
           prefs.setStringList('addedProductIds', addedProductIds);
           _showLocalNotification(
             change.doc,
@@ -70,7 +74,7 @@ class FirebaseNotifications {
             'A new product has been added! Check it out.',
           );
         } else if (change.type == DocumentChangeType.modified &&
-            addedProductIds.contains(change.doc.id)) {
+            addedProductIds.contains(product.id)) {
           _showLocalNotification(
             change.doc,
             'Product Updated',
@@ -82,17 +86,18 @@ class FirebaseNotifications {
   }
 
   void _showLocalNotification(
-      DocumentSnapshot? doc, String title, String body) async {
-    final String documentTitle = doc != null
-        ? (doc.data() as Map<String, dynamic>)['title'] ?? 'Unknown title'
-        : 'Test Product';
+      DocumentSnapshot docSnapshot, String title, String body) async {
+    final data = docSnapshot.data() as Map<String, dynamic>;
 
-    await _storeNotificationToFirestore(title, body, doc?.id ?? 'test_doc_id');
+    String productName = data['name'] ?? 'Unknown Product';
+
+    await _storeNotificationToFirestore(
+        title, "$body Product: $productName", docSnapshot.id);
 
     _localNotifications.show(
-      doc?.hashCode ?? DateTime.now().millisecondsSinceEpoch,
+      docSnapshot.id.hashCode,
       title,
-      "$body Product: $documentTitle",
+      "$body Product: $productName",
       NotificationDetails(
         android: AndroidNotificationDetails(
           _androidChannel.id,
@@ -101,7 +106,7 @@ class FirebaseNotifications {
           icon: '@drawable/ic_launcher',
         ),
       ),
-      payload: jsonEncode({'documentId': doc?.id ?? 'test_doc_id'}),
+      payload: jsonEncode({'documentId': docSnapshot.id}),
     );
   }
 
@@ -114,13 +119,5 @@ class FirebaseNotifications {
       'timestamp': FieldValue.serverTimestamp(),
     });
     print('Notification stored to Firestore for doc ID: $documentId');
-  }
-
-  void testNotification() {
-    _showLocalNotification(
-      null,
-      'Test Notification',
-      'This is a test notification to verify setup.',
-    );
   }
 }
