@@ -57,7 +57,6 @@ class FirebaseNotifications {
     bool isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
 
     if (isFirstLaunch) {
-      // Mark app as not the first launch anymore
       prefs.setBool('isFirstLaunch', false);
     }
 
