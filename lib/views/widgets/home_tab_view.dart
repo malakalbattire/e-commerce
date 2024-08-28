@@ -21,7 +21,9 @@ class HomeTabView extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (homeProvider.state == HomeState.initial) {
         homeProvider.loadHomeData();
-        favoritesProvider.subscribeToFavorites(currentUser!.uid);
+        if (currentUser != null) {
+          favoritesProvider.subscribeToFavorites(currentUser.uid);
+        }
       }
     });
 
