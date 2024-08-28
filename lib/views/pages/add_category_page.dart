@@ -37,7 +37,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                       .titleMedium!
                       .copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 TextFormField(
                   decoration: const InputDecoration(
                     hintText: 'Enter category name',
@@ -61,7 +61,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                       .titleMedium!
                       .copyWith(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 GestureDetector(
                   onTap: () async {
                     await categoryProvider.pickImage(ImageSource.gallery);
