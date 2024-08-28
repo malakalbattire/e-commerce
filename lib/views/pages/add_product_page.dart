@@ -204,7 +204,13 @@ class _AddProductPageState extends State<AddProductPage> {
                                 },
                               ),
                             ),
-                            value: _category.isEmpty ? null : _category,
+                            value: _category.isEmpty ||
+                                    categoryProvider.categories.indexWhere(
+                                            (category) =>
+                                                category.name == _category) ==
+                                        -1
+                                ? null
+                                : _category,
                             items: categoryProvider.categories.map((category) {
                               return DropdownMenuItem<String>(
                                 value: category.name,
@@ -243,6 +249,11 @@ class _AddProductPageState extends State<AddProductPage> {
                                         if (shouldRemove ?? false) {
                                           await categoryProvider
                                               .removeCategory(category.id);
+                                          setState(() {
+                                            if (_category == category.name) {
+                                              _category = '';
+                                            }
+                                          });
                                         }
                                       },
                                     ),
