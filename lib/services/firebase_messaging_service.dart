@@ -6,9 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseNotifications {
-  //final _firebaseMessaging = FirebaseMessaging.instance;
-
-  AndroidInitializationSettings initializationSettingsAndroid =
+  final AndroidInitializationSettings initializationSettingsAndroid =
       const AndroidInitializationSettings('app_icon');
 
   final _androidChannel = const AndroidNotificationChannel(
@@ -22,6 +20,7 @@ class FirebaseNotifications {
   FirebaseNotifications() {
     initializeLocalNotifications();
   }
+
   Future<void> initNotifications() async {
     await FirebaseMessaging.instance
         .requestPermission(
@@ -37,7 +36,7 @@ class FirebaseNotifications {
       }
     });
 
-    initFirestoreListeners();
+    await initFirestoreListeners();
   }
 
   Future<void> initializeLocalNotifications() async {
@@ -54,7 +53,13 @@ class FirebaseNotifications {
 
   Future<void> initFirestoreListeners() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> addedProductIds = prefs.getStringList('addedProductIds') ?? [];
+    List<String> seenProductIds = prefs.getStringList('seenProductIds') ?? [];
+    bool isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
+
+    if (isFirstLaunch) {
+      // Mark app as not the first launch anymore
+      prefs.setBool('isFirstLaunch', false);
+    }
 
     FirebaseFirestore.instance
         .collection('products')
@@ -65,16 +70,18 @@ class FirebaseNotifications {
             change.doc.data() as Map<String, dynamic>, change.doc.id);
 
         if (change.type == DocumentChangeType.added &&
-            !addedProductIds.contains(product.id)) {
-          addedProductIds.add(product.id);
-          prefs.setStringList('addedProductIds', addedProductIds);
-          _showLocalNotification(
-            change.doc,
-            'New Product Added',
-            'A new product has been added! Check it out.',
-          );
+            !seenProductIds.contains(product.id)) {
+          seenProductIds.add(product.id);
+          prefs.setStringList('seenProductIds', seenProductIds);
+          if (!isFirstLaunch) {
+            _showLocalNotification(
+              change.doc,
+              'New Product Added',
+              'A new product has been added! Check it out.',
+            );
+          }
         } else if (change.type == DocumentChangeType.modified &&
-            addedProductIds.contains(product.id)) {
+            seenProductIds.contains(product.id)) {
           _showLocalNotification(
             change.doc,
             'Product Updated',
