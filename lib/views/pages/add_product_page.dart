@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:e_commerce_app_flutter/views/pages/add_category_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
 import 'package:e_commerce_app_flutter/provider/add_product_provider.dart';
 import 'package:e_commerce_app_flutter/provider/category_provider.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -24,71 +25,6 @@ class _AddProductPageState extends State<AddProductPage> {
   int _inStock = 0;
   List<ProductColor> _selectedColors = [];
   List<ProductSize> _selectedSizes = [];
-
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
-
-  void _toggleSize(ProductSize size) {
-    setState(() {
-      if (_selectedSizes.contains(size)) {
-        _selectedSizes.remove(size);
-      } else {
-        _selectedSizes.add(size);
-      }
-    });
-  }
-
-  void _toggleColor(ProductColor color) {
-    setState(() {
-      if (_selectedColors.contains(color)) {
-        _selectedColors.remove(color);
-      } else {
-        _selectedColors.add(color);
-      }
-    });
-  }
-
-  Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      if (_imageFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select an image')),
-        );
-        return;
-      }
-
-      final provider = Provider.of<AddProductProvider>(context, listen: false);
-
-      await provider.addProduct(
-        _name,
-        _imageFile,
-        _price,
-        _description,
-        _category,
-        _inStock,
-        _selectedColors,
-        _selectedSizes,
-      );
-
-      if (provider.state == AddProductState.loaded) {
-        Navigator.of(context).pop();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to add product: ${provider.errorMessage}')),
-        );
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +86,15 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                       const SizedBox(height: 12),
                       GestureDetector(
-                        onTap: _pickImage,
+                        onTap: () async {
+                          final pickedFile = await ImagePicker()
+                              .pickImage(source: ImageSource.gallery);
+                          if (pickedFile != null) {
+                            setState(() {
+                              _imageFile = File(pickedFile.path);
+                            });
+                          }
+                        },
                         child: _imageFile != null
                             ? Image.file(
                                 _imageFile!,
@@ -359,15 +303,21 @@ class _AddProductPageState extends State<AddProductPage> {
                         runSpacing: 8,
                         children: ProductColor.values.map((color) {
                           return ChoiceChip(
-                            label: Text(color.toString().split('.').last),
+                            label: Text(color.name),
                             selected: _selectedColors.contains(color),
                             onSelected: (selected) {
-                              _toggleColor(color);
+                              setState(() {
+                                if (selected) {
+                                  _selectedColors.add(color);
+                                } else {
+                                  _selectedColors.remove(color);
+                                }
+                              });
                             },
                           );
                         }).toList(),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       Text(
                         'Sizes',
                         style: Theme.of(context)
@@ -381,39 +331,85 @@ class _AddProductPageState extends State<AddProductPage> {
                         runSpacing: 8,
                         children: ProductSize.values.map((size) {
                           return ChoiceChip(
-                            label: Text(size.toString().split('.').last),
+                            label: Text(size.name),
                             selected: _selectedSizes.contains(size),
                             onSelected: (selected) {
-                              _toggleSize(size);
+                              setState(() {
+                                if (selected) {
+                                  _selectedSizes.add(size);
+                                } else {
+                                  _selectedSizes.remove(size);
+                                }
+                              });
                             },
                           );
                         }).toList(),
                       ),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
                         height: 60,
-                        child: ElevatedButton(
-                          onPressed:
-                              context.watch<AddProductProvider>().isSubmitting
-                                  ? null
-                                  : _submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: Text(
-                            'Add Product',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall!
-                                .copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                          ),
+                        child: Consumer<AddProductProvider>(
+                          builder: (context, addProductProvider, child) {
+                            return addProductProvider.isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : ElevatedButton(
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        _formKey.currentState!.save();
+
+                                        if (_imageFile == null) {
+                                          Fluttertoast.showToast(
+                                            msg: "Please select an image.",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                          );
+                                          return;
+                                        }
+
+                                        final addProductModel = AddProductModel(
+                                          id: DateTime.now()
+                                              .millisecondsSinceEpoch
+                                              .toString(),
+                                          name: _name,
+                                          description: _description,
+                                          price: _price,
+                                          category: _category,
+                                          inStock: _inStock,
+                                          colors: _selectedColors,
+                                          sizes: _selectedSizes,
+                                          imgUrl: '',
+                                        );
+
+                                        await addProductProvider.addProduct(
+                                            addProductModel, _imageFile!);
+
+                                        if (!addProductProvider.isLoading) {
+                                          Fluttertoast.showToast(
+                                            msg: "Product added successfully",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            backgroundColor: Colors.green,
+                                            textColor: Colors.white,
+                                          );
+                                          Navigator.pop(context);
+                                        }
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: const Text('Add Product'),
+                                  );
+                          },
                         ),
                       ),
-                      const SizedBox(height: 24),
                     ],
                   ),
                 );

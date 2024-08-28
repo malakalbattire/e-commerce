@@ -10,21 +10,20 @@ class AddProductProvider with ChangeNotifier {
   AddProductState _state = AddProductState.initial;
   String _errorMessage = '';
   bool _isSubmitting = false;
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
 
   AddProductState get state => _state;
   String get errorMessage => _errorMessage;
   bool get isSubmitting => _isSubmitting;
 
-  Future<void> addProduct(
-    String name,
-    File? imageFile,
-    double price,
-    String description,
-    String category,
-    int inStock,
-    List<ProductColor> selectedColors,
-    List<ProductSize> selectedSizes,
-  ) async {
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  Future<void> addProduct(AddProductModel product, File? imageFile) async {
     if (_isSubmitting) return;
     if (imageFile == null) {
       _errorMessage = 'No image selected';
@@ -38,26 +37,18 @@ class AddProductProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      setLoading(true);
       final imageUrl = await addProductServices.uploadImageToStorage(imageFile);
 
-      final product = AddProductModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: name,
-        imgUrl: imageUrl,
-        price: price,
-        description: description,
-        category: category,
-        sizes: selectedSizes,
-        inStock: inStock,
-        colors: selectedColors,
-      );
+      final productWithImage = product.copyWith(imgUrl: imageUrl);
 
-      await addProductServices.addProduct(product);
+      await addProductServices.addProduct(productWithImage);
       _state = AddProductState.loaded;
     } catch (e) {
       _errorMessage = 'Failed to add product: $e';
       _state = AddProductState.error;
     } finally {
+      setLoading(false);
       _isSubmitting = false;
       notifyListeners();
     }
