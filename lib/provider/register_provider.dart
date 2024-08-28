@@ -14,7 +14,19 @@ class RegisterProvider with ChangeNotifier {
 
   RegisterState get state => _state;
   String get errorMessage => _errorMessage;
+  late final TextEditingController _usernameController,
+      _emailController,
+      _passwordController;
+  late FocusNode _usernameFocusNode, _emailFocusNode, _passwordFocusNode;
 
+  RegisterProvider() {
+    _usernameController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _usernameFocusNode = FocusNode();
+    _emailFocusNode = FocusNode();
+    _passwordFocusNode = FocusNode();
+  }
   Future<void> register({
     required String email,
     required String password,
@@ -49,5 +61,16 @@ class RegisterProvider with ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _usernameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
   }
 }

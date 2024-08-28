@@ -49,6 +49,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     Future<bool> isAdminFuture = authServices.isAdmin();
 
     final productItemProvider = Provider.of<ProductItemProvider>(context);
+    final productDetailsProvider = Provider.of<ProductDetailsProvider>(context);
 
     return FutureBuilder<bool>(
       future: isAdminFuture,
@@ -346,8 +347,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     final productSizes = sizesSnapshot.data!;
                                     final sizes =
                                         productSizes.map((productSize) {
-                                      return convertProductSizeToSize(
-                                          productSize);
+                                      return productDetailsProvider
+                                          .convertProductSizeToSize(
+                                              productSize);
                                     }).toList();
 
                                     return sizes.isEmpty
@@ -485,18 +487,5 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         );
       },
     );
-  }
-}
-
-Size convertProductSizeToSize(ProductSize productSize) {
-  switch (productSize) {
-    case ProductSize.S:
-      return Size.S;
-    case ProductSize.M:
-      return Size.M;
-    case ProductSize.L:
-      return Size.L;
-    case ProductSize.xL:
-      return Size.xL;
   }
 }

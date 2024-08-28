@@ -1,5 +1,6 @@
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
+import 'package:e_commerce_app_flutter/views/widgets/cart_total_subtotal_item_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/empty_cart_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -171,39 +172,6 @@ class CartPage extends StatelessWidget {
           );
         }
       },
-    );
-  }
-}
-
-class CartTotalAndSubtotalItemWidget extends StatelessWidget {
-  const CartTotalAndSubtotalItemWidget({
-    super.key,
-    required this.context,
-    required this.title,
-    required this.amount,
-  });
-
-  final BuildContext context;
-  final String title;
-  final double amount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          Text(
-            '\$ ${amount.toStringAsFixed(2)}',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ],
-      ),
     );
   }
 }

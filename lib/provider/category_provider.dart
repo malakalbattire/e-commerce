@@ -81,6 +81,13 @@ class CategoryProvider with ChangeNotifier {
     }
   }
 
+  void selectCategory(BuildContext context, String categoryName) {
+    Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.productsList,
+      arguments: categoryName,
+    );
+  }
+
   Future<void> submitCategory(String categoryName, BuildContext context) async {
     if (imageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -106,13 +113,6 @@ class CategoryProvider with ChangeNotifier {
       _imageFile = File(pickedFile.path);
       notifyListeners();
     }
-  }
-
-  void selectCategory(BuildContext context, String categoryName) {
-    Navigator.of(context, rootNavigator: true).pushNamed(
-      AppRoutes.productsList,
-      arguments: categoryName,
-    );
   }
 
   Future<void> removeCategory(String categoryId) async {

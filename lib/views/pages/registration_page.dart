@@ -34,14 +34,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   @override
-  void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final notificationProvider = Provider.of<NotificationProvider>(context);
     return Consumer<RegisterProvider>(

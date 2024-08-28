@@ -43,6 +43,19 @@ class ProductDetailsProvider with ChangeNotifier {
     }
   }
 
+  Size convertProductSizeToSize(ProductSize productSize) {
+    switch (productSize) {
+      case ProductSize.S:
+        return Size.S;
+      case ProductSize.M:
+        return Size.M;
+      case ProductSize.L:
+        return Size.L;
+      case ProductSize.xL:
+        return Size.xL;
+    }
+  }
+
   Future<void> getProductsDetails(List<String> ids) async {
     try {
       final results = await Future.wait(

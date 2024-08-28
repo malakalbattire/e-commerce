@@ -4,7 +4,6 @@ import 'package:e_commerce_app_flutter/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProductItemPaymentWidget extends StatelessWidget {
-  // final ProductItemModel item;
   final AddToCartModel item;
 
   const ProductItemPaymentWidget({super.key, required this.item});
