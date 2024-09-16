@@ -11,7 +11,7 @@ abstract class HomeServices {
 }
 
 class HomeServicesImpl implements HomeServices {
-  final String backendUrl = 'http://192.168.88.5:3000';
+  final String backendUrl = 'http://192.168.88.2:3000';
 
   @override
   Future<List<ProductItemModel>> getProducts() async {
