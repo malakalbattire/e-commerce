@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -11,9 +9,8 @@ abstract class CartServices {
   Stream<List<AddToCartModel>> getCartItemsStream(String userId);
   Future<List<AddToCartModel>> getCartItems();
   Future<void> removeCartItem(String productId);
-  Future<void> updateCartItem(AddToCartModel item, String productId);
-  Future<void> incrementCartItemQuantity(String productId);
-  Future<void> decrementCartItemQuantity(String productId);
+  Future<void> incrementCartItemQuantity(String id, int incrementBy);
+  Future<void> decrementCartItemQuantity(String id, int decrementBy);
   Future<void> clearCart();
   Future<void> addToCart(AddToCartModel addToCartModel);
 }
@@ -132,64 +129,96 @@ class CartServicesImpl implements CartServices {
     }
   }
 
-  @override
-  Future<void> updateCartItem(AddToCartModel item, String productId) async {
-    final currentUser = await authServices.getUser();
-    await firestore.setData(
-      path: ApiPath.addToCart(currentUser!.uid, productId),
-      data: item.toMap(),
-    );
-  }
-
-  @override
   Future<void> clearCart() async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    final cartCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart');
 
-    final cartDocs = await cartCollection.get();
-    for (var doc in cartDocs.docs) {
-      await doc.reference.delete();
+    try {
+      final response = await http.delete(
+        Uri.parse('$backendUrl/cart/$userId/clear'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Cart cleared successfully');
+      } else {
+        final errorResponse = jsonDecode(response.body);
+        final errorMessage = errorResponse['message'] ?? 'Unknown error';
+        print('Failed to clear cart: $errorMessage');
+      }
+    } catch (e) {
+      print('Error clearing cart: $e');
     }
   }
 
   @override
-  Future<void> incrementCartItemQuantity(String productId) async {
-    final currentUser = await authServices.getUser();
-    final cartItem = await firestore.getDocument(
-      path: ApiPath.addToCart(currentUser!.uid, productId),
-      builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
-    );
-    if ((cartItem.quantity) < cartItem.inStock) {
-      final newQuantity = (cartItem.quantity) + 1;
-      cartItem.quantity = newQuantity;
-      await firestore.setData(
-        path: ApiPath.addToCart(currentUser.uid, productId),
-        data: cartItem.toMap(),
+  Future<void> incrementCartItemQuantity(String id, int incrementBy) async {
+    print("======${id}=======");
+    try {
+      final response = await http.put(
+        Uri.parse('$backendUrl/cart/$id/increment'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'incrementBy': incrementBy,
+        }),
       );
-    } else {
-      print('reach limit');
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('Quantity incremented');
+      } else {
+        try {
+          final errorResponse = jsonDecode(response.body);
+          final errorMessage = errorResponse['message'] ?? 'Unknown error';
+          final serverError = errorResponse['error'] ?? 'No additional info';
+          print(
+              'Failed to increment quantity: $errorMessage. Server error: $serverError');
+        } catch (jsonError) {
+          print('Error parsing error response: ${response.body}');
+        }
+      }
+    } catch (e) {
+      print('Exception caught: $e');
     }
   }
 
   @override
-  Future<void> decrementCartItemQuantity(String productId) async {
-    final currentUser = await authServices.getUser();
-    final cartItem = await firestore.getDocument(
-      path: ApiPath.addToCart(currentUser!.uid, productId),
-      builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
-    );
-    if ((cartItem.quantity) > 1) {
-      final newQuantity = (cartItem.quantity) - 1;
-      cartItem.quantity = newQuantity;
-      await firestore.setData(
-        path: ApiPath.addToCart(currentUser.uid, productId),
-        data: cartItem.toMap(),
+  Future<void> decrementCartItemQuantity(String id, int decrementBy) async {
+    print("======${id}=======");
+    try {
+      final response = await http.put(
+        Uri.parse('$backendUrl/cart/$id/decrement'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'decrementBy': decrementBy,
+        }),
       );
-    } else {
-      await removeCartItem(productId);
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('Quantity decremented');
+      } else {
+        try {
+          final errorResponse = jsonDecode(response.body);
+          final errorMessage = errorResponse['message'] ?? 'Unknown error';
+          final serverError = errorResponse['error'] ?? 'No additional info';
+          print(
+              'Failed to decrement quantity: $errorMessage. Server error: $serverError');
+        } catch (jsonError) {
+          print('Error parsing error response: ${response.body}');
+        }
+      }
+    } catch (e) {
+      print('Exception caught: $e');
     }
   }
 }

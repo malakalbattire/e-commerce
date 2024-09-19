@@ -1,4 +1,3 @@
-import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/favorites_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_colors.dart';

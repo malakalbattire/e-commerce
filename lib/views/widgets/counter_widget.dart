@@ -29,7 +29,7 @@ class CounterWidget extends StatelessWidget {
           IconButton(
             onPressed: value > 1
                 ? () {
-                    cartProvider.decrementQuantity(productId);
+                    cartProvider.decrementQuantity(productId, 1);
                   }
                 : null,
             icon: const Icon(Icons.remove),
@@ -38,7 +38,7 @@ class CounterWidget extends StatelessWidget {
           IconButton(
             onPressed: value < inStock
                 ? () {
-                    cartProvider.incrementQuantity(productId);
+                    cartProvider.incrementQuantity(productId, 1);
                   }
                 : null,
             icon: const Icon(Icons.add),

@@ -118,12 +118,12 @@ class CartProvider with ChangeNotifier {
     }
   }
 
-  Future<void> incrementQuantity(String productId) async {
+  Future<void> incrementQuantity(String productId, int incrementBy) async {
     _itemStates[productId] = ItemState.loading;
     _pageLoading = true;
     notifyListeners();
     try {
-      await cartServices.incrementCartItemQuantity(productId);
+      await cartServices.incrementCartItemQuantity(productId, incrementBy);
       _cartItems = await cartServices.getCartItems();
       _itemStates[productId] = ItemState.none;
       _pageLoading = false;
@@ -136,12 +136,12 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> decrementQuantity(String productId) async {
+  Future<void> decrementQuantity(String productId, int decrementBy) async {
     _itemStates[productId] = ItemState.loading;
     _pageLoading = true;
     notifyListeners();
     try {
-      await cartServices.decrementCartItemQuantity(productId);
+      await cartServices.decrementCartItemQuantity(productId, decrementBy);
       _cartItems = await cartServices.getCartItems();
       _itemStates[productId] = ItemState.none;
       _pageLoading = false;
