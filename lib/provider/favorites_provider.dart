@@ -75,10 +75,11 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> addToFav(String productId) async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
+
       final existingFav =
           _favItems.firstWhereOrNull((fav) => fav.id == productId);
 
-      final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
       if (existingFav != null) {
@@ -94,6 +95,8 @@ class FavoritesProvider with ChangeNotifier {
           description: selectedProduct.description,
           price: selectedProduct.price,
           category: selectedProduct.category,
+          productId: productId,
+          userId: user.uid,
         );
         await favServices.addToFav(favItem);
         _favItems.add(favItem);

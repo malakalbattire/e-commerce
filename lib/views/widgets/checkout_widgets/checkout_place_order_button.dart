@@ -75,9 +75,10 @@ class CheckoutPlaceOrderButton extends StatelessWidget {
                       .firstWhere((payment) =>
                           payment.id == paymentProvider.selectedPaymentMethodId)
                       .cardNumber,
-                  totalAmount: cartProvider.subtotal + 10,
+                  //   totalAmount: cartProvider.subtotal + 10,
                   cartProvider: cartProvider,
                   orderNumber: orderProvider.orders.length + 1,
+                  totalAmount: cartProvider.subtotal,
                 );
 
                 if (orderProvider.state == OrderState.error) {

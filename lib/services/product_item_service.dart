@@ -12,7 +12,7 @@ abstract class ProductItemService {
 }
 
 class ProductItemServiceImpl implements ProductItemService {
-  final String backendUrl = 'http://192.168.88.2:3000';
+  final String backendUrl = 'http://192.168.88.10:3000';
 
   Future<Map<String, dynamic>> _fetchProductData(String productId) async {
     try {

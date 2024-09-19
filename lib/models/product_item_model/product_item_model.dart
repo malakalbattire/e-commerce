@@ -74,16 +74,42 @@ class ProductItemModel {
       category: data['category'] ?? '',
       quantity: data['quantity']?.toInt() ?? 0,
       averageRate: data['averageRate']?.toDouble() ?? 0.0,
+
       sizes: data['sizes'] != null
-          ? List<ProductSize>.from((data['sizes'] as List).map(
-              (e) => ProductSize.values.firstWhere((size) => size.name == e)))
+          ? List<ProductSize>.from((data['sizes'] as List).map((e) {
+              try {
+                // Attempt to match the enum value
+                return ProductSize.values.firstWhere((size) => size.name == e);
+              } catch (error) {
+                // If no match is found, return null and handle it accordingly
+                print('Invalid size string: $e');
+                return null;
+              }
+            }).where((size) => size != null)) // Filter out any null values
           : null,
+      // sizes: data['sizes'] != null
+      //     ? List<ProductSize>.from((data['sizes'] as List).map(
+      //         (e) => ProductSize.values.firstWhere((size) => size.name == e)))
+      //     : null,
       isAddedToCart: data['isAddedToCart'] ?? false,
       inStock: data['inStock']?.toInt() ?? 0,
+
       colors: data['colors'] != null
-          ? List<ProductColor>.from((data['colors'] as List).map((e) =>
-              ProductColor.values.firstWhere((color) => color.name == e)))
+          ? List<ProductColor>.from((data['colors'] as List).map((e) {
+              try {
+                // Attempt to match the enum value
+                return ProductColor.values
+                    .firstWhere((color) => color.name == e);
+              } catch (error) {
+                print('Invalid color string: $e');
+                return null;
+              }
+            }).where((color) => color != null)) // Filter out any null values
           : null,
+      // colors: data['colors'] != null
+      //     ? List<ProductColor>.from((data['colors'] as List).map((e) =>
+      //         ProductColor.values.firstWhere((color) => color.name == e)))
+      //     : null,
     );
   }
 

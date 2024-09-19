@@ -186,7 +186,8 @@ class ProductDetailsProvider with ChangeNotifier {
         });
       } else {
         final newCartItem = AddToCartModel(
-          id: productId,
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          productId: productId,
           product: product,
           size: selectedSize ?? Size.OneSize,
           quantity: quantity,
@@ -195,6 +196,7 @@ class ProductDetailsProvider with ChangeNotifier {
           name: product.name,
           inStock: product.inStock,
           color: selectedColor?.name ?? 'DefaultColor',
+          userId: currentUser.uid,
         );
         await cartServices.addToCart(newCartItem);
         _cartItems.add(newCartItem);

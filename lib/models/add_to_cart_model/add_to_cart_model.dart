@@ -14,6 +14,8 @@ class AddToCartModel {
   final String name;
   final int inStock;
   final String color;
+  final String productId;
+  final String userId;
 
   AddToCartModel({
     required this.id,
@@ -25,6 +27,8 @@ class AddToCartModel {
     required this.name,
     required this.inStock,
     required this.color,
+    required this.productId,
+    required this.userId,
   });
 
   double get totalPrice => price * quantity;
@@ -39,6 +43,8 @@ class AddToCartModel {
     String? name,
     int? inStock,
     String? color,
+    String? productId,
+    String? userId,
   }) {
     return AddToCartModel(
       id: id ?? this.id,
@@ -50,11 +56,27 @@ class AddToCartModel {
       name: name ?? this.name,
       inStock: inStock ?? this.inStock,
       color: color ?? this.color,
+      productId: productId ?? this.productId,
+      userId: userId ?? this.userId,
     );
   }
 
-  factory AddToCartModel.fromJson(Map<String, dynamic> json) =>
-      _$AddToCartModelFromJson(json);
+  factory AddToCartModel.fromJson(Map<String, dynamic> json) {
+    return AddToCartModel(
+      id: json['id'] as String? ?? '',
+      product:
+          ProductItemModel.fromJson(json['product'] as Map<String, dynamic>),
+      size: _sizeFromString(json['size'] as String? ?? 'OneSize'),
+      quantity: json['quantity'] as int? ?? 0,
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      imgUrl: json['imgUrl'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      inStock: json['inStock'] as int? ?? 0,
+      color: json['color'] as String? ?? '',
+      productId: json['product_id'] as String? ?? '',
+      userId: json['user_id'] as String? ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() => _$AddToCartModelToJson(this);
 
@@ -63,13 +85,15 @@ class AddToCartModel {
       id: documentId,
       product:
           ProductItemModel.fromJson(map['product'] as Map<String, dynamic>),
-      size: _sizeFromString(map['size'] as String),
-      quantity: map['quantity'] as int,
-      price: (map['price'] as num).toDouble(),
-      imgUrl: map['imgUrl'] as String,
-      name: map['name'] as String,
-      inStock: map['inStock'] as int,
-      color: map['color'] as String,
+      size: _sizeFromString(map['size'] as String? ?? 'OneSize'),
+      quantity: map['quantity'] as int? ?? 0,
+      price: (map['price'] as num?)?.toDouble() ?? 0.0,
+      imgUrl: map['imgUrl'] as String? ?? '',
+      name: map['name'] as String? ?? '',
+      inStock: map['inStock'] as int? ?? 0,
+      color: map['color'] as String? ?? '',
+      productId: map['product_id'] as String? ?? '',
+      userId: map['user_id'] as String? ?? '',
     );
   }
 
@@ -84,6 +108,8 @@ class AddToCartModel {
       'name': name,
       'inStock': inStock,
       'color': color,
+      'product_id': productId,
+      'user_id': userId,
     };
   }
 
@@ -100,7 +126,7 @@ class AddToCartModel {
       case 'OneSize':
         return Size.OneSize;
       default:
-        throw ArgumentError('Invalid size string');
+        return Size.OneSize;
     }
   }
 
@@ -117,7 +143,7 @@ class AddToCartModel {
       case Size.OneSize:
         return 'OneSize';
       default:
-        throw ArgumentError('Invalid size');
+        return 'OneSize';
     }
   }
 }

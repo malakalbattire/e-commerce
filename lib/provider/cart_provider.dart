@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/cart_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 enum CartState { initial, loading, loaded, error }
 
@@ -63,6 +61,7 @@ class CartProvider with ChangeNotifier {
       }
 
       _cartItems = updatedCartItems;
+      print('getCartItemsStream: ${_cartItems}======');
       _state = CartState.loaded;
       notifyListeners();
     }, onError: (error) {
@@ -79,88 +78,6 @@ class CartProvider with ChangeNotifier {
 
   CartProvider() {
     _listenToAuthChanges();
-  }
-  Future<void> addToCart(String productId, int quantity) async {
-    try {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) return;
-
-      final cartRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .collection('cart');
-
-      final product = selectedProduct;
-      if (product == null) return;
-
-      final size = selectedSize?.name ?? 'One Size';
-      final color = selectedColor?.name ?? 'DefaultColor';
-
-      final cartSnapshot = await cartRef
-          .where('product.id', isEqualTo: productId)
-          .where('size', isEqualTo: size)
-          .where('color', isEqualTo: color)
-          .get();
-
-      if (cartSnapshot.docs.isNotEmpty) {
-        final doc = cartSnapshot.docs.first;
-        final currentQuantity = doc['quantity'] as int;
-
-        if (currentQuantity + quantity > product.inStock) {
-          Fluttertoast.showToast(
-            msg: "Cannot add more items. Exceeds stock limit.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black.withOpacity(0.4),
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-          return;
-        }
-
-        await FirebaseFirestore.instance.runTransaction((transaction) async {
-          final docSnapshot = await transaction.get(doc.reference);
-          if (docSnapshot.exists) {
-            transaction.update(doc.reference, {
-              'quantity': currentQuantity + quantity,
-            });
-          }
-        });
-      } else {
-        final newCartItem = AddToCartModel(
-          id: productId,
-          product: product,
-          size: selectedSize ?? Size.OneSize,
-          quantity: quantity,
-          price: product.price,
-          imgUrl: product.imgUrl,
-          name: product.name,
-          inStock: product.inStock,
-          color: selectedColor?.name ?? 'DefaultColor',
-        );
-
-        await cartRef.add(newCartItem.toMap());
-
-        _cartItems.add(newCartItem);
-      }
-
-      Fluttertoast.showToast(
-        msg: "Added to cart successfully.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black.withOpacity(0.4),
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-
-      notifyListeners();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error adding item to cart: $e');
-      }
-    }
   }
 
   void _listenToAuthChanges() {
@@ -199,10 +116,6 @@ class CartProvider with ChangeNotifier {
       _state = CartState.error;
       notifyListeners();
     }
-  }
-
-  bool isInCart(String productId) {
-    return _cartItems.any((item) => item.product.id == productId);
   }
 
   Future<void> incrementQuantity(String productId) async {
@@ -248,6 +161,7 @@ class CartProvider with ChangeNotifier {
     try {
       await Future.delayed(const Duration(seconds: 2));
       _cartItems = await cartServices.getCartItems();
+      print('_cartItems.length:${_cartItems.length}========');
       _state = CartState.loaded;
     } catch (error) {
       _state = CartState.error;

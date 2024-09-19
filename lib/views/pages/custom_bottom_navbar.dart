@@ -153,7 +153,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 PersistentTabConfig(
                   screen: ChangeNotifierProvider(
                     create: (_) => CartProvider(),
-                    child: const CartPage(),
+                    child: CartPage(),
                   ),
                   item: ItemConfig(
                     icon: const Icon(Icons.shopping_cart),
@@ -165,7 +165,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 PersistentTabConfig(
                   screen: ChangeNotifierProvider(
                     create: (_) => FavoritesProvider(),
-                    child: const FavoritesPage(),
+                    child: FavoritesPage(),
                   ),
                   item: ItemConfig(
                     icon: const Icon(Icons.favorite_border),

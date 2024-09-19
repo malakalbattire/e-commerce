@@ -10,32 +10,51 @@ abstract class HomeServices {
 }
 
 class HomeServicesImpl implements HomeServices {
-  final String backendUrl = 'http://192.168.88.2:3000';
+  final String backendUrl = 'http://192.168.88.10:3000';
+  List<ProductItemModel> _cachedProducts = [];
+  bool _isFetching = false;
 
   @override
   Future<List<ProductItemModel>> getProducts() async {
+    if (_cachedProducts.isNotEmpty && !_isFetching) {
+      return _cachedProducts;
+    }
+
     try {
+      _isFetching = true;
       final response = await http.get(Uri.parse('$backendUrl/products'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        List<ProductItemModel> products = data.map((product) {
+        _cachedProducts = data.map((product) {
           return ProductItemModel.fromMap(product, product['id']);
         }).toList();
-        return products;
+        return _cachedProducts;
       } else {
         throw Exception('Failed to fetch products');
       }
     } catch (e) {
       print('Error fetching products: $e');
       throw Exception('Error fetching products: $e');
+    } finally {
+      _isFetching = false;
     }
   }
 
   @override
-  Stream<List<ProductItemModel>> getProductsStream() {
-    return Stream.periodic(Duration(seconds: 10))
-        .asyncMap((_) => getProducts());
+  Stream<List<ProductItemModel>> getProductsStream() async* {
+    if (_cachedProducts.isNotEmpty) {
+      yield _cachedProducts;
+    }
+
+    yield* Stream.periodic(Duration(seconds: 10)).asyncMap((_) async {
+      try {
+        return await getProducts();
+      } catch (e) {
+        print('Error in periodic product stream: $e');
+        return _cachedProducts;
+      }
+    });
   }
 
   @override
@@ -49,7 +68,9 @@ class HomeServicesImpl implements HomeServices {
         body: json.encode(product.toMap()),
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        _cachedProducts.add(product);
+      } else {
         throw Exception('Failed to add product');
       }
     } catch (e) {
@@ -63,7 +84,9 @@ class HomeServicesImpl implements HomeServices {
     try {
       final response = await http.delete(Uri.parse('$backendUrl/products/$id'));
 
-      if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        _cachedProducts.removeWhere((product) => product.id == id);
+      } else {
         throw Exception('Failed to delete product');
       }
     } catch (e) {
