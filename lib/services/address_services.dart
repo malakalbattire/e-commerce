@@ -4,6 +4,8 @@ import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 abstract class AddressServices {
   Future<void> addAddress(AddressModel addressModel);
@@ -15,14 +17,41 @@ abstract class AddressServices {
 class AddressServicesImpl implements AddressServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
+  final String backendUrl = 'http://192.168.88.10:3000';
 
   @override
   Future<void> addAddress(AddressModel addressModel) async {
     final currentUser = await authServices.getUser();
-    return await firestore.setData(
-      path: ApiPath.addAddress(currentUser!.uid, addressModel.id),
-      data: addressModel.toMap(),
-    );
+
+    final url = Uri.parse('$backendUrl/addresses');
+
+    final body = {
+      'id': addressModel.id,
+      'firstName': addressModel.firstName,
+      'lastName': addressModel.lastName,
+      'countryName': addressModel.countryName,
+      'cityName': addressModel.cityName,
+      'phoneNumber': addressModel.phoneNumber,
+      'isSelected': addressModel.isSelected,
+      'userId': currentUser!.uid,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 201) {
+        print('Address added successfully: ${response.body}');
+      } else {
+        throw Exception('Failed to add address: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error adding address: $e');
+      throw Exception('Error adding address: $e');
+    }
   }
 
   @override

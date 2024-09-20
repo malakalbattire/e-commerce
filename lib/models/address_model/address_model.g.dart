@@ -14,6 +14,7 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) => AddressModel(
       cityName: json['cityName'] as String,
       phoneNumber: json['phoneNumber'] as String,
       isSelected: json['isSelected'] as bool? ?? false,
+      userId: json['userId'] as String,
     );
 
 Map<String, dynamic> _$AddressModelToJson(AddressModel instance) =>
@@ -25,4 +26,5 @@ Map<String, dynamic> _$AddressModelToJson(AddressModel instance) =>
       'cityName': instance.cityName,
       'phoneNumber': instance.phoneNumber,
       'isSelected': instance.isSelected,
+      'userId': instance.userId,
     };

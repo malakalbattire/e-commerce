@@ -11,6 +11,7 @@ class AddressModel {
   final String cityName;
   final String phoneNumber;
   final bool isSelected;
+  final String userId;
 
   AddressModel({
     required this.id,
@@ -20,7 +21,16 @@ class AddressModel {
     required this.cityName,
     required this.phoneNumber,
     this.isSelected = false,
-  });
+    required this.userId,
+  }) {
+    if (id.isEmpty) throw ArgumentError('id cannot be empty');
+    if (firstName.isEmpty) throw ArgumentError('firstName cannot be empty');
+    if (lastName.isEmpty) throw ArgumentError('lastName cannot be empty');
+    if (countryName.isEmpty) throw ArgumentError('countryName cannot be empty');
+    if (cityName.isEmpty) throw ArgumentError('cityName cannot be empty');
+    if (phoneNumber.isEmpty) throw ArgumentError('phoneNumber cannot be empty');
+    if (userId.isEmpty) throw ArgumentError('userId cannot be empty');
+  }
 
   factory AddressModel.fromJson(Map<String, dynamic> json) =>
       _$AddressModelFromJson(json);
@@ -35,7 +45,8 @@ class AddressModel {
       countryName: map['countryName'] as String,
       cityName: map['cityName'] as String,
       phoneNumber: map['phoneNumber'] as String,
-      isSelected: map['isSelected'] as bool? ?? false,
+      isSelected: (map['isSelected'] as int?) == 1,
+      userId: map['userId'] as String,
     );
   }
 
@@ -47,7 +58,8 @@ class AddressModel {
       'countryName': countryName,
       'cityName': cityName,
       'phoneNumber': phoneNumber,
-      'isSelected': isSelected,
+      'isSelected': isSelected ? 1 : 0,
+      'userId': userId,
     };
   }
 
@@ -59,6 +71,7 @@ class AddressModel {
     String? cityName,
     String? phoneNumber,
     bool? isSelected,
+    String? userId,
   }) {
     return AddressModel(
       id: id ?? this.id,
@@ -68,6 +81,7 @@ class AddressModel {
       cityName: cityName ?? this.cityName,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       isSelected: isSelected ?? this.isSelected,
+      userId: userId ?? this.userId,
     );
   }
 }

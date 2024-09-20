@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
@@ -11,7 +12,7 @@ class AddressProvider with ChangeNotifier {
   late final TextEditingController phoneNumberController;
   late final TextEditingController countryNameController;
   late final TextEditingController cityNameController;
-
+  final userId = FirebaseAuth.instance.currentUser!.uid;
   late final FocusNode lastNameFocusNode;
   late final FocusNode firstNameFocusNode;
   late final FocusNode phoneNumberFocusNode;
@@ -66,6 +67,7 @@ class AddressProvider with ChangeNotifier {
         phoneNumber: phoneNumberController.text,
         countryName: countryNameController.text,
         cityName: cityNameController.text,
+        userId: userId,
       );
 
       try {

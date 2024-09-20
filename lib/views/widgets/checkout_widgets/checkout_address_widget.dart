@@ -68,6 +68,7 @@ class CheckoutAddressWidget extends StatelessWidget {
                 countryName: '',
                 cityName: '',
                 phoneNumber: '',
+                userId: '',
               ),
             );
 
