@@ -10,8 +10,9 @@ PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) => PaymentModel(
       id: json['id'] as String,
       cardNumber: json['cardNumber'] as String,
       expiryDate: json['expiryDate'] as String,
-      cvv: json['cvv'] as String,
-      isDefault: json['isDefault'] as bool? ?? false,
+      cvvCode: json['cvvCode'] as String,
+      userId: json['userId'] as String,
+      isSelected: json['isSelected'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) =>
@@ -19,6 +20,7 @@ Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) =>
       'id': instance.id,
       'cardNumber': instance.cardNumber,
       'expiryDate': instance.expiryDate,
-      'cvv': instance.cvv,
-      'isDefault': instance.isDefault,
+      'cvvCode': instance.cvvCode,
+      'isSelected': instance.isSelected,
+      'userId': instance.userId,
     };

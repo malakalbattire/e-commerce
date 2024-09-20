@@ -49,14 +49,16 @@ class CardPaymentProvider with ChangeNotifier {
   Future<void> submitCard({
     required String cardNumber,
     required String expiryDate,
-    required String cvv,
+    required String cvvCode,
+    required String userId,
     required BuildContext context,
   }) async {
     final payment = PaymentModel(
       id: DateTime.now().toIso8601String(),
       cardNumber: cardNumber,
       expiryDate: expiryDate,
-      cvv: cvv,
+      cvvCode: cvvCode,
+      userId: userId,
     );
 
     await addPayment(payment);
@@ -84,22 +86,6 @@ class CardPaymentProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // Future<void> updatePayment(PaymentModel paymentModel) async {
-  //   try {
-  //     await paymentServices.updatePayment(paymentModel);
-  //     final index =
-  //         _paymentItems.indexWhere((payment) => payment.id == paymentModel.id);
-  //     if (index != -1) {
-  //       _paymentItems[index] = paymentModel;
-  //       notifyListeners();
-  //     }
-  //   } catch (error) {
-  //     _errorMessage = error.toString();
-  //     _state = PaymentState.error;
-  //     notifyListeners();
-  //   }
-  // }
 
   void choosePayment(String paymentMethodId) {
     _selectedPaymentMethodId = paymentMethodId;

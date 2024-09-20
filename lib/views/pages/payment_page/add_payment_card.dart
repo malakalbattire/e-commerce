@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,8 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
   @override
   Widget build(BuildContext context) {
     final cardPaymentProvider = Provider.of<CardPaymentProvider>(context);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final userId = currentUser!.uid;
 
     return ChangeNotifierProvider(
       create: (_) => CardPaymentProvider(),
@@ -129,8 +132,9 @@ class _AddPaymentCardState extends State<AddPaymentCard> {
                         onPressed: () async {
                           await cardPaymentProvider.submitCard(
                               cardNumber: _cardNumberController.text,
-                              cvv: _cvvController.text,
+                              cvvCode: _cvvController.text,
                               expiryDate: _expiryDateController.text,
+                              userId: userId,
                               context: context);
                         },
                         style: ElevatedButton.styleFrom(

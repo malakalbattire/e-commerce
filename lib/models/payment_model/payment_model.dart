@@ -7,15 +7,17 @@ class PaymentModel {
   final String id;
   final String cardNumber;
   final String expiryDate;
-  final String cvv;
-  final bool isDefault;
+  final String cvvCode;
+  final bool isSelected;
+  final String userId;
 
   PaymentModel({
     required this.id,
     required this.cardNumber,
     required this.expiryDate,
-    required this.cvv,
-    this.isDefault = false,
+    required this.cvvCode,
+    required this.userId,
+    this.isSelected = false,
   });
 
   factory PaymentModel.fromJson(Map<String, dynamic> json) =>
@@ -26,10 +28,11 @@ class PaymentModel {
   factory PaymentModel.fromMap(Map<String, dynamic> map, String documentId) {
     return PaymentModel(
       id: documentId,
-      cardNumber: map['cardNumber'] as String,
-      expiryDate: map['expiryDate'] as String,
-      cvv: map['cvv'] as String,
-      isDefault: map['isDefault'] as bool? ?? false,
+      cardNumber: map['cardNumber'] as String? ?? '',
+      expiryDate: map['expiryDate'] as String? ?? '',
+      cvvCode: map['cvvCode'] as String? ?? '',
+      userId: map['userId'] as String? ?? '',
+      isSelected: map['isSelected'] as bool? ?? false,
     );
   }
 
@@ -38,8 +41,9 @@ class PaymentModel {
       'id': id,
       'cardNumber': cardNumber,
       'expiryDate': expiryDate,
-      'cvv': cvv,
-      'isDefault': isDefault,
+      'cvvCode': cvvCode,
+      'isSelected': isSelected,
+      'userId': userId,
     };
   }
 
@@ -47,15 +51,17 @@ class PaymentModel {
     String? id,
     String? cardNumber,
     String? expiryDate,
-    String? cvv,
-    bool? isDefault,
+    String? cvvCode,
+    bool? isSelected,
+    String? userId,
   }) {
     return PaymentModel(
       id: id ?? this.id,
       cardNumber: cardNumber ?? this.cardNumber,
       expiryDate: expiryDate ?? this.expiryDate,
-      cvv: cvv ?? this.cvv,
-      isDefault: isDefault ?? this.isDefault,
+      cvvCode: cvvCode ?? this.cvvCode,
+      userId: userId ?? this.userId,
+      isSelected: isSelected ?? this.isSelected,
     );
   }
 }

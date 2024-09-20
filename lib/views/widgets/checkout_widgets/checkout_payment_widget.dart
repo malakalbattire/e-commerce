@@ -66,8 +66,9 @@ class CheckoutPaymentWidget extends StatelessWidget {
               orElse: () => PaymentModel(
                 id: '',
                 cardNumber: '',
-                cvv: '',
+                cvvCode: '',
                 expiryDate: '',
+                userId: '',
               ),
             );
 
