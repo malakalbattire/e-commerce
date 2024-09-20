@@ -48,7 +48,7 @@ class CategoryProvider with ChangeNotifier {
     try {
       String? imgUrl;
       if (_imageFile != null) {
-        imgUrl = await uploadImage(_imageFile!);
+        imgUrl = await uploadImageToStorage(_imageFile!);
       }
 
       final newCategory = CategoryModel(
@@ -67,17 +67,18 @@ class CategoryProvider with ChangeNotifier {
     }
   }
 
-  Future<String> uploadImage(File image) async {
+  Future<String> uploadImageToStorage(File image) async {
     try {
-      final storageRef = FirebaseStorage.instance.ref().child(
-          'categories/${DateTime.now().millisecondsSinceEpoch.toString()}');
-      final uploadTask = storageRef.putFile(image);
-      final snapshot = await uploadTask.whenComplete(() => {});
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('categories/$fileName');
+
+      UploadTask uploadTask = storageReference.putFile(image);
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+      return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
       print('Error uploading image: $e');
-      return '';
+      throw Exception('Error uploading image: $e');
     }
   }
 
@@ -129,9 +130,9 @@ class CategoryProvider with ChangeNotifier {
     }
   }
 
-  Future<CategoryModel?> getCategoryById(String categoryId) async {
+  Future<CategoryModel?> getProductsByCategory(String category) async {
     try {
-      return await _categoryServices.getCategoryById(categoryId);
+      return await _categoryServices.getCategoryById(category);
     } catch (e) {
       return null;
     }

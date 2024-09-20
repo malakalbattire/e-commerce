@@ -142,3 +142,22 @@ class OrderModel {
     };
   }
 }
+
+// CREATE TABLE orders (
+// id VARCHAR(255) PRIMARY KEY,
+// userId VARCHAR(255) NOT NULL,
+// items JSON NOT NULL,
+// cityName VARCHAR(255) NOT NULL,
+// productIds JSON NOT NULL,
+// addressId VARCHAR(255) NOT NULL,
+// paymentId VARCHAR(255) NOT NULL,
+// countryName VARCHAR(255) NOT NULL,
+// firstName VARCHAR(255) NOT NULL,
+// lastName VARCHAR(255) NOT NULL,
+// phoneNumber VARCHAR(20) NOT NULL,
+// cardNumber VARCHAR(20) NOT NULL,
+// totalAmount DOUBLE NOT NULL,
+// createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+// orderNumber INT NOT NULL,
+// orderStatus JSON
+// );

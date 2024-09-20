@@ -29,8 +29,24 @@ class CategoryModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'name': name,
       'imgUrl': imgUrl,
     };
   }
+
+  CategoryModel copyWith({
+    String? id,
+    String? name,
+    String? imgUrl,
+  }) {
+    return CategoryModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imgUrl: imgUrl ?? this.imgUrl,
+    );
+  }
+
+  bool get hasValidImageUrl => imgUrl.isNotEmpty;
+  bool get hasValidName => name.isNotEmpty;
 }
