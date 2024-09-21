@@ -13,6 +13,7 @@ class AddressProvider with ChangeNotifier {
   late final TextEditingController countryNameController;
   late final TextEditingController cityNameController;
   final userId = FirebaseAuth.instance.currentUser!.uid;
+
   late final FocusNode lastNameFocusNode;
   late final FocusNode firstNameFocusNode;
   late final FocusNode phoneNumberFocusNode;
@@ -96,6 +97,8 @@ class AddressProvider with ChangeNotifier {
       _errorMessage = error.toString();
     }
     notifyListeners();
+
+    print('======userId in provider${userId}=====');
   }
 
   Future<void> addAddress(AddressModel addressModel) async {

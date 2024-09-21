@@ -28,7 +28,6 @@ class PaymentMethodModel {
   PaymentMethodModel copyWith({
     String? id,
     String? cardNumber,
-    String? cardHolderName,
     String? expiryDate,
     String? cvvCode,
     String? imgUrl,
@@ -57,7 +56,9 @@ class PaymentMethodModel {
       imgUrl: map['imgUrl'] ??
           'https://i.pinimg.com/564x/56/65/ac/5665acfeb0668fe3ffdeb3168d3b38a4.jpg',
       name: map['name'] ?? 'Master Card',
-      isSelected: map['isSelected'] ?? false,
+      isSelected: (map['isSelected'] is bool)
+          ? map['isSelected'] as bool
+          : (map['isSelected'] == 1),
       userId: map['userId'] ?? '',
     );
   }
@@ -70,7 +71,7 @@ class PaymentMethodModel {
       'cvvCode': cvvCode,
       'imgUrl': imgUrl,
       'name': name,
-      'isSelected': isSelected,
+      'isSelected': isSelected ? 1 : 0,
       'userId': userId,
     };
   }

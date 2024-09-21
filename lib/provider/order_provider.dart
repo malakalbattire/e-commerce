@@ -102,21 +102,21 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-  Future<AddressModel?> getAddressDetails(String addressId) async {
-    if (_addressCache.containsKey(addressId)) {
-      return _addressCache[addressId];
-    }
-    try {
-      final address = await addressServices.getAddressById(addressId);
-      _addressCache[addressId] = address;
-      return address;
-    } catch (error) {
-      _errorMessage = error.toString();
-      _state = OrderState.error;
-      notifyListeners();
-      return null;
-    }
-  }
+  // Future<AddressModel?> getAddressDetails(String addressId) async {
+  //   if (_addressCache.containsKey(addressId)) {
+  //     return _addressCache[addressId];
+  //   }
+  //   try {
+  //     final address = await addressServices.getAddressById(addressId);
+  //     _addressCache[addressId] = address;
+  //     return address;
+  //   } catch (error) {
+  //     _errorMessage = error.toString();
+  //     _state = OrderState.error;
+  //     notifyListeners();
+  //     return null;
+  //   }
+  // }
 
   Future<void> _updateProductInStock(String productId, int quantity) async {
     try {

@@ -55,6 +55,7 @@ class FavoritesProvider with ChangeNotifier {
       for (var fav in favorites) {
         try {
           updatedFavorites.add(fav);
+          print('Updated favorites: $fav');
         } catch (e) {
           if (kDebugMode) {
             print('Error checking product existence: $e');
@@ -64,7 +65,12 @@ class FavoritesProvider with ChangeNotifier {
 
       _favoritesProducts = updatedFavorites;
       _favItems = updatedFavorites;
-      _state = FavoritesState.loaded;
+      _state = updatedFavorites.isNotEmpty
+          ? FavoritesState.loaded
+          : FavoritesState.error;
+      if (updatedFavorites.isEmpty) {
+        _errorMessage = 'No favorites found.';
+      }
       notifyListeners();
     }, onError: (error) {
       _state = FavoritesState.error;
@@ -137,6 +143,10 @@ class FavoritesProvider with ChangeNotifier {
         print(e);
       }
     }
+  }
+
+  Future<ProductItemModel> getInStockProduct(String productId) {
+    return favServices.getProductDetails(productId);
   }
 
   bool isFavorite(String productId) {

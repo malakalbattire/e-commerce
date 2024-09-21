@@ -11,7 +11,6 @@ abstract class AddressServices {
   Future<void> addAddress(AddressModel addressModel);
   Future<void> removeAddress(String addressId);
   Future<List<AddressModel>> getAddressItems(String userId);
-  Future<AddressModel> getAddressById(String addressId);
 }
 
 class AddressServicesImpl implements AddressServices {
@@ -35,7 +34,7 @@ class AddressServicesImpl implements AddressServices {
       'isSelected': addressModel.isSelected,
       'userId': currentUser!.uid,
     };
-
+    print("userId in services when add cards${currentUser!.uid}");
     try {
       final response = await http.post(
         url,
@@ -51,19 +50,6 @@ class AddressServicesImpl implements AddressServices {
     } catch (e) {
       print('Error adding address: $e');
       throw Exception('Error adding address: $e');
-    }
-  }
-
-  @override
-  Future<AddressModel> getAddressById(String addressId) async {
-    final doc = await FirebaseFirestore.instance
-        .collection('address')
-        .doc(addressId)
-        .get();
-    if (doc.exists) {
-      return AddressModel.fromMap(doc.data()!, doc.id);
-    } else {
-      throw Exception('Address not found');
     }
   }
 

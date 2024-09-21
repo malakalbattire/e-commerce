@@ -21,8 +21,11 @@ class _AddressBookPageState extends State<AddressBookPage> {
       final addressProvider =
           Provider.of<AddressProvider>(context, listen: false);
       final currentUser = FirebaseAuth.instance.currentUser;
-      if (addressProvider.state == AddressState.initial) {
-        addressProvider.loadAddressData(currentUser!.uid);
+      if (currentUser != null) {
+        if (addressProvider.state == AddressState.initial) {
+          addressProvider.loadAddressData(currentUser.uid);
+          print("userid in address book page: ${currentUser.uid}");
+        }
       }
     });
   }

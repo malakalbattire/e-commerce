@@ -32,7 +32,9 @@ class PaymentModel {
       expiryDate: map['expiryDate'] as String? ?? '',
       cvvCode: map['cvvCode'] as String? ?? '',
       userId: map['userId'] as String? ?? '',
-      isSelected: map['isSelected'] as bool? ?? false,
+      isSelected: (map['isSelected'] is bool)
+          ? map['isSelected'] as bool
+          : (map['isSelected'] == 1),
     );
   }
 
@@ -42,7 +44,7 @@ class PaymentModel {
       'cardNumber': cardNumber,
       'expiryDate': expiryDate,
       'cvvCode': cvvCode,
-      'isSelected': isSelected,
+      'isSelected': isSelected ? 1 : 0,
       'userId': userId,
     };
   }

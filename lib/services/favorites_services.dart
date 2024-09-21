@@ -93,11 +93,13 @@ class FavServicesImpl implements FavoritesServices {
       if (response.statusCode == 200) {
         final List<dynamic> favoriteItemsJson =
             json.decode(response.body) as List<dynamic>;
-        print('Decoded favorite items JSON: $favoriteItemsJson');
+        print(
+            'Decoded favorite items JSON====fav serv getFavItems: $favoriteItemsJson');
         return favoriteItemsJson
             .map((json) => FavoriteModel.fromJson(json as Map<String, dynamic>))
             .toList();
       } else {
+        print('Failed to load favorite items');
         throw Exception(
             'Failed to load favorite items: ${response.reasonPhrase}');
       }
@@ -124,7 +126,8 @@ class FavServicesImpl implements FavoritesServices {
         if (response.statusCode == 200) {
           final List<dynamic> favoriteItemsJson =
               json.decode(response.body) as List<dynamic>;
-          print('Decoded favorite items JSON: $favoriteItemsJson');
+          print(
+              '=====Decoded favorite items JSON=====fav serv getFavItemsStream: $favoriteItemsJson');
           return favoriteItemsJson
               .map((json) =>
                   FavoriteModel.fromJson(json as Map<String, dynamic>))
