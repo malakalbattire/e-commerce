@@ -17,7 +17,7 @@ abstract class AddressServices {
 class AddressServicesImpl implements AddressServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
-  final String backendUrl = 'http://192.168.88.10:3000';
+  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<void> addAddress(AddressModel addressModel) async {

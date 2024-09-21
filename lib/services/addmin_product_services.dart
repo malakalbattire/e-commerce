@@ -6,7 +6,7 @@ class AdminProductService {
   AdminProductService._();
   static final instance = AdminProductService._();
 
-  final String baseUrl = 'http://192.168.88.10:3000';
+  final String baseUrl = 'http://192.168.88.5:3000';
 
   Future<void> addProduct({
     required Map<String, dynamic> data,
