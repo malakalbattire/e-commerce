@@ -15,9 +15,9 @@ abstract class FavoritesServices {
 }
 
 class FavServicesImpl implements FavoritesServices {
-  final String backendUrl = 'http://192.168.88.2:3000';
+  final String backendUrl = 'http://192.168.88.5:3000';
   final authServices = AuthServicesImpl();
-
+  @override
   Future<String> getCurrentUserId() async {
     final currentUser = await authServices.getUser();
     if (currentUser == null) {

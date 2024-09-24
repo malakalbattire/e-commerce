@@ -7,11 +7,9 @@ import 'package:provider/provider.dart';
 class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-
     return Scaffold(
-      body: Builder(
-        builder: (context) {
+      body: Consumer<FavoritesProvider>(
+        builder: (context, favoritesProvider, child) {
           switch (favoritesProvider.state) {
             case FavoritesState.loading:
               return const Center(child: CircularProgressIndicator());

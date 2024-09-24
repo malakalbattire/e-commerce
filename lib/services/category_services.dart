@@ -19,7 +19,7 @@ abstract class CategoryServices {
 class CategoryServicesImpl implements CategoryServices {
   final firestore = FirestoreServices.instance;
   //final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String backendUrl = 'http://192.168.88.2:3000';
+  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<void> removeCategory(String categoryId) async {

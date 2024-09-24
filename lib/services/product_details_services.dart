@@ -13,7 +13,7 @@ abstract class ProductDetailsServices {
 
 class ProductDetailsServicesImpl implements ProductDetailsServices {
   final authServices = AuthServicesImpl();
-  final String apiBaseUrl = 'http://192.168.88.2:3000';
+  final String apiBaseUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<ProductItemModel> getProductDetails(String id) async {
