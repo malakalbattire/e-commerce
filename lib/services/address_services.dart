@@ -54,10 +54,33 @@ class AddressServicesImpl implements AddressServices {
 
   @override
   Future<void> removeAddress(String addressId) async {
-    final currentUser = await authServices.getUser();
-    await firestore.deleteData(
-      path: ApiPath.addAddress(currentUser!.uid, addressId),
-    );
+    try {
+      final currentUser = await authServices.getUser();
+      if (currentUser == null) {
+        throw Exception('User not authenticated');
+      }
+      final url = Uri.parse('$backendUrl/addresses/$addressId');
+
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('Address successfully removed.');
+        }
+      } else if (response.statusCode == 404) {
+        if (kDebugMode) {
+          print('Address not found.');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Error removing address: ${response.statusCode}');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error occurred while removing address: $e');
+      }
+    }
   }
 
   @override
