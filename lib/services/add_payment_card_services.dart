@@ -35,10 +35,26 @@ class PaymentServicesImpl implements PaymentServices {
 
   @override
   Future<void> removePayment(String paymentId) async {
-    final currentUser = await authServices.getUser();
-    await firestore.deleteData(
-      path: ApiPath.addPaymentCard(currentUser!.uid, paymentId),
-    );
+    try {
+      final currentUser = await authServices.getUser();
+      if (currentUser == null) {
+        throw Exception('User not authenticated');
+      }
+
+      final url = Uri.parse('$backendUrl/cards/$paymentId');
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        print('Payment card deleted successfully');
+      } else {
+        print('Failed to delete payment card: ${response.body}');
+        throw Exception(
+            'Failed to delete payment card: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error removing payment card: $e');
+      throw Exception('Error removing payment card: $e');
+    }
   }
 
   @override
