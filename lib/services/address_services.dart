@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
@@ -34,7 +33,7 @@ class AddressServicesImpl implements AddressServices {
       'isSelected': addressModel.isSelected,
       'userId': currentUser!.uid,
     };
-    print("userId in services when add cards${currentUser!.uid}");
+    print("userId in services when add cards${currentUser.uid}");
     try {
       final response = await http.post(
         url,

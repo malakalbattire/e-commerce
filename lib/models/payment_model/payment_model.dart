@@ -20,8 +20,16 @@ class PaymentModel {
     this.isSelected = false,
   });
 
-  factory PaymentModel.fromJson(Map<String, dynamic> json) =>
-      _$PaymentModelFromJson(json);
+  factory PaymentModel.fromJson(Map<String, dynamic> json) {
+    return PaymentModel(
+      id: json['id'] as String,
+      cardNumber: json['cardNumber'] as String,
+      expiryDate: json['expiryDate'] as String,
+      cvvCode: json['cvvCode'] as String,
+      userId: json['userId'] as String,
+      isSelected: (json['isSelected'] as int?) == 1, // Convert int to bool
+    );
+  }
 
   Map<String, dynamic> toJson() => _$PaymentModelToJson(this);
 

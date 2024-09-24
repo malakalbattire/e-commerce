@@ -3,9 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +18,7 @@ abstract class CategoryServices {
 
 class CategoryServicesImpl implements CategoryServices {
   final firestore = FirestoreServices.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String backendUrl = 'http://192.168.88.2:3000';
 
   @override
