@@ -62,20 +62,32 @@ class AddressServicesImpl implements AddressServices {
 
   @override
   Future<List<AddressModel>> getAddressItems(String userId) async {
-    final path = ApiPath.addAddressItems(userId);
+    final url = Uri.parse('$backendUrl/addresses/$userId');
 
     try {
-      final addresses = await firestore.getCollection(
-        path: path,
-        builder: (data, documentId) {
-          return AddressModel.fromMap(data, documentId);
-        },
-      );
+      print('Fetching payment cards from: $url');
 
-      return addresses;
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = jsonDecode(response.body);
+        return jsonResponse
+            .map((data) => AddressModel.fromMap(data, data['id']))
+            .toList();
+      } else if (response.statusCode == 404) {
+        if (kDebugMode) {
+          print('No addresses found for userId: $userId');
+        }
+        return [];
+      } else {
+        if (kDebugMode) {
+          print('Error fetching addresses: ${response.statusCode}');
+        }
+        return [];
+      }
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        print('Error occurred while fetching addresses: $e');
       }
       return [];
     }
