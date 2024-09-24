@@ -14,7 +14,7 @@ class FavoritesPage extends StatelessWidget {
         builder: (context) {
           switch (favoritesProvider.state) {
             case FavoritesState.loading:
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             case FavoritesState.error:
               return Center(child: Text(favoritesProvider.errorMessage));
             case FavoritesState.loaded:

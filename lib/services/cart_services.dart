@@ -18,7 +18,7 @@ abstract class CartServices {
 class CartServicesImpl implements CartServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
-  final String backendUrl = 'http://192.168.88.5:3000';
+  final String backendUrl = 'http://192.168.88.2:3000';
 
   @override
   Future<void> addToCart(AddToCartModel addToCartModel) async {

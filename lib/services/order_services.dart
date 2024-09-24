@@ -37,7 +37,7 @@ class OrderServicesImpl implements OrderServices {
 
     // Set up the API endpoint and request body
     final url = Uri.parse(
-        'http://192.168.88.5/orders'); // Replace with your Node.js server URL
+        'http://192.168.88.2/orders'); // Replace with your Node.js server URL
     final Map<String, dynamic> body = {
       'id': order.id,
       'userId': userId, // Use current user's ID

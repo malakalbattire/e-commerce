@@ -16,7 +16,7 @@ abstract class AuthServices {
 
 class AuthServicesImpl implements AuthServices {
   final _firebaseAuth = FirebaseAuth.instance;
-  final String backendUrl = 'http://192.168.88.5:3000';
+  final String backendUrl = 'http://192.168.88.2:3000';
 
   @override
   Future<bool> isAdmin() async {
