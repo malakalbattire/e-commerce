@@ -8,10 +8,7 @@ import 'package:http/http.dart' as http;
 
 abstract class OrderServices {
   Future<void> createOrder(OrderModel order);
-  Future<void> updateOrder(OrderModel order);
-  Future<void> deleteOrder(String orderId);
   Future<List<OrderModel>> getUserOrders(String userId);
-
   Stream<OrderModel> getOrderStatusStream(String userId, String orderId);
 }
 
@@ -61,26 +58,10 @@ class OrderServicesImpl implements OrderServices {
   }
 
   @override
-  Future<void> updateOrder(OrderModel order) async {
-    await firestore.setData(
-      path: ApiPath.createOrder(order.userId, order.id),
-      data: order.toMap(),
-    );
-  }
-
-  @override
   Stream<OrderModel> getOrderStatusStream(String userId, String orderId) {
     return firestore.documentStream(
       path: ApiPath.createOrder(userId, orderId),
       builder: (data, documentId) => OrderModel.fromMap(data),
-    );
-  }
-
-  @override
-  Future<void> deleteOrder(String orderId) async {
-    final currentUser = await authServices.getUser();
-    await firestore.deleteData(
-      path: ApiPath.createOrder(currentUser!.uid, orderId),
     );
   }
 

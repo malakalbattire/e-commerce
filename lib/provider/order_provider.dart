@@ -2,11 +2,15 @@ import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/order_services.dart';
 import 'package:e_commerce_app_flutter/provider/cart_provider.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 enum OrderState { initial, loading, loaded, error }
 
@@ -19,7 +23,6 @@ class OrderProvider with ChangeNotifier {
   List<OrderModel> _orders = [];
   OrderState _state = OrderState.initial;
   String _errorMessage = '';
-  Map<String, AddressModel> _addressCache = {};
 
   List<OrderModel> get orders => _orders;
   OrderState get state => _state;
@@ -102,22 +105,6 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-  // Future<AddressModel?> getAddressDetails(String addressId) async {
-  //   if (_addressCache.containsKey(addressId)) {
-  //     return _addressCache[addressId];
-  //   }
-  //   try {
-  //     final address = await addressServices.getAddressById(addressId);
-  //     _addressCache[addressId] = address;
-  //     return address;
-  //   } catch (error) {
-  //     _errorMessage = error.toString();
-  //     _state = OrderState.error;
-  //     notifyListeners();
-  //     return null;
-  //   }
-  // }
-
   Future<void> _updateProductInStock(String productId, int quantity) async {
     try {
       final product = await productServices.getProductDetails(productId);
@@ -154,17 +141,5 @@ class OrderProvider with ChangeNotifier {
     _orders = [];
     _state = OrderState.initial;
     notifyListeners();
-  }
-
-  Future<void> deleteOrder(String orderId) async {
-    try {
-      await orderServices.deleteOrder(orderId);
-      _orders.removeWhere((order) => order.id == orderId);
-      notifyListeners();
-    } catch (error) {
-      _errorMessage = error.toString();
-      _state = OrderState.error;
-      notifyListeners();
-    }
   }
 }

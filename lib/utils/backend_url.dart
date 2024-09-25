@@ -1,3 +1,3 @@
 class BackendUrl {
-  static String url = 'http://192.168.88.4:3000';
+  static String url = 'http://192.168.88.10:3000';
 }
