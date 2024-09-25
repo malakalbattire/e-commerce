@@ -88,7 +88,7 @@ class OrderServicesImpl implements OrderServices {
   Future<List<OrderModel>> getUserOrders(String userId) async {
     try {
       final response =
-          await http.get(Uri.parse('${BackendUrl.url}/orders/$userId'));
+          await http.get(Uri.parse('${BackendUrl.url}/orders?userId=$userId'));
 
       if (response.statusCode == 200) {
         final List<dynamic> ordersData = json.decode(response.body);

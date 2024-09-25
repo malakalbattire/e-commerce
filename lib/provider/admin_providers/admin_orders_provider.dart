@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AdminOrdersProvider with ChangeNotifier {
   Stream<List<OrderModel>> get ordersStream => _ordersStreamController.stream;
@@ -18,82 +21,74 @@ class AdminOrdersProvider with ChangeNotifier {
   AdminOrdersProvider() {
     _initializeOrdersStream();
   }
+  void _initializeOrdersStream() async {
+    final baseUrl = '${BackendUrl.url}/orders';
 
-  void _initializeOrdersStream() {
-    FirebaseFirestore.instance
-        .collection('users')
-        .snapshots()
-        .listen((userSnapshot) {
-      final Map<String, OrderModel> ordersMap = {};
+    try {
+      final response = await http.get(Uri.parse(baseUrl));
 
-      for (var userDoc in userSnapshot.docs) {
-        String userId = userDoc.id;
+      if (response.statusCode == 200) {
+        final List<dynamic> ordersData = json.decode(response.body);
 
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .collection('orders')
-            .snapshots()
-            .listen((orderSnapshot) {
-          for (var orderDoc in orderSnapshot.docs) {
-            var orderData = orderDoc.data() as Map<String, dynamic>?;
+        final Map<String, OrderModel> ordersMap = {};
 
-            if (orderData != null) {
-              var itemsData = orderData['items'] as List<dynamic>?;
+        for (var orderData in ordersData) {
+          var itemsData = orderData['items'] as List<dynamic>?;
 
-              List<OrderItem> items = itemsData != null
-                  ? itemsData.map((item) {
-                      return OrderItem.fromMap(item as Map<String, dynamic>);
-                    }).toList()
-                  : [];
+          List<OrderItem> items = itemsData != null
+              ? itemsData.map((item) {
+                  return OrderItem.fromMap(item as Map<String, dynamic>);
+                }).toList()
+              : [];
 
-              var statusData = orderData['orderStatus'];
-              List<OrderStatus> orderStatus = [];
-              if (statusData is List) {
-                orderStatus = statusData
-                    .map((status) => OrderStatus.values.firstWhere(
-                          (e) => e.name == status,
-                          orElse: () => OrderStatus.waitingForConfirmation,
-                        ))
-                    .toList();
-              } else {
-                orderStatus = [OrderStatus.waitingForConfirmation];
-              }
-
-              var order = OrderModel(
-                id: orderDoc.id,
-                userId: userId,
-                items: items,
-                cityName: orderData['cityName'] as String? ?? '',
-                productIds: List<String>.from(
-                    orderData['productIds'] as List<dynamic>? ?? []),
-                addressId: orderData['addressId'] as String? ?? '',
-                paymentId: orderData['paymentId'] as String? ?? '',
-                countryName: orderData['countryName'] as String? ?? '',
-                firstName: orderData['firstName'] as String? ?? '',
-                lastName: orderData['lastName'] as String? ?? '',
-                phoneNumber: orderData['phoneNumber'] as String? ?? '',
-                cardNumber: orderData['cardNumber'] as String? ?? '',
-                totalAmount:
-                    (orderData['totalAmount'] as num?)?.toDouble() ?? 0.0,
-                createdAt: (orderData['createdAt'] as Timestamp?)?.toDate() ??
-                    DateTime.now(),
-                orderNumber: orderData['orderNumber'] as int? ?? 0,
-                orderStatus: orderStatus,
-              );
-
-              ordersMap[order.id] = order;
-
-              if (orderStatus.isNotEmpty) {
-                _orderStatusStreamController.add({order.id: orderStatus.last});
-              }
-            }
+          var statusData = orderData['orderStatus'];
+          List<OrderStatus> orderStatus = [];
+          if (statusData is List) {
+            orderStatus = statusData
+                .map((status) => OrderStatus.values.firstWhere(
+                      (e) => e.name == status,
+                      orElse: () => OrderStatus.waitingForConfirmation,
+                    ))
+                .toList();
+          } else {
+            print("can not get orders");
+            orderStatus = [OrderStatus.waitingForConfirmation];
           }
 
-          _ordersStreamController.add(ordersMap.values.toList());
-        });
+          var order = OrderModel(
+            id: orderData['id'].toString(),
+            userId: orderData['userId'].toString(),
+            items: items,
+            cityName: orderData['cityName'] as String? ?? '',
+            productIds: List<String>.from(orderData['productIds'] ?? []),
+            addressId: orderData['addressId'] as String? ?? '',
+            paymentId: orderData['paymentId'] as String? ?? '',
+            countryName: orderData['countryName'] as String? ?? '',
+            firstName: orderData['firstName'] as String? ?? '',
+            lastName: orderData['lastName'] as String? ?? '',
+            phoneNumber: orderData['phoneNumber'] as String? ?? '',
+            cardNumber: orderData['cardNumber'] as String? ?? '',
+            totalAmount: (orderData['totalAmount'] as num?)?.toDouble() ?? 0.0,
+            createdAt: DateTime.parse(
+                orderData['createdAt'] ?? DateTime.now().toString()),
+            orderNumber: orderData['orderNumber'] as int? ?? 0,
+            orderStatus: orderStatus,
+          );
+
+          ordersMap[order.id] = order;
+
+          if (orderStatus.isNotEmpty) {
+            _orderStatusStreamController.add({order.id: orderStatus.last});
+          }
+        }
+
+        _ordersStreamController.add(ordersMap.values.toList());
+      } else {
+        throw Exception('Failed to load orders: ${response.body}');
       }
-    });
+    } catch (e) {
+      print('Error fetching orders: $e');
+    }
   }
 
   Future<void> updateOrderStatus(String orderId, OrderStatus newStatus) async {
