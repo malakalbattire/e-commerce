@@ -1,7 +1,7 @@
 import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -14,11 +14,10 @@ abstract class PaymentServices {
 class PaymentServicesImpl implements PaymentServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
-  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<void> addPayment(PaymentModel paymentModel) async {
-    final url = Uri.parse('$backendUrl/cards');
+    final url = Uri.parse('${BackendUrl.url}/cards');
     final body = json.encode(paymentModel.toMap());
     print("Sending request to $url with body: $body");
 
@@ -41,7 +40,7 @@ class PaymentServicesImpl implements PaymentServices {
         throw Exception('User not authenticated');
       }
 
-      final url = Uri.parse('$backendUrl/cards/$paymentId');
+      final url = Uri.parse('${BackendUrl.url}/cards/$paymentId');
       final response = await http.delete(url);
 
       if (response.statusCode == 200) {
@@ -60,7 +59,7 @@ class PaymentServicesImpl implements PaymentServices {
   @override
   Future<List<PaymentModel>> getPaymentItems(String userId) async {
     try {
-      final url = Uri.parse('$backendUrl/cards/$userId');
+      final url = Uri.parse('${BackendUrl.url}/cards/$userId');
       print('Fetching payment cards from: $url');
 
       final response = await http.get(url);

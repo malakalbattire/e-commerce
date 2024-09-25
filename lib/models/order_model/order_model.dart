@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -111,7 +110,7 @@ class OrderModel {
       phoneNumber: map['phoneNumber'] as String,
       cardNumber: map['cardNumber'] as String,
       totalAmount: (map['totalAmount'] as num).toDouble(),
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      createdAt: DateTime.parse(map['createdAt'] as String),
       orderNumber: map['orderNumber'] as int,
       orderStatus: map['orderStatus'] != null
           ? List<OrderStatus>.from((map['orderStatus'] as List<dynamic>).map(

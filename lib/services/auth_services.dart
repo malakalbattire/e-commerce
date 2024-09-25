@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
@@ -16,7 +17,6 @@ abstract class AuthServices {
 
 class AuthServicesImpl implements AuthServices {
   final _firebaseAuth = FirebaseAuth.instance;
-  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<bool> isAdmin() async {
@@ -25,7 +25,7 @@ class AuthServicesImpl implements AuthServices {
 
     try {
       final response =
-          await http.get(Uri.parse('$backendUrl/users/${user.uid}'));
+          await http.get(Uri.parse('${BackendUrl.url}/users/${user.uid}'));
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -78,7 +78,7 @@ class AuthServicesImpl implements AuthServices {
         };
 
         final response = await http.post(
-          Uri.parse('$backendUrl/users'),
+          Uri.parse('${BackendUrl.url}/users'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(currentUserData),
         );
@@ -115,13 +115,12 @@ class AuthServicesImpl implements AuthServices {
   }
 
   @override
-  @override
   Stream<String?> usernameStream() {
     return _firebaseAuth.authStateChanges().asyncMap((User? user) async {
       if (user != null) {
         try {
           final response =
-              await http.get(Uri.parse('$backendUrl/users/${user.uid}'));
+              await http.get(Uri.parse('${BackendUrl.url}/users/${user.uid}'));
 
           print('Response status: ${response.statusCode}');
           print('Response body: ${response.body}');
@@ -155,7 +154,7 @@ class AuthServicesImpl implements AuthServices {
     final user = _firebaseAuth.currentUser;
     if (user != null) {
       final response =
-          await http.get(Uri.parse('$backendUrl/users/${user.uid}'));
+          await http.get(Uri.parse('${BackendUrl.url}/users/${user.uid}'));
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         return userData['username'] as String?;

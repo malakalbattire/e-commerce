@@ -33,8 +33,8 @@ class CheckoutPlaceOrderButton extends StatelessWidget {
         onPressed: orderProvider.state == OrderState.loading
             ? null
             : () async {
-                if ( //addressProvider.selectedAddress == null ||
-                    //  paymentProvider.selectedPaymentMethodId == null ||
+                if (addressProvider.selectedAddress == null ||
+                    paymentProvider.selectedPaymentMethodId == null ||
                     cartProvider.cartItemCount == 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

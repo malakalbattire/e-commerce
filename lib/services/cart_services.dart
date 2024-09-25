@@ -1,6 +1,7 @@
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -18,11 +19,10 @@ abstract class CartServices {
 class CartServicesImpl implements CartServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
-  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<void> addToCart(AddToCartModel addToCartModel) async {
-    final url = Uri.parse('$backendUrl/cart');
+    final url = Uri.parse('${BackendUrl.url}/cart');
     final body = json.encode(addToCartModel.toMap());
     print("Sending request to $url with body: $body");
 
@@ -48,7 +48,7 @@ class CartServicesImpl implements CartServices {
       }
 
       final userId = currentUser.uid;
-      final url = Uri.parse('$backendUrl/cart/$userId');
+      final url = Uri.parse('${BackendUrl.url}/cart/$userId');
 
       print('Fetching cart items from: $url');
 
@@ -77,7 +77,7 @@ class CartServicesImpl implements CartServices {
   Stream<List<AddToCartModel>> getCartItemsStream(String userId) {
     return Stream.periodic(Duration(seconds: 10), (_) async {
       try {
-        final url = Uri.parse('$backendUrl/cart/$userId');
+        final url = Uri.parse('${BackendUrl.url}/cart/$userId');
 
         if (url == null) {
           throw Exception('Constructed URL is null');
@@ -113,7 +113,7 @@ class CartServicesImpl implements CartServices {
         throw Exception('No user is currently logged in');
       }
 
-      final url = Uri.parse('$backendUrl/cart/$id');
+      final url = Uri.parse('${BackendUrl.url}/cart/$id');
 
       final response = await http.delete(url);
 
@@ -134,7 +134,7 @@ class CartServicesImpl implements CartServices {
 
     try {
       final response = await http.delete(
-        Uri.parse('$backendUrl/cart/$userId/clear'),
+        Uri.parse('${BackendUrl.url}/cart/$userId/clear'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -157,7 +157,7 @@ class CartServicesImpl implements CartServices {
     print("======${id}=======");
     try {
       final response = await http.put(
-        Uri.parse('$backendUrl/cart/$id/increment'),
+        Uri.parse('${BackendUrl.url}/cart/$id/increment'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -192,7 +192,7 @@ class CartServicesImpl implements CartServices {
     print("======${id}=======");
     try {
       final response = await http.put(
-        Uri.parse('$backendUrl/cart/$id/decrement'),
+        Uri.parse('${BackendUrl.url}/cart/$id/decrement'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

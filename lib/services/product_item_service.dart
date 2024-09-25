@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ProductItemService {
@@ -12,12 +13,10 @@ abstract class ProductItemService {
 }
 
 class ProductItemServiceImpl implements ProductItemService {
-  final String backendUrl = 'http://192.168.88.5:3000';
-
   Future<Map<String, dynamic>> _fetchProductData(String productId) async {
     try {
       final response =
-          await http.get(Uri.parse('$backendUrl/products/$productId'));
+          await http.get(Uri.parse('${BackendUrl.url}/products/$productId'));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -76,7 +75,7 @@ class ProductItemServiceImpl implements ProductItemService {
   Future<void> deleteProduct(String productId) async {
     try {
       final response =
-          await http.delete(Uri.parse('$backendUrl/products/$productId'));
+          await http.delete(Uri.parse('${BackendUrl.url}/products/$productId'));
 
       if (response.statusCode == 200) {
         print('Product deleted successfully');

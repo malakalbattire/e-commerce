@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
@@ -15,7 +16,6 @@ abstract class FavoritesServices {
 }
 
 class FavServicesImpl implements FavoritesServices {
-  final String backendUrl = 'http://192.168.88.5:3000';
   final authServices = AuthServicesImpl();
   @override
   Future<String> getCurrentUserId() async {
@@ -31,7 +31,7 @@ class FavServicesImpl implements FavoritesServices {
     final userId = await getCurrentUserId();
 
     final response = await http.post(
-      Uri.parse('$backendUrl/favorites'),
+      Uri.parse('${BackendUrl.url}/favorites'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'id': addToFavModel.id,
@@ -57,7 +57,7 @@ class FavServicesImpl implements FavoritesServices {
   Future<void> removeFromFav(String productId) async {
     final userId = await getCurrentUserId();
     final response = await http.post(
-      Uri.parse('$backendUrl/favorites/remove'),
+      Uri.parse('${BackendUrl.url}/favorites/remove'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'user_id': userId, 'product_id': productId}),
     );
@@ -71,7 +71,7 @@ class FavServicesImpl implements FavoritesServices {
 
   @override
   Future<ProductItemModel> getProductDetails(String id) async {
-    final response = await http.get(Uri.parse('$backendUrl/products/$id'));
+    final response = await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return ProductItemModel.fromJson(data);
@@ -83,7 +83,7 @@ class FavServicesImpl implements FavoritesServices {
   @override
   Future<List<FavoriteModel>> getFavItems(String userId) async {
     try {
-      final url = Uri.parse('$backendUrl/favorites/$userId');
+      final url = Uri.parse('${BackendUrl.url}/favorites/$userId');
       print('Fetching favorite items from: $url');
 
       final response = await http.get(url);
@@ -113,7 +113,7 @@ class FavServicesImpl implements FavoritesServices {
   Stream<List<FavoriteModel>> getFavItemsStream(String userId) {
     return Stream.periodic(Duration(seconds: 30), (_) async {
       try {
-        final url = Uri.parse('$backendUrl/favorites/$userId');
+        final url = Uri.parse('${BackendUrl.url}/favorites/$userId');
 
         if (url == null) {
           throw Exception('Constructed URL is null');
@@ -148,7 +148,7 @@ class FavServicesImpl implements FavoritesServices {
     return Stream.periodic(Duration(seconds: 30), (_) async {
       final List<ProductItemModel> products = [];
       for (String id in favoriteIds) {
-        final response = await http.get(Uri.parse('$backendUrl/products/$id'));
+        final response = await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           products.add(ProductItemModel.fromJson(data));

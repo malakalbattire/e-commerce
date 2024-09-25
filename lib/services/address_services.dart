@@ -1,7 +1,7 @@
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -15,13 +15,12 @@ abstract class AddressServices {
 class AddressServicesImpl implements AddressServices {
   final firestore = FirestoreServices.instance;
   final authServices = AuthServicesImpl();
-  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<void> addAddress(AddressModel addressModel) async {
     final currentUser = await authServices.getUser();
 
-    final url = Uri.parse('$backendUrl/addresses');
+    final url = Uri.parse('${BackendUrl.url}/addresses');
 
     final body = {
       'id': addressModel.id,
@@ -59,7 +58,7 @@ class AddressServicesImpl implements AddressServices {
       if (currentUser == null) {
         throw Exception('User not authenticated');
       }
-      final url = Uri.parse('$backendUrl/addresses/$addressId');
+      final url = Uri.parse('${BackendUrl.url}/addresses/$addressId');
 
       final response = await http.delete(url);
 
@@ -85,7 +84,7 @@ class AddressServicesImpl implements AddressServices {
 
   @override
   Future<List<AddressModel>> getAddressItems(String userId) async {
-    final url = Uri.parse('$backendUrl/addresses/$userId');
+    final url = Uri.parse('${BackendUrl.url}/addresses/$userId');
 
     try {
       print('Fetching payment cards from: $url');

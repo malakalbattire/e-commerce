@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,13 +11,11 @@ abstract class AddProductServices {
 }
 
 class AddProductServicesImpl implements AddProductServices {
-  final String backendUrl = 'http://192.168.88.5:3000';
-
   @override
   Future<void> addProduct(AddProductModel productModel) async {
     try {
       final response = await http.post(
-        Uri.parse('$backendUrl/products'),
+        Uri.parse('${BackendUrl.url}/products'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(productModel.toMap()),
       );

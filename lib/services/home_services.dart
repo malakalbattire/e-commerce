@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -10,7 +11,6 @@ abstract class HomeServices {
 }
 
 class HomeServicesImpl implements HomeServices {
-  final String backendUrl = 'http://192.168.88.5:3000';
   List<ProductItemModel> _cachedProducts = [];
   bool _isFetching = false;
 
@@ -22,7 +22,7 @@ class HomeServicesImpl implements HomeServices {
 
     try {
       _isFetching = true;
-      final response = await http.get(Uri.parse('$backendUrl/products'));
+      final response = await http.get(Uri.parse('${BackendUrl.url}/products'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
@@ -61,7 +61,7 @@ class HomeServicesImpl implements HomeServices {
   Future<void> addProduct(ProductItemModel product) async {
     try {
       final response = await http.post(
-        Uri.parse('$backendUrl/products'),
+        Uri.parse('${BackendUrl.url}/products'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -82,7 +82,8 @@ class HomeServicesImpl implements HomeServices {
   @override
   Future<void> deleteProduct(String id) async {
     try {
-      final response = await http.delete(Uri.parse('$backendUrl/products/$id'));
+      final response =
+          await http.delete(Uri.parse('${BackendUrl.url}/products/$id'));
 
       if (response.statusCode == 200) {
         _cachedProducts.removeWhere((product) => product.id == id);

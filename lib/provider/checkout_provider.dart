@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/services/cart_services.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
@@ -8,6 +9,7 @@ enum CheckoutState { initial, loading, success, error }
 
 class CheckoutProvider with ChangeNotifier {
   final CheckoutServices _checkoutServices = CheckoutServicesImpl();
+  final CartServicesImpl cartServices = CartServicesImpl();
 
   List<AddToCartModel> _cartItems = [];
   List<AddressModel> _addressItems = [];
@@ -27,7 +29,7 @@ class CheckoutProvider with ChangeNotifier {
   Future<void> loadCartItems() async {
     _setState(CheckoutState.loading);
     try {
-      _cartItems = await _checkoutServices.getCartItems();
+      _cartItems = await cartServices.getCartItems();
       _setState(CheckoutState.success);
     } catch (e) {
       _setState(CheckoutState.error);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ProductDetailsServices {
@@ -13,11 +14,11 @@ abstract class ProductDetailsServices {
 
 class ProductDetailsServicesImpl implements ProductDetailsServices {
   final authServices = AuthServicesImpl();
-  final String apiBaseUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<ProductItemModel> getProductDetails(String id) async {
-    final response = await http.get(Uri.parse('$apiBaseUrl/products/$id'));
+    final response =
+        await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -30,7 +31,7 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
   @override
   Stream<List<ProductSize>> getProductSizes(String productId) async* {
     final response =
-        await http.get(Uri.parse('$apiBaseUrl/products/$productId'));
+        await http.get(Uri.parse('${BackendUrl.url}/products/$productId'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -47,7 +48,7 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
   @override
   Future<void> updateProductStock(String productId, int newStock) async {
     final response = await http.put(
-      Uri.parse('$apiBaseUrl/products/$productId'),
+      Uri.parse('${BackendUrl.url}/products/$productId'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'inStock': newStock}),
     );
@@ -61,7 +62,7 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
   Future<void> updateProductDetails(
       String productId, Map<String, dynamic> updatedFields) async {
     final response = await http.put(
-      Uri.parse('$apiBaseUrl/products/$productId'),
+      Uri.parse('${BackendUrl.url}/products/$productId'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(updatedFields),
     );

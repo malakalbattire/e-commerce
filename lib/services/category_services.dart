@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -18,12 +18,10 @@ abstract class CategoryServices {
 
 class CategoryServicesImpl implements CategoryServices {
   final firestore = FirestoreServices.instance;
-  //final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String backendUrl = 'http://192.168.88.5:3000';
 
   @override
   Future<void> removeCategory(String categoryId) async {
-    final url = Uri.parse('$backendUrl/categories/$categoryId');
+    final url = Uri.parse('${BackendUrl.url}/categories/$categoryId');
 
     final response = await http.delete(url);
 
@@ -41,8 +39,8 @@ class CategoryServicesImpl implements CategoryServices {
   Future<List<ProductItemModel>> getProductsByCategory(String category) async {
     print("${category} category name ==========");
 
-    final response =
-        await http.get(Uri.parse('$backendUrl/products?category=$category'));
+    final response = await http
+        .get(Uri.parse('${BackendUrl.url}/products?category=$category'));
     if (response.statusCode == 200) {
       final List<dynamic> productData = json.decode(response.body);
       if (productData.isEmpty) {
@@ -58,7 +56,7 @@ class CategoryServicesImpl implements CategoryServices {
 
   @override
   Future<void> addCategory(CategoryModel categoryModel) async {
-    final url = Uri.parse('$backendUrl/categories');
+    final url = Uri.parse('${BackendUrl.url}/categories');
 
     final updatedCategoryModel = categoryModel.copyWith(
       imgUrl: categoryModel.imgUrl.isNotEmpty
@@ -101,7 +99,8 @@ class CategoryServicesImpl implements CategoryServices {
   @override
   Future<List<CategoryModel>> getCategoryItems() async {
     try {
-      final response = await http.get(Uri.parse('$backendUrl/categories'));
+      final response =
+          await http.get(Uri.parse('${BackendUrl.url}/categories'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -119,7 +118,7 @@ class CategoryServicesImpl implements CategoryServices {
   Future<CategoryModel> getCategoryById(String categoryId) async {
     try {
       final response =
-          await http.get(Uri.parse('$backendUrl/categories/$categoryId'));
+          await http.get(Uri.parse('${BackendUrl.url}/categories/$categoryId'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

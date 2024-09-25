@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -6,12 +7,10 @@ class AdminProductService {
   AdminProductService._();
   static final instance = AdminProductService._();
 
-  final String baseUrl = 'http://192.168.88.5:3000';
-
   Future<void> addProduct({
     required Map<String, dynamic> data,
   }) async {
-    final url = Uri.parse('$baseUrl/products');
+    final url = Uri.parse('${BackendUrl.url}/products');
 
     debugPrint('Adding product: $data');
     final response = await http.post(
@@ -31,7 +30,7 @@ class AdminProductService {
     required String documentId,
     required Map<String, dynamic> data,
   }) async {
-    final url = Uri.parse('$baseUrl/products/$documentId');
+    final url = Uri.parse('${BackendUrl.url}/products/$documentId');
 
     debugPrint('Updating product: $data');
     final response = await http.put(
@@ -50,7 +49,7 @@ class AdminProductService {
   Future<void> deleteProduct({
     required String documentId,
   }) async {
-    final url = Uri.parse('$baseUrl/products/$documentId');
+    final url = Uri.parse('${BackendUrl.url}/products/$documentId');
 
     debugPrint('Deleting product with id: $documentId');
     final response = await http.delete(
