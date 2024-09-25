@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:flutter/material.dart';
@@ -92,55 +91,28 @@ class AdminOrdersProvider with ChangeNotifier {
   }
 
   Future<void> updateOrderStatus(String orderId, OrderStatus newStatus) async {
+    final url = Uri.parse('${BackendUrl.url}/orders/$orderId/orderStatus');
     try {
-      final usersCollection = FirebaseFirestore.instance.collection('users');
-      final userDocs = await usersCollection.get();
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'orderStatus': [newStatus.name],
+        }),
+      );
 
-      for (var userDoc in userDocs.docs) {
-        final userId = userDoc.id;
-        final ordersCollection =
-            usersCollection.doc(userId).collection('orders');
-        final orderDoc = await ordersCollection.doc(orderId).get();
-
-        if (orderDoc.exists) {
-          final currentData = orderDoc.data();
-          if (currentData != null && currentData['orderStatus'] is List) {
-            final List<dynamic> statusList = currentData['orderStatus'];
-            if (statusList.isNotEmpty) {
-              statusList[statusList.length - 1] = newStatus.name;
-            } else {
-              statusList.add(newStatus.name);
-            }
-            await orderDoc.reference.update({
-              'orderStatus': statusList,
-            });
-
-            _orderStatusStreamController.add({orderId: newStatus});
-          }
-        }
+      if (response.statusCode == 200) {
+        print('Order status updated successfully.');
+      } else if (response.statusCode == 404) {
+        print('Order not found.');
+      } else {
+        print('Failed to update order status: ${response.body}');
       }
     } catch (error) {
-      print('Failed to update order status: $error');
+      print('Error updating order status: $error');
     }
-  }
-
-  Stream<OrderStatus> getOrderStatusStream(String orderId) {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(orderId)
-        .snapshots()
-        .map((snapshot) {
-      final data = snapshot.data();
-      if (data != null && data['orderStatus'] is List) {
-        final statusList = data['orderStatus'] as List;
-        return OrderStatus.values.firstWhere(
-          (e) => e.name == statusList.last,
-          orElse: () => OrderStatus.waitingForConfirmation,
-        );
-      } else {
-        return OrderStatus.waitingForConfirmation;
-      }
-    });
   }
 
   String getOrderStatusText(OrderStatus status) {

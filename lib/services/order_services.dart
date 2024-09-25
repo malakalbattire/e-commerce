@@ -1,7 +1,7 @@
+import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
-import 'package:e_commerce_app_flutter/utils/api_path.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -58,11 +58,65 @@ class OrderServicesImpl implements OrderServices {
   }
 
   @override
-  Stream<OrderModel> getOrderStatusStream(String userId, String orderId) {
-    return firestore.documentStream(
-      path: ApiPath.createOrder(userId, orderId),
-      builder: (data, documentId) => OrderModel.fromMap(data),
-    );
+  Stream<OrderModel> getOrderStatusStream(
+      String userId, String orderId) async* {
+    final url = Uri.parse('${BackendUrl.url}/orders/$orderId/status');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        yield OrderModel(
+          id: data['id'] ?? '',
+          userId: data['userId'] ?? '',
+          items: (data['items'] as List<dynamic>? ?? [])
+              .map((item) => OrderItem.fromMap(item as Map<String, dynamic>))
+              .toList(),
+          cityName: data['cityName'] ?? '',
+          productIds: List<String>.from(data['productIds'] ?? []),
+          addressId: data['addressId'] ?? '',
+          paymentId: data['paymentId'] ?? '',
+          countryName: data['countryName'] ?? '',
+          firstName: data['firstName'] ?? '',
+          lastName: data['lastName'] ?? '',
+          phoneNumber: data['phoneNumber'] ?? '',
+          cardNumber: data['cardNumber'] ?? '',
+          totalAmount: (data['totalAmount'] as num?)?.toDouble() ?? 0.0,
+          createdAt:
+              DateTime.tryParse(data['createdAt'] ?? '') ?? DateTime.now(),
+          orderNumber: data['orderNumber'] ?? 0,
+          orderStatus: (data['orderStatus'] as List<dynamic>? ?? [])
+              .map((status) => OrderStatus.values.firstWhere(
+                  (e) => e.toString().split('.').last == status,
+                  orElse: () => OrderStatus.waitingForConfirmation))
+              .toList(),
+        );
+      } else {
+        throw Exception('Failed to fetch order status: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching order status: $e');
+      yield OrderModel(
+        id: '',
+        userId: '',
+        items: [],
+        cityName: '',
+        productIds: [],
+        addressId: '',
+        paymentId: '',
+        countryName: '',
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        cardNumber: '',
+        totalAmount: 0,
+        createdAt: DateTime.now(),
+        orderNumber: 0,
+        orderStatus: [OrderStatus.waitingForConfirmation],
+      );
+    }
   }
 
   @override

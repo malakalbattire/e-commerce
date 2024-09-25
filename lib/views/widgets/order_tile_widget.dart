@@ -21,9 +21,10 @@ class OrderTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Order Number (${order.orderNumber})'),
-            StreamBuilder<OrderModel>(
-              stream: Provider.of<OrderProvider>(context)
-                  .listenToOrderStatus(order.userId, order.id),
+            FutureBuilder<OrderModel>(
+              future: Provider.of<OrderProvider>(context)
+                  .listenToOrderStatus(order.userId, order.id)
+                  ?.first,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Text('Order Status: Loading...');
