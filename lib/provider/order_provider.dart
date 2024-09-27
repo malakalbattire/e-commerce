@@ -87,25 +87,25 @@ class OrderProvider with ChangeNotifier {
 
       await orderServices.createOrder(newOrder);
 
-      for (var cartItem in cartProvider.cartItems) {
-        await _updateProductInStock(cartItem.product.id, cartItem.quantity);
-      }
+      for (var orderItem in orderItems) {
+        final product =
+            await productServices.getProductDetails(orderItem.productId);
 
+        final updatedStock = product.inStock - orderItem.quantity;
+
+        final updatedProduct = {
+          'name': product.name,
+          'price': product.price,
+          'description': product.description,
+          'inStock': updatedStock,
+        };
+
+        await productServices.updateProductDetails(
+            orderItem.productId, updatedProduct);
+      }
       _orders.add(newOrder);
       _state = OrderState.loaded;
       notifyListeners();
-    } catch (error) {
-      _errorMessage = error.toString();
-      _state = OrderState.error;
-      notifyListeners();
-    }
-  }
-
-  Future<void> _updateProductInStock(String productId, int quantity) async {
-    try {
-      final product = await productServices.getProductDetails(productId);
-      final updatedStock = product.inStock - quantity;
-      await productServices.updateProductStock(productId, updatedStock);
     } catch (error) {
       _errorMessage = error.toString();
       _state = OrderState.error;

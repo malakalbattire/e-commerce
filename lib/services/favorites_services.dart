@@ -71,7 +71,8 @@ class FavServicesImpl implements FavoritesServices {
 
   @override
   Future<ProductItemModel> getProductDetails(String id) async {
-    final response = await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
+    final response =
+        await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return ProductItemModel.fromJson(data);
@@ -148,7 +149,8 @@ class FavServicesImpl implements FavoritesServices {
     return Stream.periodic(Duration(seconds: 30), (_) async {
       final List<ProductItemModel> products = [];
       for (String id in favoriteIds) {
-        final response = await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
+        final response =
+            await http.get(Uri.parse('${BackendUrl.url}/products/$id'));
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           products.add(ProductItemModel.fromJson(data));

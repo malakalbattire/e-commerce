@@ -129,6 +129,7 @@ class CartServicesImpl implements CartServices {
     }
   }
 
+  @override
   Future<void> clearCart() async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
