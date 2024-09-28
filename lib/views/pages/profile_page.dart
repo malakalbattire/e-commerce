@@ -20,8 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider =
           Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider
-          .handleAuthState(); // Check the auth state when the page loads
+      profileProvider.handleAuthState();
     });
     _currentUserFuture = _loadCurrentUser();
   }
@@ -65,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (!snapshot.hasData || snapshot.data == null) {
-                        return const Text('Hi, User');
+                        return Center(child: const Text('Hi, User'));
                       } else {
                         final user = snapshot.data!;
                         return Column(

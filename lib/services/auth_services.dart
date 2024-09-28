@@ -18,15 +18,14 @@ abstract class AuthServices {
 }
 
 class AuthServicesImpl implements AuthServices {
-  String? _currentUserId; // or String _currentUserId = ''; based on your needs
+  String? _currentUserId;
   String? _currentUsername;
 
   @override
   Future<bool> isAdmin() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      _currentUserId = prefs.getString(
-          'currentUserId'); // Retrieve user ID from SharedPreferences
+      _currentUserId = prefs.getString('currentUserId');
 
       if (_currentUserId == null) {
         print('No user ID found in SharedPreferences');
@@ -63,9 +62,7 @@ class AuthServicesImpl implements AuthServices {
         body: json.encode({'email': email, 'password': password}),
       );
 
-      // Check the response status
       if (response.statusCode == 200) {
-        // Login successful, you can parse and store user data if needed
         final userData = json.decode(response.body);
         print('Login successful: $userData');
         _currentUserId = userData['id'];
@@ -77,7 +74,6 @@ class AuthServicesImpl implements AuthServices {
         print(_currentUsername);
         return true;
       } else {
-        // Handle errors based on the response
         if (kDebugMode) {
           print('Login failed: ${response.body}');
         }
@@ -101,7 +97,7 @@ class AuthServicesImpl implements AuthServices {
         'email': email,
         'username': username,
         'userRole': 'customer',
-        'password': password, // You may want to hash this before sending it
+        'password': password,
       };
 
       final response = await http.post(
@@ -139,6 +135,9 @@ class AuthServicesImpl implements AuthServices {
       );
       if (response.statusCode == 200) {
         print('Logged out successfully');
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.remove('currentUserId');
       } else {
         print('Error logging out: ${response.body}');
       }
@@ -151,8 +150,7 @@ class AuthServicesImpl implements AuthServices {
   Future<bool> isLoggedIn() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      _currentUserId = prefs.getString(
-          'currentUserId'); // Retrieve user ID from SharedPreferences
+      _currentUserId = prefs.getString('currentUserId');
 
       if (_currentUserId != null) {
         print('User is logged in with ID: $_currentUserId');
@@ -169,7 +167,6 @@ class AuthServicesImpl implements AuthServices {
 
   @override
   Future<UserData?> getUser() async {
-    // Retrieve the user ID from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _currentUserId = prefs.getString('currentUserId');
 
@@ -206,15 +203,14 @@ class AuthServicesImpl implements AuthServices {
   Future<String?> getUsername() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      _currentUserId = prefs.getString(
-          'currentUserId'); // Retrieve the user ID from SharedPreferences
+      _currentUserId = prefs.getString('currentUserId');
 
       if (_currentUserId == null) {
         print('No user ID found in SharedPreferences');
         return null;
       }
 
-      print('Fetching username for userId: $_currentUserId'); // Add this log
+      print('Fetching username for userId: $_currentUserId');
 
       final response = await http.get(
         Uri.parse('${BackendUrl.url}/users/$_currentUserId'),
@@ -237,7 +233,7 @@ class AuthServicesImpl implements AuthServices {
   @override
   Stream<String?> usernameStream() async* {
     while (true) {
-      await Future.delayed(Duration(seconds: 10)); // Poll every 10 seconds
+      await Future.delayed(Duration(seconds: 10));
       yield await getUsername();
     }
   }

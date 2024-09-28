@@ -125,7 +125,7 @@ class AddressProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final fetchedAddresses = await _addressServices.getAddressItems(userId!);
+      final fetchedAddresses = await _addressServices.getAddressItems(userId);
       _addressItems = fetchedAddresses;
       _state = AddressState.loaded;
     } catch (error) {

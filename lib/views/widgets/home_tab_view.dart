@@ -22,25 +22,19 @@ class HomeTabView extends StatelessWidget {
     return FutureBuilder<UserData?>(
       future: _authServices.getUser(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text('No user found. Please log in.'));
-        }
-
-        final userId = snapshot.data!.id;
-
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (homeProvider.state == HomeState.initial) {
             homeProvider.loadHomeData();
-            favoritesProvider.subscribeToFavorites(userId);
+            if (snapshot.hasData && snapshot.data != null) {
+              favoritesProvider.subscribeToFavorites(snapshot.data!.id);
+            }
           }
         });
 
         return RefreshIndicator(
-          onRefresh: () async {},
+          onRefresh: () async {
+            homeProvider.loadHomeData();
+          },
           child: SingleChildScrollView(
             child: Column(
               children: [

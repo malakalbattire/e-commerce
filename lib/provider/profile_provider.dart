@@ -1,6 +1,7 @@
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileProvider with ChangeNotifier {
   final AuthServices authServices = AuthServicesImpl();
@@ -8,17 +9,15 @@ class ProfileProvider with ChangeNotifier {
   bool isAdmin = false;
 
   Future<void> handleAuthState() async {
-    // Check if the user is logged in using the MySQL-backed AuthServices implementation
     isLoggedIn = await authServices.isLoggedIn();
 
     if (isLoggedIn) {
-      // If logged in, check if the user is an admin
       isAdmin = await authServices.isAdmin();
     } else {
-      // If not logged in, reset the admin flag
       isAdmin = false;
     }
-    notifyListeners(); // Notify listeners to update UI after login/logout
+
+    notifyListeners();
   }
 
   Future<void> showLogoutConfirmationDialog(BuildContext context) async {
@@ -47,16 +46,22 @@ class ProfileProvider with ChangeNotifier {
     );
 
     if (shouldLogout == true) {
-      // Use the MySQL-backed AuthServices to log out
       await authServices.logout();
+      await _clearUserData();
       isLoggedIn = false;
       isAdmin = false;
-      notifyListeners(); // Notify listeners to update the UI
+      notifyListeners();
       Navigator.pushNamedAndRemoveUntil(
         context,
         AppRoutes.login,
         (route) => false,
       );
     }
+  }
+
+  Future<void> _clearUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('currentUserId');
+    notifyListeners();
   }
 }
