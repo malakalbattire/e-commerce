@@ -15,7 +15,7 @@ class FavoritesProvider with ChangeNotifier {
   final FavServicesImpl favServices = FavServicesImpl();
   List<FavoriteModel> _favItems = [];
 
-  final AuthServices authServices = AuthServicesImpl(); // Use AuthServices
+  final AuthServices authServices = AuthServicesImpl();
 
   ProductItemModel? get selectedProduct => _selectedProduct;
   List<FavoriteModel> get favoritesProducts => _favoritesProducts;
@@ -28,12 +28,11 @@ class FavoritesProvider with ChangeNotifier {
   }
 
   void _listenToAuthChanges() async {
-    final currentUser =
-        await authServices.getUser(); // Fetch user data from MySQL
+    final currentUser = await authServices.getUser();
     if (currentUser == null) {
       _clearFavorites();
     } else {
-      subscribeToFavorites(currentUser.id); // Use the user ID
+      subscribeToFavorites(currentUser.id);
     }
   }
 
@@ -57,7 +56,9 @@ class FavoritesProvider with ChangeNotifier {
       for (var fav in favorites) {
         try {
           updatedFavorites.add(fav);
-          print('Updated favorites: $fav');
+          if (kDebugMode) {
+            print('Updated favorites: $fav');
+          }
         } catch (e) {
           if (kDebugMode) {
             print('Error checking product existence: $e');
@@ -83,8 +84,7 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> addToFav(String productId) async {
     try {
-      final currentUser =
-          await authServices.getUser(); // Use MySQL-based user fetching
+      final currentUser = await authServices.getUser();
 
       if (currentUser == null) return;
 
@@ -105,7 +105,7 @@ class FavoritesProvider with ChangeNotifier {
           price: selectedProduct.price,
           category: selectedProduct.category,
           productId: productId,
-          userId: currentUser.id, // Use the user ID from MySQL
+          userId: currentUser.id,
         );
         await favServices.addToFav(favItem);
         _favItems.add(favItem);
@@ -121,7 +121,7 @@ class FavoritesProvider with ChangeNotifier {
 
   Future<void> removeFromFav(String productId) async {
     try {
-      final currentUser = await authServices.getUser(); // Fetch user from MySQL
+      final currentUser = await authServices.getUser();
       if (currentUser != null) {
         await favServices.removeFromFav(productId);
         _favItems = await favServices.getFavItems(currentUser.id);

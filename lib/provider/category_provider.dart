@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/services/category_services.dart';
@@ -60,7 +61,9 @@ class CategoryProvider with ChangeNotifier {
       await _categoryServices.addCategory(newCategory);
       fetchCategories();
     } catch (e) {
-      print('Error adding category: $e');
+      if (kDebugMode) {
+        print('Error adding category: $e');
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -77,7 +80,9 @@ class CategoryProvider with ChangeNotifier {
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
       return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
-      print('Error uploading image: $e');
+      if (kDebugMode) {
+        print('Error uploading image: $e');
+      }
       throw Exception('Error uploading image: $e');
     }
   }
@@ -123,7 +128,9 @@ class CategoryProvider with ChangeNotifier {
       await _categoryServices.removeCategory(categoryId);
       fetchCategories();
     } catch (e) {
-      print('Error removing category: $e');
+      if (kDebugMode) {
+        print('Error removing category: $e');
+      }
     } finally {
       _isLoading = false;
       notifyListeners();

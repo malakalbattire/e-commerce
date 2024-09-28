@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'address_model.g.dart';
@@ -117,7 +118,9 @@ class AddressModel {
   // Factory to create AddressModel from a map and documentId
   factory AddressModel.fromMap(Map<String, dynamic> map, String documentId) {
     final userId = map['userId'] as String?;
-    print("userId in address model:${userId}===========");
+    if (kDebugMode) {
+      print("userId in address model:${userId}===========");
+    }
     if (userId == null || userId.isEmpty) {
       throw ArgumentError('userId cannot be empty');
     }

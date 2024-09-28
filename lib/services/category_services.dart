@@ -3,6 +3,7 @@ import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -23,25 +24,35 @@ class CategoryServicesImpl implements CategoryServices {
     final response = await http.delete(url);
 
     if (response.statusCode == 200) {
-      print('Category deleted successfully');
+      if (kDebugMode) {
+        print('Category deleted successfully');
+      }
     } else if (response.statusCode == 404) {
-      print('Category not found');
+      if (kDebugMode) {
+        print('Category not found');
+      }
     } else {
-      print('Failed to delete category: ${response.body}');
+      if (kDebugMode) {
+        print('Failed to delete category: ${response.body}');
+      }
       throw Exception('Failed to delete category');
     }
   }
 
   @override
   Future<List<ProductItemModel>> getProductsByCategory(String category) async {
-    print("${category} category name ==========");
+    if (kDebugMode) {
+      print("$category category name ==========");
+    }
 
     final response = await http
         .get(Uri.parse('${BackendUrl.url}/products?category=$category'));
     if (response.statusCode == 200) {
       final List<dynamic> productData = json.decode(response.body);
       if (productData.isEmpty) {
-        print('No products found for this category.');
+        if (kDebugMode) {
+          print('No products found for this category.');
+        }
       }
       return productData
           .map((data) => ProductItemModel.fromMap(data, data['id']))
@@ -63,7 +74,9 @@ class CategoryServicesImpl implements CategoryServices {
 
     final body = json.encode(updatedCategoryModel.toMap());
 
-    print("Sending request to $url with body: $body");
+    if (kDebugMode) {
+      print("Sending request to $url with body: $body");
+    }
 
     final response = await http.post(
       url,
@@ -72,7 +85,9 @@ class CategoryServicesImpl implements CategoryServices {
     );
 
     if (response.statusCode != 201) {
-      print("Response: ${response.statusCode} - ${response.body}");
+      if (kDebugMode) {
+        print("Response: ${response.statusCode} - ${response.body}");
+      }
       throw Exception('Failed to add category to categories');
     }
   }
@@ -88,7 +103,9 @@ class CategoryServicesImpl implements CategoryServices {
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
       return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
-      print('Error uploading image: $e');
+      if (kDebugMode) {
+        print('Error uploading image: $e');
+      }
       throw Exception('Error uploading image: $e');
     }
   }
@@ -106,7 +123,9 @@ class CategoryServicesImpl implements CategoryServices {
         throw Exception('Failed to load categories');
       }
     } catch (e) {
-      print('Error fetching categories: $e');
+      if (kDebugMode) {
+        print('Error fetching categories: $e');
+      }
       return [];
     }
   }
@@ -124,7 +143,9 @@ class CategoryServicesImpl implements CategoryServices {
         throw Exception('Category not found');
       }
     } catch (e) {
-      print('Error fetching category by ID: $e');
+      if (kDebugMode) {
+        print('Error fetching category by ID: $e');
+      }
       throw Exception('Error fetching category by ID');
     }
   }

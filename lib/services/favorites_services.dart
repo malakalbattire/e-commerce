@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
@@ -49,7 +50,9 @@ class FavServicesImpl implements FavoritesServices {
     if (response.statusCode != 201) {
       throw Exception('Failed to add to favorites');
     } else {
-      print('Added to favorites successfully');
+      if (kDebugMode) {
+        print('Added to favorites successfully');
+      }
     }
   }
 
@@ -65,7 +68,9 @@ class FavServicesImpl implements FavoritesServices {
     if (response.statusCode != 200) {
       throw Exception('Failed to remove from favorites');
     } else {
-      print('removed');
+      if (kDebugMode) {
+        print('removed');
+      }
     }
   }
 
@@ -85,27 +90,37 @@ class FavServicesImpl implements FavoritesServices {
   Future<List<FavoriteModel>> getFavItems(String userId) async {
     try {
       final url = Uri.parse('${BackendUrl.url}/favorites/$userId');
-      print('Fetching favorite items from: $url');
+      if (kDebugMode) {
+        print('Fetching favorite items from: $url');
+      }
 
       final response = await http.get(url);
 
-      print('Response body: ${response.body}');
+      if (kDebugMode) {
+        print('Response body: ${response.body}');
+      }
 
       if (response.statusCode == 200) {
         final List<dynamic> favoriteItemsJson =
             json.decode(response.body) as List<dynamic>;
-        print(
-            'Decoded favorite items JSON====fav serv getFavItems: $favoriteItemsJson');
+        if (kDebugMode) {
+          print(
+              'Decoded favorite items JSON====fav serv getFavItems: $favoriteItemsJson');
+        }
         return favoriteItemsJson
             .map((json) => FavoriteModel.fromJson(json as Map<String, dynamic>))
             .toList();
       } else {
-        print('Failed to load favorite items');
+        if (kDebugMode) {
+          print('Failed to load favorite items');
+        }
         throw Exception(
             'Failed to load favorite items: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error fetching favorite items: $e');
+      if (kDebugMode) {
+        print('Error fetching favorite items: $e');
+      }
       throw Exception('Error fetching favorite items: $e');
     }
   }
@@ -120,15 +135,21 @@ class FavServicesImpl implements FavoritesServices {
           throw Exception('Constructed URL is null');
         }
 
-        print('Fetching favorite items from: $url');
+        if (kDebugMode) {
+          if (kDebugMode) {
+            print('Fetching favorite items from: $url');
+          }
+        }
 
         final response = await http.get(url);
 
         if (response.statusCode == 200) {
           final List<dynamic> favoriteItemsJson =
               json.decode(response.body) as List<dynamic>;
-          print(
-              '=====Decoded favorite items JSON=====fav serv getFavItemsStream: $favoriteItemsJson');
+          if (kDebugMode) {
+            print(
+                '=====Decoded favorite items JSON=====fav serv getFavItemsStream: $favoriteItemsJson');
+          }
           return favoriteItemsJson
               .map((json) =>
                   FavoriteModel.fromJson(json as Map<String, dynamic>))
@@ -138,7 +159,11 @@ class FavServicesImpl implements FavoritesServices {
               'Failed to load favorite items: ${response.reasonPhrase}');
         }
       } catch (e) {
-        print('Error fetching favorite items: $e');
+        if (kDebugMode) {
+          if (kDebugMode) {
+            print('Error fetching favorite items: $e');
+          }
+        }
         throw Exception('Error fetching favorite items: $e');
       }
     }).asyncMap((event) => event);

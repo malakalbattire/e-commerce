@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/views/widgets/address_card_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/signin_signout_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
@@ -30,7 +31,9 @@ class _AddressBookPageState extends State<AddressBookPage> {
       if (user != null) {
         if (addressProvider.state == AddressState.initial) {
           addressProvider.loadAddressData(user.id);
-          print("userid in address book page: ${user.id}");
+          if (kDebugMode) {
+            print("userid in address book page: ${user.id}");
+          }
         }
       }
     });

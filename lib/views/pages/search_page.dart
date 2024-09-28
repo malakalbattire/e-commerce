@@ -35,9 +35,9 @@ class SearchPage extends StatelessWidget {
                     Icons.search,
                     color: Colors.grey[600],
                   ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
                 ),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                 ),
               );

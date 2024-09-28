@@ -46,8 +46,7 @@ class CartProvider with ChangeNotifier {
   }
 
   void subscribeToCart() async {
-    final currentUser =
-        await authServices.getUser(); // Fetch user data using AuthServices
+    final currentUser = await authServices.getUser();
     if (currentUser == null) {
       _clearCart();
       return;
@@ -89,8 +88,7 @@ class CartProvider with ChangeNotifier {
   }
 
   void _listenToAuthChanges() async {
-    final currentUser = await authServices
-        .getUser(); // Listen for auth state changes using AuthServices
+    final currentUser = await authServices.getUser();
     if (currentUser == null) {
       _clearCart();
     } else {

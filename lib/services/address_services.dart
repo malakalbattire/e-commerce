@@ -32,7 +32,9 @@ class AddressServicesImpl implements AddressServices {
       'isSelected': addressModel.isSelected,
       'userId': currentUser!.id,
     };
-    print("userId in services when add cards${currentUser.id}");
+    if (kDebugMode) {
+      print("userId in services when add cards${currentUser.id}");
+    }
     try {
       final response = await http.post(
         url,
@@ -41,12 +43,13 @@ class AddressServicesImpl implements AddressServices {
       );
 
       if (response.statusCode == 201) {
-        print('Address added successfully: ${response.body}');
       } else {
         throw Exception('Failed to add address: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error adding address: $e');
+      if (kDebugMode) {
+        print('Error adding address: $e');
+      }
       throw Exception('Error adding address: $e');
     }
   }
@@ -87,7 +90,9 @@ class AddressServicesImpl implements AddressServices {
     final url = Uri.parse('${BackendUrl.url}/addresses/$userId');
 
     try {
-      print('Fetching payment cards from: $url');
+      if (kDebugMode) {
+        print('Fetching payment cards from: $url');
+      }
 
       final response = await http.get(url);
 

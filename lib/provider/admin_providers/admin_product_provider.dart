@@ -12,7 +12,6 @@ class AdminProductProvider with ChangeNotifier {
   Future<void> addProduct(ProductItemModel product) async {
     try {
       await _productService.addProduct(
-        //  path: 'products',
         data: product.toMap(),
       );
       await _sendNotification('admin', 'New Product Added',
@@ -27,7 +26,6 @@ class AdminProductProvider with ChangeNotifier {
   Future<void> updateProduct(ProductItemModel product) async {
     try {
       await _productService.updateProduct(
-        //path: 'products',
         documentId: product.id,
         data: product.toMap(),
       );
@@ -44,7 +42,6 @@ class AdminProductProvider with ChangeNotifier {
   Future<void> deleteProduct(String productId) async {
     try {
       await _productService.deleteProduct(
-        //   path: 'products',
         documentId: productId,
       );
       _products.removeWhere((product) => product.id == productId);

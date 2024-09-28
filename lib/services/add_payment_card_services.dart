@@ -2,6 +2,7 @@ import 'package:e_commerce_app_flutter/models/payment_model/payment_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -19,7 +20,9 @@ class PaymentServicesImpl implements PaymentServices {
   Future<void> addPayment(PaymentModel paymentModel) async {
     final url = Uri.parse('${BackendUrl.url}/cards');
     final body = json.encode(paymentModel.toMap());
-    print("Sending request to $url with body: $body");
+    if (kDebugMode) {
+      print("Sending request to $url with body: $body");
+    }
 
     final response = await http.post(
       url,
@@ -27,7 +30,9 @@ class PaymentServicesImpl implements PaymentServices {
       body: body,
     );
     if (response.statusCode != 201) {
-      print("Response: ${response.statusCode} - ${response.body}");
+      if (kDebugMode) {
+        print("Response: ${response.statusCode} - ${response.body}");
+      }
       throw Exception('Failed to add payment card');
     }
   }
@@ -44,14 +49,20 @@ class PaymentServicesImpl implements PaymentServices {
       final response = await http.delete(url);
 
       if (response.statusCode == 200) {
-        print('Payment card deleted successfully');
+        if (kDebugMode) {
+          print('Payment card deleted successfully');
+        }
       } else {
-        print('Failed to delete payment card: ${response.body}');
+        if (kDebugMode) {
+          print('Failed to delete payment card: ${response.body}');
+        }
         throw Exception(
             'Failed to delete payment card: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error removing payment card: $e');
+      if (kDebugMode) {
+        print('Error removing payment card: $e');
+      }
       throw Exception('Error removing payment card: $e');
     }
   }
@@ -60,25 +71,33 @@ class PaymentServicesImpl implements PaymentServices {
   Future<List<PaymentModel>> getPaymentItems(String userId) async {
     try {
       final url = Uri.parse('${BackendUrl.url}/cards/$userId');
-      print('Fetching payment cards from: $url');
+      if (kDebugMode) {
+        print('Fetching payment cards from: $url');
+      }
 
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final List<dynamic> cardsItemsJson =
             json.decode(response.body) as List<dynamic>;
-        print('Decoded payment cards items JSON: $cardsItemsJson');
+        if (kDebugMode) {
+          print('Decoded payment cards items JSON: $cardsItemsJson');
+        }
 
         return cardsItemsJson
             .map((json) => PaymentModel.fromJson(json as Map<String, dynamic>))
             .toList();
       } else {
-        print('Failed to load payment cards items: ${response.body}');
+        if (kDebugMode) {
+          print('Failed to load payment cards items: ${response.body}');
+        }
         throw Exception(
             'Failed to load payment cards items: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error fetching payment cards items: $e');
+      if (kDebugMode) {
+        print('Error fetching payment cards items: $e');
+      }
       throw Exception('Error fetching payment cards items: $e');
     }
   }

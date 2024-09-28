@@ -3,6 +3,7 @@ import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -48,12 +49,18 @@ class OrderServicesImpl implements OrderServices {
       );
 
       if (response.statusCode == 201) {
-        print('Order placed successfully: ${jsonDecode(response.body)}');
+        if (kDebugMode) {
+          print('Order placed successfully: ${jsonDecode(response.body)}');
+        }
       } else {
-        print('Failed to place order: ${response.body}');
+        if (kDebugMode) {
+          print('Failed to place order: ${response.body}');
+        }
       }
     } catch (e) {
-      print('Error placing order: $e');
+      if (kDebugMode) {
+        print('Error placing order: $e');
+      }
     }
   }
 
@@ -97,7 +104,9 @@ class OrderServicesImpl implements OrderServices {
         throw Exception('Failed to fetch order status: ${response.body}');
       }
     } catch (e) {
-      print('Error fetching order status: $e');
+      if (kDebugMode) {
+        print('Error fetching order status: $e');
+      }
       yield OrderModel(
         id: '',
         userId: '',
@@ -135,8 +144,10 @@ class OrderServicesImpl implements OrderServices {
         throw Exception('Failed to load user orders: ${response.body}');
       }
     } catch (e) {
-      print('Error fetching user orders: $e');
-      throw e;
+      if (kDebugMode) {
+        print('Error fetching user orders: $e');
+      }
+      rethrow;
     }
   }
 }

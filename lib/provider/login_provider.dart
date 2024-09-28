@@ -9,8 +9,7 @@ import 'package:provider/provider.dart';
 enum LoginState { initial, loading, loaded, error }
 
 class LoginProvider with ChangeNotifier {
-  final AuthServices _authServices =
-      AuthServicesImpl(); // Using the MySQL Auth implementation
+  final AuthServices _authServices = AuthServicesImpl();
   LoginState _state = LoginState.initial;
   String _errorMessage = '';
 
@@ -47,26 +46,20 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // Use AuthServicesImpl's login method
       final isLoggedIn = await _authServices.login(email, password);
 
       if (isLoggedIn) {
-        // Fetch user data after login
         final user = await _authServices.getUser();
         if (user != null) {
-          // Assuming you store role in the user object fetched from MySQL
           final userRole = user.userRole;
 
           await notificationProvider.clearAllNotifications();
           Fluttertoast.showToast(msg: 'Login Success!');
 
-          // Redirect user based on their role
           if (userRole == 'admin') {
-            Navigator.pushNamed(context,
-                '/adminHome'); // Assuming /adminHome is the route for admin
+            Navigator.pushNamed(context, '/adminHome');
           } else {
-            Navigator.pushNamed(context,
-                '/home'); // Assuming /home is the default route for users
+            Navigator.pushNamed(context, '/home');
           }
         } else {
           _errorMessage = 'Login failed. User data could not be retrieved.';

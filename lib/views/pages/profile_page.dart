@@ -49,10 +49,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  Center(
+                  const Center(
                     child: CircleAvatar(
                       radius: 50,
-                      child: const Icon(Icons.person, size: 50),
+                      child: Icon(Icons.person, size: 50),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -64,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (!snapshot.hasData || snapshot.data == null) {
-                        return Center(child: const Text('Hi, User'));
+                        return const Center(child: Text('Hi, User'));
                       } else {
                         final user = snapshot.data!;
                         return Column(

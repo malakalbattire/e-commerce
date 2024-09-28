@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce_app_flutter/models/add_product_model/add_product_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,12 +22,16 @@ class AddProductServicesImpl implements AddProductServices {
       );
 
       if (response.statusCode == 200) {
-        print('Product added successfully');
+        if (kDebugMode) {
+          print('Product added successfully');
+        }
       } else {
         throw Exception('Failed to add product: ${response.body}');
       }
     } catch (e) {
-      print('Error adding product: $e');
+      if (kDebugMode) {
+        print('Error adding product: $e');
+      }
       throw Exception('Error adding product: $e');
     }
   }
@@ -42,7 +47,9 @@ class AddProductServicesImpl implements AddProductServices {
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
       return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
-      print('Error uploading image: $e');
+      if (kDebugMode) {
+        print('Error uploading image: $e');
+      }
       throw Exception('Error uploading image: $e');
     }
   }

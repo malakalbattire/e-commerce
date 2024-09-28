@@ -1,5 +1,6 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -38,11 +39,15 @@ class SearchProvider extends ChangeNotifier {
       } else if (response.statusCode == 404) {
         _searchResults = [];
       } else {
-        print('Error fetching products: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Error fetching products: ${response.statusCode}');
+        }
         _searchResults = [];
       }
     } catch (e) {
-      print('Error searching products: $e');
+      if (kDebugMode) {
+        print('Error searching products: $e');
+      }
       _searchResults = [];
     }
 

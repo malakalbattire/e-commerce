@@ -28,7 +28,9 @@ class AuthServicesImpl implements AuthServices {
       _currentUserId = prefs.getString('currentUserId');
 
       if (_currentUserId == null) {
-        print('No user ID found in SharedPreferences');
+        if (kDebugMode) {
+          print('No user ID found in SharedPreferences');
+        }
         return false;
       }
 
@@ -41,14 +43,20 @@ class AuthServicesImpl implements AuthServices {
         final userData = json.decode(response.body);
         final userRole = userData['userRole'] as String?;
         final isAdmin = userRole == 'admin';
-        print('Is Admin: $isAdmin');
+        if (kDebugMode) {
+          print('Is Admin: $isAdmin');
+        }
         return isAdmin;
       } else {
-        print('Error fetching user data: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Error fetching user data: ${response.statusCode}');
+        }
         return false;
       }
     } catch (e) {
-      print('Error fetching user role: $e');
+      if (kDebugMode) {
+        print('Error fetching user role: $e');
+      }
       return false;
     }
   }
@@ -64,14 +72,20 @@ class AuthServicesImpl implements AuthServices {
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
-        print('Login successful: $userData');
+        if (kDebugMode) {
+          print('Login successful: $userData');
+        }
         _currentUserId = userData['id'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('currentUserId', _currentUserId!);
 
         _currentUsername = userData['username'];
-        print(_currentUserId);
-        print(_currentUsername);
+        if (kDebugMode) {
+          print(_currentUserId);
+        }
+        if (kDebugMode) {
+          print(_currentUsername);
+        }
         return true;
       } else {
         if (kDebugMode) {
@@ -106,11 +120,17 @@ class AuthServicesImpl implements AuthServices {
         body: json.encode(currentUserData),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      if (kDebugMode) {
+        print('Response status: ${response.statusCode}');
+      }
+      if (kDebugMode) {
+        print('Response body: ${response.body}');
+      }
 
       if (response.statusCode == 200) {
-        print('Registration successful');
+        if (kDebugMode) {
+          print('Registration successful');
+        }
         return true;
       } else {
         if (kDebugMode) {
@@ -134,15 +154,21 @@ class AuthServicesImpl implements AuthServices {
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
-        print('Logged out successfully');
+        if (kDebugMode) {
+          print('Logged out successfully');
+        }
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.remove('currentUserId');
       } else {
-        print('Error logging out: ${response.body}');
+        if (kDebugMode) {
+          print('Error logging out: ${response.body}');
+        }
       }
     } catch (e) {
-      print('Logout Error: $e');
+      if (kDebugMode) {
+        print('Logout Error: $e');
+      }
     }
   }
 
@@ -153,14 +179,20 @@ class AuthServicesImpl implements AuthServices {
       _currentUserId = prefs.getString('currentUserId');
 
       if (_currentUserId != null) {
-        print('User is logged in with ID: $_currentUserId');
+        if (kDebugMode) {
+          print('User is logged in with ID: $_currentUserId');
+        }
         return true;
       } else {
-        print('No user is logged in.');
+        if (kDebugMode) {
+          print('No user is logged in.');
+        }
         return false;
       }
     } catch (e) {
-      print('Error checking login status: $e');
+      if (kDebugMode) {
+        print('Error checking login status: $e');
+      }
       return false;
     }
   }
@@ -186,15 +218,21 @@ class AuthServicesImpl implements AuthServices {
             userRole: userData['userRole'],
           );
         } else {
-          print('Error fetching user: ${response.body}');
+          if (kDebugMode) {
+            print('Error fetching user: ${response.body}');
+          }
           return null;
         }
       } catch (e) {
-        print('Error getting user: $e');
+        if (kDebugMode) {
+          print('Error getting user: $e');
+        }
         return null;
       }
     } else {
-      print('No user ID found in SharedPreferences.');
+      if (kDebugMode) {
+        print('No user ID found in SharedPreferences.');
+      }
       return null;
     }
   }
@@ -206,11 +244,15 @@ class AuthServicesImpl implements AuthServices {
       _currentUserId = prefs.getString('currentUserId');
 
       if (_currentUserId == null) {
-        print('No user ID found in SharedPreferences');
+        if (kDebugMode) {
+          print('No user ID found in SharedPreferences');
+        }
         return null;
       }
 
-      print('Fetching username for userId: $_currentUserId');
+      if (kDebugMode) {
+        print('Fetching username for userId: $_currentUserId');
+      }
 
       final response = await http.get(
         Uri.parse('${BackendUrl.url}/users/$_currentUserId'),
@@ -221,11 +263,15 @@ class AuthServicesImpl implements AuthServices {
         final userData = json.decode(response.body);
         return userData['username'] as String?;
       } else {
-        print('Error fetching username: ${response.body}');
+        if (kDebugMode) {
+          print('Error fetching username: ${response.body}');
+        }
         return null;
       }
     } catch (e) {
-      print('Error getting username: $e');
+      if (kDebugMode) {
+        print('Error getting username: $e');
+      }
       return null;
     }
   }

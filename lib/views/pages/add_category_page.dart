@@ -53,7 +53,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                     _categoryName = value!;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Category Image',
                   style: Theme.of(context)
@@ -85,7 +85,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                           ),
                         ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   height: 60,
@@ -116,11 +116,11 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                             }
                           },
                     child: _isSubmitting
-                        ? CircularProgressIndicator(
+                        ? const CircularProgressIndicator(
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           )
-                        : Text('Add Category'),
+                        : const Text('Add Category'),
                   ),
                 ),
               ],

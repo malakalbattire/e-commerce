@@ -140,102 +140,18 @@ class ProductDetailsProvider with ChangeNotifier {
   }
 
   double get totalPrice => _price * _quantity;
-  // Future<void> addToCart(String productId) async {
-  //   try {
-  //     final currentUser = authServices.getUser();
-  //     if (currentUser == null) return;
-  //
-  //     final cartRef = FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(currentUser.id)
-  //         .collection('cart');
-  //
-  //     final product = selectedProduct;
-  //     if (product == null) return;
-  //
-  //     final size = selectedSize?.name ?? 'One Size';
-  //     final color = selectedColor?.name ?? 'DefaultColor';
-  //
-  //     final cartSnapshot = await cartRef
-  //         .where('product.id', isEqualTo: productId)
-  //         .where('size', isEqualTo: size)
-  //         .where('color', isEqualTo: color)
-  //         .get();
-  //
-  //     if (cartSnapshot.docs.isNotEmpty) {
-  //       final doc = cartSnapshot.docs.first;
-  //       final currentQuantity = doc['quantity'] as int;
-  //
-  //       if (currentQuantity + quantity > product.inStock) {
-  //         Fluttertoast.showToast(
-  //           msg: "Cannot add more items. Exceeds stock limit.",
-  //           toastLength: Toast.LENGTH_SHORT,
-  //           gravity: ToastGravity.CENTER,
-  //           timeInSecForIosWeb: 1,
-  //           backgroundColor: Colors.black.withOpacity(0.4),
-  //           textColor: Colors.white,
-  //           fontSize: 16.0,
-  //         );
-  //         return;
-  //       }
-  //
-  //       await FirebaseFirestore.instance.runTransaction((transaction) async {
-  //         final docSnapshot = await transaction.get(doc.reference);
-  //         if (docSnapshot.exists) {
-  //           transaction.update(doc.reference, {
-  //             'quantity': currentQuantity + quantity,
-  //           });
-  //         }
-  //       });
-  //     } else {
-  //       final newCartItem = AddToCartModel(
-  //         id: DateTime.now().millisecondsSinceEpoch.toString(),
-  //         productId: productId,
-  //         product: product,
-  //         size: selectedSize ?? Size.OneSize,
-  //         quantity: quantity,
-  //         price: product.price,
-  //         imgUrl: product.imgUrl,
-  //         name: product.name,
-  //         inStock: product.inStock,
-  //         color: selectedColor?.name ?? 'DefaultColor',
-  //         userId: currentUser.uid,
-  //       );
-  //       await cartServices.addToCart(newCartItem);
-  //       _cartItems.add(newCartItem);
-  //     }
-  //
-  //     Fluttertoast.showToast(
-  //       msg: "Added to cart successfully.",
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.CENTER,
-  //       timeInSecForIosWeb: 1,
-  //       backgroundColor: Colors.black.withOpacity(0.4),
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //     notifyListeners();
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       print('Error adding item to cart: $e');
-  //     }
-  //   }
-  // }
 
   Future<void> addToCart(String productId) async {
     try {
-      // Get current user using the AuthServices implementation
       final currentUser = await authServices.getUser();
-      if (currentUser == null) return; // Ensure user is logged in
+      if (currentUser == null) return;
 
       final product = selectedProduct;
       if (product == null) return;
 
-      // Prepare data for the request
       final size = selectedSize?.name ?? 'One Size';
       final color = selectedColor?.name ?? 'DefaultColor';
 
-      // Create the AddToCartModel object
       final newCartItem = AddToCartModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         productId: productId,
@@ -247,10 +163,9 @@ class ProductDetailsProvider with ChangeNotifier {
         name: product.name,
         inStock: product.inStock,
         color: selectedColor?.name ?? 'DefaultColor',
-        userId: currentUser.id, // Get user ID from AuthServices
+        userId: currentUser.id,
       );
 
-      // Call the backend to add the item to the cart
       final url = Uri.parse('${BackendUrl.url}/cart');
       final body = jsonEncode(newCartItem.toMap());
 
@@ -261,7 +176,6 @@ class ProductDetailsProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        // Successfully added to cart
         Fluttertoast.showToast(
           msg: "Added to cart successfully.",
           toastLength: Toast.LENGTH_SHORT,
@@ -273,7 +187,6 @@ class ProductDetailsProvider with ChangeNotifier {
         );
         notifyListeners();
       } else if (response.statusCode == 200) {
-        // If the product was already in the cart, the quantity is updated
         Fluttertoast.showToast(
           msg: "Cart item quantity updated.",
           toastLength: Toast.LENGTH_SHORT,
@@ -285,7 +198,6 @@ class ProductDetailsProvider with ChangeNotifier {
         );
         notifyListeners();
       } else {
-        // Handle errors
         final errorResponse = jsonDecode(response.body);
         final errorMessage = errorResponse['error'] ?? 'Unknown error';
         Fluttertoast.showToast(

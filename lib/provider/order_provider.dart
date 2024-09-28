@@ -2,7 +2,6 @@ import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.
 import 'package:e_commerce_app_flutter/services/address_services.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/order_services.dart';

@@ -25,13 +25,6 @@ class BuildPaymentCardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Text(
-            //   payment.cardHolderName,
-            //   style: const TextStyle(
-            //     fontWeight: FontWeight.bold,
-            //     fontSize: 16.0,
-            //   ),
-            // ),
             const SizedBox(height: 8.0),
             Text(
               'Card Number: ${payment.cardNumber}',

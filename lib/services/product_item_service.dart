@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ProductItemService {
@@ -24,7 +25,9 @@ class ProductItemServiceImpl implements ProductItemService {
         throw Exception('Failed to load product');
       }
     } catch (e) {
-      print('Error fetching product data: $e');
+      if (kDebugMode) {
+        print('Error fetching product data: $e');
+      }
       throw Exception('Error fetching product data: $e');
     }
   }
@@ -78,16 +81,26 @@ class ProductItemServiceImpl implements ProductItemService {
           await http.delete(Uri.parse('${BackendUrl.url}/products/$productId'));
 
       if (response.statusCode == 200) {
-        print('Product deleted successfully');
+        if (kDebugMode) {
+          if (kDebugMode) {
+            print('Product deleted successfully');
+          }
+        }
       } else if (response.statusCode == 404) {
-        print('Product not found');
+        if (kDebugMode) {
+          print('Product not found');
+        }
         throw Exception('Product not found');
       } else {
-        print('Failed to delete product: ${response.reasonPhrase}');
+        if (kDebugMode) {
+          print('Failed to delete product: ${response.reasonPhrase}');
+        }
         throw Exception('Failed to delete product: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error deleting product: $e');
+      if (kDebugMode) {
+        print('Error deleting product: $e');
+      }
       throw Exception('Error deleting product: $e');
     }
   }

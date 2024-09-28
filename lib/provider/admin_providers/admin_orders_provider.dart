@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'dart:convert';
@@ -50,7 +51,9 @@ class AdminOrdersProvider with ChangeNotifier {
                     ))
                 .toList();
           } else {
-            print("can not get orders");
+            if (kDebugMode) {
+              print("can not get orders");
+            }
             orderStatus = [OrderStatus.waitingForConfirmation];
           }
 
@@ -86,7 +89,9 @@ class AdminOrdersProvider with ChangeNotifier {
         throw Exception('Failed to load orders: ${response.body}');
       }
     } catch (e) {
-      print('Error fetching orders: $e');
+      if (kDebugMode) {
+        print('Error fetching orders: $e');
+      }
     }
   }
 
@@ -104,14 +109,22 @@ class AdminOrdersProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print('Order status updated successfully.');
+        if (kDebugMode) {
+          print('Order status updated successfully.');
+        }
       } else if (response.statusCode == 404) {
-        print('Order not found.');
+        if (kDebugMode) {
+          print('Order not found.');
+        }
       } else {
-        print('Failed to update order status: ${response.body}');
+        if (kDebugMode) {
+          print('Failed to update order status: ${response.body}');
+        }
       }
     } catch (error) {
-      print('Error updating order status: $error');
+      if (kDebugMode) {
+        print('Error updating order status: $error');
+      }
     }
   }
 

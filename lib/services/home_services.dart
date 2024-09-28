@@ -1,5 +1,6 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -34,7 +35,9 @@ class HomeServicesImpl implements HomeServices {
         throw Exception('Failed to fetch products');
       }
     } catch (e) {
-      print('Error fetching products: $e');
+      if (kDebugMode) {
+        print('Error fetching products: $e');
+      }
       throw Exception('Error fetching products: $e');
     } finally {
       _isFetching = false;
@@ -51,7 +54,6 @@ class HomeServicesImpl implements HomeServices {
       try {
         return await getProducts();
       } catch (e) {
-        print('Error in periodic product stream: $e');
         return _cachedProducts;
       }
     });
@@ -74,7 +76,9 @@ class HomeServicesImpl implements HomeServices {
         throw Exception('Failed to add product');
       }
     } catch (e) {
-      print('Error adding product: $e');
+      if (kDebugMode) {
+        print('Error adding product: $e');
+      }
       throw Exception('Error adding product: $e');
     }
   }
@@ -91,7 +95,9 @@ class HomeServicesImpl implements HomeServices {
         throw Exception('Failed to delete product');
       }
     } catch (e) {
-      print('Error deleting product: $e');
+      if (kDebugMode) {
+        print('Error deleting product: $e');
+      }
       throw Exception('Error deleting product: $e');
     }
   }

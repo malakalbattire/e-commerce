@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'product_item_model.g.dart';
@@ -82,7 +83,11 @@ class ProductItemModel {
                 return ProductSize.values.firstWhere((size) => size.name == e);
               } catch (error) {
                 // If no match is found, return null and handle it accordingly
-                print('Invalid size string: $e');
+                if (kDebugMode) {
+                  if (kDebugMode) {
+                    print('Invalid size string: $e');
+                  }
+                }
                 return null;
               }
             }).where((size) => size != null)) // Filter out any null values
@@ -101,7 +106,9 @@ class ProductItemModel {
                 return ProductColor.values
                     .firstWhere((color) => color.name == e);
               } catch (error) {
-                print('Invalid color string: $e');
+                if (kDebugMode) {
+                  print('Invalid color string: $e');
+                }
                 return null;
               }
             }).where((color) => color != null)) // Filter out any null values

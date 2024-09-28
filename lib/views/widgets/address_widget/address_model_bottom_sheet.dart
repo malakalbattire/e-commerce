@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddressModelBottomSheet extends StatelessWidget {
-  final AuthServices _authServices = AuthServicesImpl(); // Using AuthServices
+  final AuthServices _authServices = AuthServicesImpl();
 
   AddressModelBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserData?>(
-      future: _authServices.getUser(), // Fetch the current user
+      future: _authServices.getUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -30,8 +30,7 @@ class AddressModelBottomSheet extends StatelessWidget {
           builder: (context, addressProvider, child) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (addressProvider.state == AddressState.initial) {
-                addressProvider
-                    .loadAddressData(userId); // Use user ID from AuthServices
+                addressProvider.loadAddressData(userId);
               }
             });
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,9 +31,13 @@ class FirebaseNotifications {
     )
         .then((settings) {
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('User granted permission');
+        if (kDebugMode) {
+          print('User granted permission');
+        }
       } else {
-        print('User declined or has not accepted permission');
+        if (kDebugMode) {
+          print('User declined or has not accepted permission');
+        }
       }
     });
 
@@ -124,6 +129,8 @@ class FirebaseNotifications {
       'documentId': documentId,
       'timestamp': FieldValue.serverTimestamp(),
     });
-    print('Notification stored to Firestore for doc ID: $documentId');
+    if (kDebugMode) {
+      print('Notification stored to Firestore for doc ID: $documentId');
+    }
   }
 }

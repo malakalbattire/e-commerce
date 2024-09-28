@@ -17,10 +17,10 @@ class HomeTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    final AuthServices _authServices = AuthServicesImpl();
+    final AuthServices authServices = AuthServicesImpl();
 
     return FutureBuilder<UserData?>(
-      future: _authServices.getUser(),
+      future: authServices.getUser(),
       builder: (context, snapshot) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (homeProvider.state == HomeState.initial) {
