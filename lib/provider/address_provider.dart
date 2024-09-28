@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/address_model/address_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
@@ -12,7 +12,9 @@ class AddressProvider with ChangeNotifier {
   late final TextEditingController phoneNumberController;
   late final TextEditingController countryNameController;
   late final TextEditingController cityNameController;
-  final userId = FirebaseAuth.instance.currentUser!.uid;
+
+  final AuthServices authServices = AuthServicesImpl();
+  String? userId;
 
   late final FocusNode lastNameFocusNode;
   late final FocusNode firstNameFocusNode;
@@ -35,7 +37,9 @@ class AddressProvider with ChangeNotifier {
 
   AddressProvider() {
     _initializeControllers();
+    _fetchUser();
   }
+
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -55,7 +59,31 @@ class AddressProvider with ChangeNotifier {
     cityNameFocusNode = FocusNode();
   }
 
+  Future<void> _fetchUser() async {
+    try {
+      final currentUser = await authServices.getUser();
+      if (currentUser != null) {
+        userId = currentUser.id;
+      } else {
+        _errorMessage = 'No user is logged in.';
+        _state = AddressState.error;
+        notifyListeners();
+      }
+    } catch (e) {
+      _errorMessage = 'Error fetching user: $e';
+      _state = AddressState.error;
+      notifyListeners();
+    }
+  }
+
   Future<void> submitAddress() async {
+    if (userId == null) {
+      _errorMessage = 'User not logged in';
+      _state = AddressState.error;
+      notifyListeners();
+      return;
+    }
+
     if (lastNameController.text.isNotEmpty &&
         firstNameController.text.isNotEmpty &&
         phoneNumberController.text.isNotEmpty &&
@@ -68,7 +96,7 @@ class AddressProvider with ChangeNotifier {
         phoneNumber: phoneNumberController.text,
         countryName: countryNameController.text,
         cityName: cityNameController.text,
-        userId: userId,
+        userId: userId!,
       );
 
       try {
@@ -86,10 +114,18 @@ class AddressProvider with ChangeNotifier {
   }
 
   Future<void> loadAddressData(String userId) async {
+    if (userId == null) {
+      _errorMessage = 'User not logged in';
+      _state = AddressState.error;
+      notifyListeners();
+      return;
+    }
+
     _state = AddressState.loading;
     notifyListeners();
+
     try {
-      final fetchedAddresses = await _addressServices.getAddressItems(userId);
+      final fetchedAddresses = await _addressServices.getAddressItems(userId!);
       _addressItems = fetchedAddresses;
       _state = AddressState.loaded;
     } catch (error) {
@@ -97,8 +133,6 @@ class AddressProvider with ChangeNotifier {
       _errorMessage = error.toString();
     }
     notifyListeners();
-
-    print('======userId in provider${userId}=====');
   }
 
   Future<void> addAddress(AddressModel addressModel) async {

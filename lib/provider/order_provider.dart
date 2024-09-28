@@ -1,7 +1,8 @@
 import 'package:e_commerce_app_flutter/models/order_item_model/order_item_model.dart';
 import 'package:e_commerce_app_flutter/services/address_services.dart';
+import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/product_details_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/models/order_model/order_model.dart';
 import 'package:e_commerce_app_flutter/services/order_services.dart';
@@ -15,7 +16,7 @@ class OrderProvider with ChangeNotifier {
   final ProductDetailsServicesImpl productServices =
       ProductDetailsServicesImpl();
   final AddressServicesImpl addressServices = AddressServicesImpl();
-
+  final AuthServices authServices = AuthServicesImpl();
   List<OrderModel> _orders = [];
   OrderState _state = OrderState.initial;
   String _errorMessage = '';
@@ -48,7 +49,7 @@ class OrderProvider with ChangeNotifier {
     _errorMessage = '';
     notifyListeners();
 
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = authServices.getUser();
 
     if (currentUser == null) {
       _errorMessage = 'You are signed out. Please sign in to place an order.';

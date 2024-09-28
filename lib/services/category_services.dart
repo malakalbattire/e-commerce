@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:e_commerce_app_flutter/models/category_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
-import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:convert';
@@ -17,8 +16,6 @@ abstract class CategoryServices {
 }
 
 class CategoryServicesImpl implements CategoryServices {
-  final firestore = FirestoreServices.instance;
-
   @override
   Future<void> removeCategory(String categoryId) async {
     final url = Uri.parse('${BackendUrl.url}/categories/$categoryId');
