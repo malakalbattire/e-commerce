@@ -6,7 +6,6 @@ import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ProductItem extends StatelessWidget {
   final String productId;
@@ -21,8 +20,8 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productItemProvider = Provider.of<ProductItemProvider>(context);
-    final currentUser = FirebaseAuth.instance.currentUser;
     final AuthServicesImpl authServices = AuthServicesImpl();
+    final currentUser = authServices.getUser();
 
     Future<bool> isAdminFuture = authServices.isAdmin();
 

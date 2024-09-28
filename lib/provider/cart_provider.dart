@@ -14,7 +14,7 @@ class CartProvider with ChangeNotifier {
   Map<String, ProductItemModel> get products => _products;
 
   final CartServicesImpl cartServices = CartServicesImpl();
-  final AuthServices authServices = AuthServicesImpl(); // Use AuthServices
+  final AuthServices authServices = AuthServicesImpl();
 
   ProductItemModel? get selectedProduct =>
       _products.isNotEmpty ? _products.values.first : null;
