@@ -35,14 +35,14 @@ class CheckoutAddressWidget extends StatelessWidget {
                     title: 'Address',
                     onTap: () => showModalBottomSheet(
                       context: context,
-                      builder: (context) => const AddressModelBottomSheet(),
+                      builder: (context) => AddressModelBottomSheet(),
                     ),
                   ),
                   const SizedBox(height: 8.0),
                   InkWell(
                     onTap: () => showModalBottomSheet(
                       context: context,
-                      builder: (context) => const AddressModelBottomSheet(),
+                      builder: (context) => AddressModelBottomSheet(),
                     ),
                     child: Container(
                       width: double.infinity,
@@ -78,14 +78,14 @@ class CheckoutAddressWidget extends StatelessWidget {
                   title: 'Address',
                   onTap: () => showModalBottomSheet(
                     context: context,
-                    builder: (context) => const AddressModelBottomSheet(),
+                    builder: (context) => AddressModelBottomSheet(),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 InkWell(
                   onTap: () => showModalBottomSheet(
                     context: context,
-                    builder: (context) => const AddressModelBottomSheet(),
+                    builder: (context) => AddressModelBottomSheet(),
                   ),
                   child: Container(
                     width: double.infinity,
