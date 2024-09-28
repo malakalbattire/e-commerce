@@ -1,12 +1,12 @@
 import 'package:e_commerce_app_flutter/provider/address_provider.dart';
 import 'package:e_commerce_app_flutter/provider/card_payment_provider.dart';
+import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:e_commerce_app_flutter/views/widgets/checkout_widgets/checkout_cart_items_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/checkout_widgets/checkout_address_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/checkout_widgets/checkout_payment_widget.dart';
 import 'package:e_commerce_app_flutter/views/widgets/checkout_widgets/checkout_place_order_button.dart';
 import 'package:e_commerce_app_flutter/views/widgets/checkout_widgets/checkout_total_amount_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:e_commerce_app_flutter/provider/checkout_provider.dart';
@@ -20,17 +20,21 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   String? lastUserId;
+  final AuthServices _authServices = AuthServicesImpl();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final checkoutProvider =
           Provider.of<CheckoutProvider>(context, listen: false);
-      final user = FirebaseAuth.instance.currentUser;
       final addressProvider =
           Provider.of<AddressProvider>(context, listen: false);
       final paymentProvider =
           Provider.of<CardPaymentProvider>(context, listen: false);
+
+      final user = await _authServices.getUser();
+
       if (user == null) {
         await addressProvider.clearAddresses();
         await paymentProvider.clearPaymentCards();
@@ -38,13 +42,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
         return;
       } else if ((addressProvider.state == AddressState.initial &&
               paymentProvider.state == PaymentState.initial) ||
-          user.uid != lastUserId) {
-        lastUserId = user.uid;
+          user.id != lastUserId) {
+        lastUserId = user.id;
         addressProvider.clearAddresses();
-        addressProvider.loadAddressData(user.uid);
+        addressProvider.loadAddressData(user.id);
         paymentProvider.clearPaymentCards();
-        paymentProvider.loadPaymentData(user.uid);
+        paymentProvider.loadPaymentData(user.id);
       }
+
       checkoutProvider.loadCartItems();
       checkoutProvider.loadAddressItems();
       checkoutProvider.loadPaymentItems();
