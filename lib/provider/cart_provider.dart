@@ -56,7 +56,7 @@ class CartProvider with ChangeNotifier {
     _state = CartState.loading;
     notifyListeners();
 
-    cartServices.getCartItemsStream(currentUser.id!).listen((cartItems) async {
+    cartServices.getCartItemsStream(currentUser.id).listen((cartItems) async {
       List<AddToCartModel> updatedCartItems = [];
 
       for (var cartItem in cartItems) {

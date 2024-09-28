@@ -22,7 +22,6 @@ class ProductItem extends StatelessWidget {
     final productItemProvider = Provider.of<ProductItemProvider>(context);
     final AuthServicesImpl authServices = AuthServicesImpl();
     final currentUser = authServices.getUser();
-
     Future<bool> isAdminFuture = authServices.isAdmin();
 
     return Consumer<FavoritesProvider>(

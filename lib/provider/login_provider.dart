@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
-import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:flutter/material.dart';

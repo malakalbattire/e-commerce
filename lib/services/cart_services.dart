@@ -1,9 +1,6 @@
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
-import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
-import 'package:e_commerce_app_flutter/services/firestore_services.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 

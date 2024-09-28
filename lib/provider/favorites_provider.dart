@@ -181,7 +181,7 @@ class FavoritesProvider with ChangeNotifier {
     if (currentUser == null) {
       _clearFavorites();
     } else {
-      subscribeToFavorites(currentUser.id!); // Use the user ID
+      subscribeToFavorites(currentUser.id); // Use the user ID
     }
   }
 
@@ -272,7 +272,7 @@ class FavoritesProvider with ChangeNotifier {
       final currentUser = await authServices.getUser(); // Fetch user from MySQL
       if (currentUser != null) {
         await favServices.removeFromFav(productId);
-        _favItems = await favServices.getFavItems(currentUser.id!);
+        _favItems = await favServices.getFavItems(currentUser.id);
       } else {
         _favItems.clear();
       }
