@@ -19,8 +19,9 @@ class CheckoutServicesImpl implements CheckoutServices {
   @override
   Future<List<AddToCartModel>> getCartItems() async {
     final currentUser = await authServices.getUser();
+    final userId = currentUser!.id;
     return await firestore.getCollection(
-      path: ApiPath.addToCartItems(currentUser!.uid),
+      path: ApiPath.addToCartItems(userId),
       builder: (data, documentId) => AddToCartModel.fromMap(data, documentId),
     );
   }
@@ -28,7 +29,7 @@ class CheckoutServicesImpl implements CheckoutServices {
   @override
   Future<List<AddressModel>> getAddressItems() async {
     final currentUser = await authServices.getUser();
-    final path = ApiPath.addAddressItems(currentUser!.uid);
+    final path = ApiPath.addAddressItems(currentUser!.id);
 
     try {
       final addresses = await firestore.getCollection(
@@ -50,7 +51,7 @@ class CheckoutServicesImpl implements CheckoutServices {
   @override
   Future<List<PaymentModel>> getPaymentItems() async {
     final currentUser = await authServices.getUser();
-    final path = ApiPath.addPaymentCardItems(currentUser!.uid);
+    final path = ApiPath.addPaymentCardItems(currentUser!.id);
 
     try {
       final payments = await firestore.getCollection(

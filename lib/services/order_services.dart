@@ -19,7 +19,7 @@ class OrderServicesImpl implements OrderServices {
   @override
   Future<void> createOrder(OrderModel order) async {
     final currentUser = await authServices.getUser();
-    final String userId = currentUser!.uid;
+    final String userId = currentUser!.id;
 
     final url = Uri.parse('${BackendUrl.url}/orders');
     final Map<String, dynamic> body = {

@@ -30,9 +30,9 @@ class AddressServicesImpl implements AddressServices {
       'cityName': addressModel.cityName,
       'phoneNumber': addressModel.phoneNumber,
       'isSelected': addressModel.isSelected,
-      'userId': currentUser!.uid,
+      'userId': currentUser!.id,
     };
-    print("userId in services when add cards${currentUser.uid}");
+    print("userId in services when add cards${currentUser.id}");
     try {
       final response = await http.post(
         url,

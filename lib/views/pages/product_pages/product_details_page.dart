@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/provider/product_providers/product_item_provider.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -44,8 +43,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
     final AuthServicesImpl authServices = AuthServicesImpl();
+    final currentUser = authServices.getUser();
+
     Future<bool> isAdminFuture = authServices.isAdmin();
 
     final productItemProvider = Provider.of<ProductItemProvider>(context);
@@ -451,6 +451,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                           fontSize: 16.0,
                                                         );
                                                       } else {
+                                                        print('object');
                                                         await provider
                                                             .addToCart(widget
                                                                 .productId);

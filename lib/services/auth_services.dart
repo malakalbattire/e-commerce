@@ -1,46 +1,51 @@
+import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 abstract class AuthServices {
   Future<bool> login(String email, String password);
   Future<bool> register(String email, String password, String username);
   Future<void> logout();
   Future<bool> isLoggedIn();
-  Future<User?> getUser();
+  Future<UserData?> getUser();
   Future<String?> getUsername();
   Future<bool> isAdmin();
   Stream<String?> usernameStream();
 }
 
 class AuthServicesImpl implements AuthServices {
-  final _firebaseAuth = FirebaseAuth.instance;
+  String? _currentUserId; // or String _currentUserId = ''; based on your needs
+  String? _currentUsername;
 
   @override
   Future<bool> isAdmin() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return false;
-
     try {
-      final response =
-          await http.get(Uri.parse('${BackendUrl.url}/users/${user.uid}'));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _currentUserId = prefs.getString(
+          'currentUserId'); // Retrieve user ID from SharedPreferences
+
+      if (_currentUserId == null) {
+        print('No user ID found in SharedPreferences');
+        return false;
+      }
+
+      final response = await http.get(
+        Uri.parse('${BackendUrl.url}/users/$_currentUserId'),
+        headers: {'Content-Type': 'application/json'},
+      );
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
-
-        if (userData is Map<String, dynamic>) {
-          final userRole = userData['userRole'] as String?;
-          final isAdmin = userRole == 'admin';
-          print('Is Admin: $isAdmin');
-          return isAdmin;
-        } else {
-          print('Unexpected user data format: $userData');
-          return false;
-        }
+        final userRole = userData['userRole'] as String?;
+        final isAdmin = userRole == 'admin';
+        print('Is Admin: $isAdmin');
+        return isAdmin;
       } else {
-        print('Failed to fetch user data: ${response.statusCode}');
+        print('Error fetching user data: ${response.statusCode}');
         return false;
       }
     } catch (e) {
@@ -52,9 +57,32 @@ class AuthServicesImpl implements AuthServices {
   @override
   Future<bool> login(String email, String password) async {
     try {
-      UserCredential userData = await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-      return userData.user != null;
+      final response = await http.post(
+        Uri.parse('${BackendUrl.url}/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'password': password}),
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        // Login successful, you can parse and store user data if needed
+        final userData = json.decode(response.body);
+        print('Login successful: $userData');
+        _currentUserId = userData['id'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('currentUserId', _currentUserId!);
+
+        _currentUsername = userData['username'];
+        print(_currentUserId);
+        print(_currentUsername);
+        return true;
+      } else {
+        // Handle errors based on the response
+        if (kDebugMode) {
+          print('Login failed: ${response.body}');
+        }
+        return false;
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Login Error: $e');
@@ -66,34 +94,37 @@ class AuthServicesImpl implements AuthServices {
   @override
   Future<bool> register(String email, String password, String username) async {
     try {
-      UserCredential userData = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      var uuid = Uuid();
+      String userId = uuid.v4();
+      final currentUserData = {
+        'id': userId,
+        'email': email,
+        'username': username,
+        'userRole': 'customer',
+        'password': password, // You may want to hash this before sending it
+      };
 
-      if (userData.user != null) {
-        final currentUserData = {
-          'id': userData.user!.uid,
-          'email': email,
-          'username': username,
-          'userRole': 'customer',
-        };
+      final response = await http.post(
+        Uri.parse('${BackendUrl.url}/users'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(currentUserData),
+      );
 
-        final response = await http.post(
-          Uri.parse('${BackendUrl.url}/users'),
-          headers: {'Content-Type': 'application/json'},
-          body: json.encode(currentUserData),
-        );
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        if (response.statusCode == 200) {
-          print('register sucses');
-          return true;
-        } else {
-          return false;
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('Registration successful');
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Registration failed: ${response.body}');
         }
+        return false;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Registration Error========: $e');
+        print('Registration Error: $e');
       }
     }
     return false;
@@ -101,65 +132,113 @@ class AuthServicesImpl implements AuthServices {
 
   @override
   Future<void> logout() async {
-    await _firebaseAuth.signOut();
+    try {
+      final response = await http.post(
+        Uri.parse('${BackendUrl.url}/logout'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        print('Logged out successfully');
+      } else {
+        print('Error logging out: ${response.body}');
+      }
+    } catch (e) {
+      print('Logout Error: $e');
+    }
   }
 
   @override
   Future<bool> isLoggedIn() async {
-    return _firebaseAuth.currentUser != null;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _currentUserId = prefs.getString(
+          'currentUserId'); // Retrieve user ID from SharedPreferences
+
+      if (_currentUserId != null) {
+        print('User is logged in with ID: $_currentUserId');
+        return true;
+      } else {
+        print('No user is logged in.');
+        return false;
+      }
+    } catch (e) {
+      print('Error checking login status: $e');
+      return false;
+    }
   }
 
   @override
-  Future<User?> getUser() async {
-    return _firebaseAuth.currentUser;
-  }
+  Future<UserData?> getUser() async {
+    // Retrieve the user ID from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _currentUserId = prefs.getString('currentUserId');
 
-  @override
-  Stream<String?> usernameStream() {
-    return _firebaseAuth.authStateChanges().asyncMap((User? user) async {
-      if (user != null) {
-        try {
-          final response =
-              await http.get(Uri.parse('${BackendUrl.url}/users/${user.uid}'));
+    if (_currentUserId != null) {
+      try {
+        final response = await http.get(
+          Uri.parse('${BackendUrl.url}/users/$_currentUserId'),
+          headers: {'Content-Type': 'application/json'},
+        );
 
-          print('Response status: ${response.statusCode}');
-          print('Response body: ${response.body}');
-
-          if (response.statusCode == 200) {
-            final userData = json.decode(response.body);
-            print('Decoded user data: $userData');
-
-            if (userData is Map<String, dynamic>) {
-              return userData['username'] as String?;
-            } else {
-              print('Unexpected JSON structure: $userData');
-              return null;
-            }
-          } else {
-            print('Failed to load username: ${response.statusCode}');
-            return null;
-          }
-        } catch (e) {
-          print('Error fetching username: $e');
+        if (response.statusCode == 200) {
+          final userData = json.decode(response.body);
+          return UserData(
+            id: userData['id'],
+            email: userData['email'],
+            username: userData['username'],
+            userRole: userData['userRole'],
+          );
+        } else {
+          print('Error fetching user: ${response.body}');
           return null;
         }
-      } else {
+      } catch (e) {
+        print('Error getting user: $e');
         return null;
       }
-    });
+    } else {
+      print('No user ID found in SharedPreferences.');
+      return null;
+    }
   }
 
   @override
   Future<String?> getUsername() async {
-    final user = _firebaseAuth.currentUser;
-    if (user != null) {
-      final response =
-          await http.get(Uri.parse('${BackendUrl.url}/users/${user.uid}'));
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _currentUserId = prefs.getString(
+          'currentUserId'); // Retrieve the user ID from SharedPreferences
+
+      if (_currentUserId == null) {
+        print('No user ID found in SharedPreferences');
+        return null;
+      }
+
+      print('Fetching username for userId: $_currentUserId'); // Add this log
+
+      final response = await http.get(
+        Uri.parse('${BackendUrl.url}/users/$_currentUserId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         return userData['username'] as String?;
+      } else {
+        print('Error fetching username: ${response.body}');
+        return null;
       }
+    } catch (e) {
+      print('Error getting username: $e');
+      return null;
     }
-    return null;
+  }
+
+  @override
+  Stream<String?> usernameStream() async* {
+    while (true) {
+      await Future.delayed(Duration(seconds: 10)); // Poll every 10 seconds
+      yield await getUsername();
+    }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/provider/notification_provider.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 enum LoginState { initial, loading, loaded, error }
 
 class LoginProvider with ChangeNotifier {
-  final AuthServices _authServices = AuthServicesImpl();
+  final AuthServices _authServices =
+      AuthServicesImpl(); // Using the MySQL Auth implementation
   LoginState _state = LoginState.initial;
   String _errorMessage = '';
 
@@ -48,25 +49,26 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      // Use AuthServicesImpl's login method
       final isLoggedIn = await _authServices.login(email, password);
 
       if (isLoggedIn) {
+        // Fetch user data after login
         final user = await _authServices.getUser();
         if (user != null) {
-          final userDoc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-
-          final userRole = userDoc.data()?['userRole'] as String? ?? 'customer';
+          // Assuming you store role in the user object fetched from MySQL
+          final userRole = user.userRole;
 
           await notificationProvider.clearAllNotifications();
           Fluttertoast.showToast(msg: 'Login Success!');
 
+          // Redirect user based on their role
           if (userRole == 'admin') {
-            Navigator.pushNamed(context, AppRoutes.home);
+            Navigator.pushNamed(context,
+                '/adminHome'); // Assuming /adminHome is the route for admin
           } else {
-            Navigator.pushNamed(context, AppRoutes.home);
+            Navigator.pushNamed(context,
+                '/home'); // Assuming /home is the default route for users
           }
         } else {
           _errorMessage = 'Login failed. User data could not be retrieved.';
@@ -106,8 +108,8 @@ class LoginProvider with ChangeNotifier {
     }
   }
 
-  Future<User?> getUser() async {
-    User? userData = await _authServices.getUser();
+  Future<UserData?> getUser() async {
+    UserData? userData = await _authServices.getUser();
     if (userData != null) {
       notifyListeners();
       return userData;
@@ -126,5 +128,21 @@ class LoginProvider with ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  Future<bool> isAdmin() async {
+    try {
+      bool isAdmin = await _authServices.isAdmin();
+      return isAdmin;
+    } catch (e) {
+      _state = LoginState.error;
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Stream<String?> usernameStream() {
+    return _authServices.usernameStream();
   }
 }

@@ -1,5 +1,5 @@
+import 'package:e_commerce_app_flutter/models/user_data/user_data.dart';
 import 'package:e_commerce_app_flutter/provider/profile_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app_flutter/utils/app_routes.dart';
 import 'package:provider/provider.dart';
@@ -12,22 +12,30 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late Future<UserData?> _currentUserFuture;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider =
           Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider.handleAuthState();
+      profileProvider
+          .handleAuthState(); // Check the auth state when the page loads
     });
+    _currentUserFuture = _loadCurrentUser();
+  }
+
+  Future<UserData?> _loadCurrentUser() async {
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    return await profileProvider.authServices.getUser();
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
       builder: (context, profileProvider, child) {
-        final User? user = FirebaseAuth.instance.currentUser;
-
         return FutureBuilder<bool>(
           future: profileProvider.authServices.isAdmin(),
           builder: (context, snapshot) {
@@ -45,50 +53,45 @@ class _ProfilePageState extends State<ProfilePage> {
                   Center(
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: user != null && user.photoURL != null
-                          ? NetworkImage(user.photoURL!)
-                          : null,
-                      child: user?.photoURL == null
-                          ? const Icon(Icons.person, size: 50)
-                          : null,
+                      child: const Icon(Icons.person, size: 50),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (user != null)
-                    Center(
-                      child: FutureBuilder<String?>(
-                        future: profileProvider.authServices.getUsername(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text('Loading...');
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (!snapshot.hasData ||
-                              snapshot.data == null) {
-                            return const Text('Hi, User');
-                          } else {
-                            return Text(
-                              ' ${snapshot.data}'.toUpperCase(),
+                  FutureBuilder<UserData?>(
+                    future: _currentUserFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading...');
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data == null) {
+                        return const Text('Hi, User');
+                      } else {
+                        final user = snapshot.data!;
+                        return Column(
+                          children: [
+                            Text(
+                              user.username.toUpperCase(),
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
                                   .copyWith(fontWeight: FontWeight.w600),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: 10),
-                  if (user != null)
-                    Center(
-                      child: Text(
-                        user.email ?? 'No Email',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
+                            ),
+                            const SizedBox(height: 10),
+                            Center(
+                              child: Text(
+                                user.email ?? 'No Email',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
                   const SizedBox(height: 30),
-                  if (!profileProvider.isAdmin) ...[
+                  if (!profileProvider.isAdmin &&
+                      profileProvider.isLoggedIn) ...[
                     ListTile(
                       leading: const Icon(Icons.shopping_bag),
                       title: const Text('My Orders'),

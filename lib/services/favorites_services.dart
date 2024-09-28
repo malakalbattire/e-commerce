@@ -23,7 +23,7 @@ class FavServicesImpl implements FavoritesServices {
     if (currentUser == null) {
       throw Exception('No user is signed in.');
     }
-    return currentUser.uid;
+    return currentUser.id;
   }
 
   @override
@@ -112,7 +112,7 @@ class FavServicesImpl implements FavoritesServices {
 
   @override
   Stream<List<FavoriteModel>> getFavItemsStream(String userId) {
-    return Stream.periodic(Duration(seconds: 30), (_) async {
+    return Stream.periodic(Duration(seconds: 4), (_) async {
       try {
         final url = Uri.parse('${BackendUrl.url}/favorites/$userId');
 
