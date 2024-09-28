@@ -1,8 +1,8 @@
 import 'package:e_commerce_app_flutter/models/add_to_cart_model/add_to_cart_model.dart';
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
+import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/cart_services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 enum CartState { initial, loading, loaded, error }
@@ -14,6 +14,8 @@ class CartProvider with ChangeNotifier {
   Map<String, ProductItemModel> get products => _products;
 
   final CartServicesImpl cartServices = CartServicesImpl();
+  final AuthServices authServices = AuthServicesImpl(); // Use AuthServices
+
   ProductItemModel? get selectedProduct =>
       _products.isNotEmpty ? _products.values.first : null;
   List<AddToCartModel> _cartItems = [];
@@ -43,11 +45,18 @@ class CartProvider with ChangeNotifier {
     );
   }
 
-  void subscribeToCart(String userId) {
+  void subscribeToCart() async {
+    final currentUser =
+        await authServices.getUser(); // Fetch user data using AuthServices
+    if (currentUser == null) {
+      _clearCart();
+      return;
+    }
+
     _state = CartState.loading;
     notifyListeners();
 
-    cartServices.getCartItemsStream(userId).listen((cartItems) async {
+    cartServices.getCartItemsStream(currentUser.id!).listen((cartItems) async {
       List<AddToCartModel> updatedCartItems = [];
 
       for (var cartItem in cartItems) {
@@ -61,7 +70,6 @@ class CartProvider with ChangeNotifier {
       }
 
       _cartItems = updatedCartItems;
-      print('getCartItemsStream: ${_cartItems}======');
       _state = CartState.loaded;
       notifyListeners();
     }, onError: (error) {
@@ -80,14 +88,14 @@ class CartProvider with ChangeNotifier {
     _listenToAuthChanges();
   }
 
-  void _listenToAuthChanges() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        _clearCart();
-      } else {
-        subscribeToCart(user.uid);
-      }
-    });
+  void _listenToAuthChanges() async {
+    final currentUser = await authServices
+        .getUser(); // Listen for auth state changes using AuthServices
+    if (currentUser == null) {
+      _clearCart();
+    } else {
+      subscribeToCart();
+    }
   }
 
   void _clearCart() {
@@ -161,7 +169,6 @@ class CartProvider with ChangeNotifier {
     try {
       await Future.delayed(const Duration(seconds: 2));
       _cartItems = await cartServices.getCartItems();
-      print('_cartItems.length:${_cartItems.length}========');
       _state = CartState.loaded;
     } catch (error) {
       _state = CartState.error;
