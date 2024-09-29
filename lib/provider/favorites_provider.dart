@@ -2,8 +2,10 @@ import 'package:e_commerce_app_flutter/models/favorite_model/favorite_model.dart
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/services/favorites_services.dart';
+import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:flutter/foundation.dart';
 import 'package:collection/collection.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 enum FavoritesState { initial, loading, loaded, error }
 
@@ -14,6 +16,7 @@ class FavoritesProvider with ChangeNotifier {
   String _errorMessage = '';
   final FavServicesImpl favServices = FavServicesImpl();
   List<FavoriteModel> _favItems = [];
+  IO.Socket? socket;
 
   final AuthServices authServices = AuthServicesImpl();
 
@@ -25,6 +28,38 @@ class FavoritesProvider with ChangeNotifier {
 
   FavoritesProvider() {
     _listenToAuthChanges();
+    _initializeSocket();
+  }
+
+  void _initializeSocket() {
+    socket = IO.io('${BackendUrl.url}', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    socket?.on('connect', (_) {
+      print('Connected to Socket.IO server');
+    });
+
+    socket?.on('favoriteAdded', (data) {
+      print('Favorite added via socket: $data');
+      final newFavorite = FavoriteModel.fromJson(data);
+      _favItems.add(newFavorite);
+      _favoritesProducts.add(newFavorite);
+      notifyListeners();
+    });
+
+    socket?.on('favoriteRemoved', (data) {
+      print('Favorite removed via socket: $data');
+      final productId = data['product_id'] as String;
+      _favItems.removeWhere((fav) => fav.productId == productId);
+      _favoritesProducts.removeWhere((fav) => fav.productId == productId);
+      notifyListeners();
+    });
+
+    socket?.on('disconnect', (_) {
+      print('Disconnected from Socket.IO server');
+    });
   }
 
   void _listenToAuthChanges() async {
