@@ -131,6 +131,15 @@ class AuthServicesImpl implements AuthServices {
         if (kDebugMode) {
           print('Registration successful');
         }
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('currentUserId', userId);
+        await prefs.setString('currentUsername', username);
+        await prefs.setString('currentUserEmail', email);
+
+        _currentUserId = userId;
+        _currentUsername = username;
+
         return true;
       } else {
         if (kDebugMode) {
@@ -142,8 +151,8 @@ class AuthServicesImpl implements AuthServices {
       if (kDebugMode) {
         print('Registration Error: $e');
       }
+      return false;
     }
-    return false;
   }
 
   @override

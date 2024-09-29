@@ -36,14 +36,12 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         final currentUserId = snapshot.data!.id;
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (currentUserId == null) {
-            orderProvider.clearOrders();
-          } else if (orderProvider.state == OrderState.initial ||
-              currentUserId != lastUserId) {
-            lastUserId = currentUserId;
-            orderProvider.clearOrders();
-            orderProvider.loadOrders(currentUserId);
-          }
+          if (orderProvider.state == OrderState.initial ||
+            currentUserId != lastUserId) {
+          lastUserId = currentUserId;
+          orderProvider.clearOrders();
+          orderProvider.loadOrders(currentUserId);
+        }
         });
 
         return WillPopScope(
@@ -68,8 +66,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                     children: [
                       if (orderProvider.state == OrderState.loading)
                         const CircularProgressIndicator.adaptive()
-                      else if (orderProvider.state == OrderState.error ||
-                          currentUserId == null)
+                      else if (orderProvider.state == OrderState.error)
                         const SigninSignoutWidget()
                       else if (orderProvider.orders.isEmpty)
                         const Center(child: Text('No orders found'))

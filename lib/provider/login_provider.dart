@@ -57,7 +57,7 @@ class LoginProvider with ChangeNotifier {
           Fluttertoast.showToast(msg: 'Login Success!');
 
           if (userRole == 'admin') {
-            Navigator.pushNamed(context, '/adminHome');
+            Navigator.pushNamed(context, '/home');
           } else {
             Navigator.pushNamed(context, '/home');
           }
