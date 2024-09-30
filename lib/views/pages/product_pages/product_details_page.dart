@@ -434,10 +434,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                           !isColorSelected))
                                                   ? null
                                                   : () async {
+                                                      final currentUser =
+                                                          await authServices
+                                                              .getUser();
                                                       if (currentUser == null) {
                                                         Fluttertoast.showToast(
                                                           msg:
-                                                              "Please sign in to add items to the cart",
+                                                              "Please log in to add items to the cart",
                                                           toastLength: Toast
                                                               .LENGTH_SHORT,
                                                           gravity: ToastGravity
@@ -453,7 +456,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                         );
                                                       } else {
                                                         if (kDebugMode) {
-                                                          print('object');
+                                                          print(
+                                                              'Adding product to cart...');
                                                         }
                                                         await provider
                                                             .addToCart(widget
@@ -461,11 +465,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       }
                                                     },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: (hasColors &&
-                                                        isColorSelected)
-                                                    ? Theme.of(context)
-                                                        .primaryColor
-                                                    : Theme.of(context)
+                                                backgroundColor:
+                                                    Theme.of(context)
                                                         .primaryColor,
                                               ),
                                               child: const Text(
