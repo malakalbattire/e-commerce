@@ -48,7 +48,7 @@ class CartPage extends StatelessWidget {
                               Navigator.of(context, rootNavigator: true)
                                   .pushNamed(
                                 AppRoutes.productDetails,
-                                arguments: cartItem.id,
+                                arguments: cartItem.productId,
                               );
                             },
                             child: CartItemWidget(cartItem: cartItem),
