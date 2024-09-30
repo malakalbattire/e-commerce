@@ -3,6 +3,7 @@ import 'package:e_commerce_app_flutter/models/product_item_model/product_item_mo
 import 'package:e_commerce_app_flutter/services/auth_services.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 abstract class ProductDetailsServices {
   Future<ProductItemModel> getProductDetails(String id);
@@ -14,6 +15,34 @@ abstract class ProductDetailsServices {
 
 class ProductDetailsServicesImpl implements ProductDetailsServices {
   final authServices = AuthServicesImpl();
+  IO.Socket? socket;
+
+  ProductDetailsServicesImpl() {
+    _initializeSocket();
+  }
+
+  void _initializeSocket() {
+    socket = IO.io('${BackendUrl.url}', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    socket?.on('connect', (_) {
+      print('Connected to Socket.IO server');
+    });
+
+    socket?.on('productStockUpdated', (data) {
+      print('Product stock updated via socket: $data');
+    });
+
+    socket?.on('productDetailsUpdated', (data) {
+      print('Product details updated via socket: $data');
+    });
+
+    socket?.on('disconnect', (_) {
+      print('Disconnected from Socket.IO server');
+    });
+  }
 
   @override
   Future<ProductItemModel> getProductDetails(String id) async {
@@ -53,7 +82,12 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
       body: json.encode({'inStock': newStock}),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      socket?.emit('productStockUpdated', {
+        'product_id': productId,
+        'new_stock': newStock,
+      });
+    } else {
       throw Exception('Failed to update product stock');
     }
   }
@@ -67,7 +101,12 @@ class ProductDetailsServicesImpl implements ProductDetailsServices {
       body: json.encode(updatedFields),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      socket?.emit('productDetailsUpdated', {
+        'product_id': productId,
+        ...updatedFields,
+      });
+    } else {
       throw Exception('Failed to update product details');
     }
   }

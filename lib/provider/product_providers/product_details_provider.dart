@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 class ProductDetailsProvider with ChangeNotifier {
   Map<String, ProductItemModel> _products = {};
   int _quantity = 1;
@@ -18,6 +20,7 @@ class ProductDetailsProvider with ChangeNotifier {
   ProductColor? _selectedColor;
   final CartServicesImpl cartServices = CartServicesImpl();
   final authServices = AuthServicesImpl();
+  IO.Socket? socket;
 
   final List<AddToCartModel> _cartItems = [];
   final ProductDetailsServicesImpl productDetailsServices =
@@ -29,6 +32,59 @@ class ProductDetailsProvider with ChangeNotifier {
   Size? get selectedSize => _selectedSize;
   ProductColor? get selectedColor => _selectedColor;
   List<AddToCartModel> get cartItems => _cartItems;
+
+  ProductDetailsProvider() {
+    _initializeSocket();
+  }
+
+  void _initializeSocket() {
+    socket = IO.io('${BackendUrl.url}', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    socket?.on('connect', (_) {
+      print('Connected to Socket.IO server');
+    });
+
+    socket?.on('productStockUpdated', (data) {
+      print('Product stock updated via socket: $data');
+      final productId = data['product_id'];
+      final newStock = data['new_stock'];
+      _updateStockInProvider(productId, newStock);
+    });
+
+    socket?.on('productDetailsUpdated', (data) {
+      print('Product details updated via socket: $data');
+      final productId = data['product_id'];
+      _fetchUpdatedProductDetails(productId);
+    });
+
+    socket?.on('disconnect', (_) {
+      print('Disconnected from Socket.IO server');
+    });
+  }
+
+  Future<void> _fetchUpdatedProductDetails(String productId) async {
+    try {
+      final updatedProduct =
+          await productDetailsServices.getProductDetails(productId);
+      _products[productId] = updatedProduct;
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching updated product details: $e');
+      }
+    }
+  }
+
+  Future<void> _updateStockInProvider(String productId, int newStock) async {
+    final product = _products[productId];
+    if (product != null) {
+      _products[productId] = product.copyWith(inStock: newStock);
+      notifyListeners();
+    }
+  }
 
   Future<void> getProductDetails(String id) async {
     try {
@@ -46,17 +102,8 @@ class ProductDetailsProvider with ChangeNotifier {
     }
   }
 
-  Size convertProductSizeToSize(ProductSize productSize) {
-    switch (productSize) {
-      case ProductSize.S:
-        return Size.S;
-      case ProductSize.M:
-        return Size.M;
-      case ProductSize.L:
-        return Size.L;
-      case ProductSize.xL:
-        return Size.xL;
-    }
+  ProductItemModel? getProductById(String id) {
+    return _products[id];
   }
 
   Future<void> getProductsDetails(List<String> ids) async {
@@ -73,8 +120,19 @@ class ProductDetailsProvider with ChangeNotifier {
     }
   }
 
-  ProductItemModel? getProductById(String id) {
-    return _products[id];
+  Size convertProductSizeToSize(ProductSize productSize) {
+    switch (productSize) {
+      case ProductSize.S:
+        return Size.S;
+      case ProductSize.M:
+        return Size.M;
+      case ProductSize.L:
+        return Size.L;
+      case ProductSize.xL:
+        return Size.xL;
+      default:
+        return Size.OneSize;
+    }
   }
 
   void setQuantity(int quantity) {
@@ -149,9 +207,6 @@ class ProductDetailsProvider with ChangeNotifier {
       final product = selectedProduct;
       if (product == null) return;
 
-      final size = selectedSize?.name ?? 'One Size';
-      final color = selectedColor?.name ?? 'DefaultColor';
-
       final newCartItem = AddToCartModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         productId: productId,
@@ -176,6 +231,13 @@ class ProductDetailsProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
+        socket?.emit('cartItemAdded', {
+          'user_id': currentUser.id,
+          'product_id': productId,
+          'quantity': quantity,
+          'action': 'added',
+        });
+
         Fluttertoast.showToast(
           msg: "Added to cart successfully.",
           toastLength: Toast.LENGTH_SHORT,
@@ -187,6 +249,13 @@ class ProductDetailsProvider with ChangeNotifier {
         );
         notifyListeners();
       } else if (response.statusCode == 200) {
+        socket?.emit('cartItemUpdated', {
+          'user_id': currentUser.id,
+          'product_id': productId,
+          'quantity': quantity,
+          'action': 'updated',
+        });
+
         Fluttertoast.showToast(
           msg: "Cart item quantity updated.",
           toastLength: Toast.LENGTH_SHORT,

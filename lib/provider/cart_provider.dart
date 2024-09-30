@@ -45,6 +45,50 @@ class CartProvider with ChangeNotifier {
     );
   }
 
+  CartProvider() {
+    _listenToAuthChanges();
+    _initializeCartSubscription();
+  }
+
+  void _listenToAuthChanges() async {
+    final currentUser = await authServices.getUser();
+    if (currentUser == null) {
+      _clearCart();
+    } else {
+      subscribeToCart();
+    }
+  }
+
+  void _initializeCartSubscription() {
+    cartServices.socket?.on('cartUpdated', (data) {
+      print('Cart updated via socket: $data');
+      _fetchUpdatedCartItems();
+    });
+
+    cartServices.socket?.on('cartCleared', (data) {
+      print('Cart cleared via socket');
+      _clearCart();
+    });
+  }
+
+  Future<void> _fetchUpdatedCartItems() async {
+    final currentUser = await authServices.getUser();
+    if (currentUser != null) {
+      _state = CartState.loading;
+      notifyListeners();
+
+      try {
+        _cartItems = await cartServices.getCartItems();
+        _state = CartState.loaded;
+      } catch (error) {
+        _state = CartState.error;
+        _errorMessage = error.toString();
+      }
+
+      notifyListeners();
+    }
+  }
+
   void subscribeToCart() async {
     final currentUser = await authServices.getUser();
     if (currentUser == null) {
@@ -56,19 +100,7 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
 
     cartServices.getCartItemsStream(currentUser.id).listen((cartItems) async {
-      List<AddToCartModel> updatedCartItems = [];
-
-      for (var cartItem in cartItems) {
-        try {
-          updatedCartItems.add(cartItem);
-        } catch (e) {
-          if (kDebugMode) {
-            print('Error processing cart item: $e');
-          }
-        }
-      }
-
-      _cartItems = updatedCartItems;
+      _cartItems = cartItems;
       _state = CartState.loaded;
       notifyListeners();
     }, onError: (error) {
@@ -82,19 +114,6 @@ class CartProvider with ChangeNotifier {
         0,
         (sum, item) => sum + item.quantity,
       );
-
-  CartProvider() {
-    _listenToAuthChanges();
-  }
-
-  void _listenToAuthChanges() async {
-    final currentUser = await authServices.getUser();
-    if (currentUser == null) {
-      _clearCart();
-    } else {
-      subscribeToCart();
-    }
-  }
 
   void _clearCart() {
     _cartItems.clear();
@@ -130,7 +149,7 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
     try {
       await cartServices.incrementCartItemQuantity(productId, incrementBy);
-      _cartItems = await cartServices.getCartItems();
+      await _fetchUpdatedCartItems();
       _itemStates[productId] = ItemState.none;
       _pageLoading = false;
     } catch (error) {
@@ -148,7 +167,7 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
     try {
       await cartServices.decrementCartItemQuantity(productId, decrementBy);
-      _cartItems = await cartServices.getCartItems();
+      await _fetchUpdatedCartItems();
       _itemStates[productId] = ItemState.none;
       _pageLoading = false;
     } catch (error) {
