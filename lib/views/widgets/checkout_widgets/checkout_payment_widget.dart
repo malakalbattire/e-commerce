@@ -37,14 +37,14 @@ class CheckoutPaymentWidget extends StatelessWidget {
                     title: 'Payment Method',
                     onTap: () => showModalBottomSheet(
                       context: context,
-                      builder: (context) => const PaymentModelBottomSheet(),
+                      builder: (context) => PaymentModelBottomSheet(),
                     ),
                   ),
                   const SizedBox(height: 8.0),
                   InkWell(
                     onTap: () => showModalBottomSheet(
                       context: context,
-                      builder: (context) => const PaymentModelBottomSheet(),
+                      builder: (context) => PaymentModelBottomSheet(),
                     ),
                     child: Container(
                       width: double.infinity,
@@ -78,14 +78,14 @@ class CheckoutPaymentWidget extends StatelessWidget {
                   title: 'Payment Method',
                   onTap: () => showModalBottomSheet(
                     context: context,
-                    builder: (context) => const PaymentModelBottomSheet(),
+                    builder: (context) => PaymentModelBottomSheet(),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 InkWell(
                   onTap: () => showModalBottomSheet(
                     context: context,
-                    builder: (context) => const PaymentModelBottomSheet(),
+                    builder: (context) => PaymentModelBottomSheet(),
                   ),
                   child: Container(
                     width: double.infinity,

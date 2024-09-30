@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PaymentModelBottomSheet extends StatelessWidget {
-  const PaymentModelBottomSheet({super.key});
+  final AuthServices authServices = AuthServicesImpl();
+
+  PaymentModelBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final AuthServices authServices = AuthServicesImpl();
-
     return FutureBuilder<UserData?>(
       future: authServices.getUser(),
       builder: (context, snapshot) {

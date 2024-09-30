@@ -25,11 +25,21 @@ class CardPaymentProvider with ChangeNotifier {
     notifyListeners();
     try {
       final fetchedPayments = await paymentServices.getPaymentItems(userId);
-      _paymentItems = fetchedPayments;
-      _state = PaymentState.loaded;
+      if (fetchedPayments.isEmpty) {
+        _paymentItems = [];
+        _state = PaymentState.loaded;
+      } else {
+        _paymentItems = fetchedPayments;
+        _state = PaymentState.loaded;
+      }
     } catch (error) {
-      _state = PaymentState.error;
-      _errorMessage = error.toString();
+      if (error.toString().contains("Not Found")) {
+        _paymentItems = [];
+        _state = PaymentState.loaded;
+      } else {
+        _state = PaymentState.error;
+        _errorMessage = error.toString();
+      }
     }
     notifyListeners();
   }
