@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 abstract class ProductItemService {
   Stream<String> getNameStream(String productId);
@@ -11,9 +12,36 @@ abstract class ProductItemService {
   Stream<int> getStockStream(String productId);
   Stream<String> getDescriptionStream(String productId);
   Future<void> deleteProduct(String productId);
+  Future<void> updateProduct(
+      String productId, Map<String, dynamic> updatedData);
 }
 
 class ProductItemServiceImpl implements ProductItemService {
+  late IO.Socket _socket;
+
+  ProductItemServiceImpl() {
+    _initializeSocket();
+  }
+
+  void _initializeSocket() {
+    _socket = IO.io(BackendUrl.url, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    _socket.on('connect', (_) {
+      if (kDebugMode) {
+        print('Connected to socket server');
+      }
+    });
+
+    _socket.on('disconnect', (_) {
+      if (kDebugMode) {
+        print('Disconnected from socket server');
+      }
+    });
+  }
+
   Future<Map<String, dynamic>> _fetchProductData(String productId) async {
     try {
       final response =
@@ -82,10 +110,9 @@ class ProductItemServiceImpl implements ProductItemService {
 
       if (response.statusCode == 200) {
         if (kDebugMode) {
-          if (kDebugMode) {
-            print('Product deleted successfully');
-          }
+          print('Product deleted successfully');
         }
+        _socket.emit('productDeleted', {'id': productId});
       } else if (response.statusCode == 404) {
         if (kDebugMode) {
           print('Product not found');
@@ -103,5 +130,42 @@ class ProductItemServiceImpl implements ProductItemService {
       }
       throw Exception('Error deleting product: $e');
     }
+  }
+
+  Future<void> updateProduct(
+      String productId, Map<String, dynamic> updatedData) async {
+    try {
+      final response = await http.put(
+        Uri.parse('${BackendUrl.url}/products/$productId'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(updatedData),
+      );
+
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('Product updated successfully');
+        }
+        _socket.emit('productUpdated', {'id': productId, ...updatedData});
+      } else if (response.statusCode == 404) {
+        if (kDebugMode) {
+          print('Product not found');
+        }
+        throw Exception('Product not found');
+      } else {
+        if (kDebugMode) {
+          print('Failed to update product: ${response.reasonPhrase}');
+        }
+        throw Exception('Failed to update product: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating product: $e');
+      }
+      throw Exception('Error updating product: $e');
+    }
+  }
+
+  void closeSocket() {
+    _socket.disconnect();
   }
 }

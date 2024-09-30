@@ -1,8 +1,8 @@
 import 'package:e_commerce_app_flutter/models/product_item_model/product_item_model.dart';
 import 'package:e_commerce_app_flutter/utils/backend_url.dart';
-import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 abstract class HomeServices {
   Future<List<ProductItemModel>> getProducts();
@@ -14,6 +14,32 @@ abstract class HomeServices {
 class HomeServicesImpl implements HomeServices {
   List<ProductItemModel> _cachedProducts = [];
   bool _isFetching = false;
+  late IO.Socket _socket;
+
+  HomeServicesImpl() {
+    _socket = IO.io(BackendUrl.url, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    _socket.on('productAdded', (data) {
+      final newProduct = ProductItemModel.fromMap(data, data['id']);
+      _cachedProducts.add(newProduct);
+    });
+
+    _socket.on('productUpdated', (data) {
+      final updatedProduct = ProductItemModel.fromMap(data, data['id']);
+      final index =
+          _cachedProducts.indexWhere((product) => product.id == data['id']);
+      if (index != -1) {
+        _cachedProducts[index] = updatedProduct;
+      }
+    });
+
+    _socket.on('productDeleted', (data) {
+      _cachedProducts.removeWhere((product) => product.id == data['id']);
+    });
+  }
 
   @override
   Future<List<ProductItemModel>> getProducts() async {
@@ -35,9 +61,6 @@ class HomeServicesImpl implements HomeServices {
         throw Exception('Failed to fetch products');
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching products: $e');
-      }
       throw Exception('Error fetching products: $e');
     } finally {
       _isFetching = false;
@@ -72,13 +95,11 @@ class HomeServicesImpl implements HomeServices {
 
       if (response.statusCode == 200) {
         _cachedProducts.add(product);
+        _socket.emit('productAdded', product.toMap());
       } else {
         throw Exception('Failed to add product');
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Error adding product: $e');
-      }
       throw Exception('Error adding product: $e');
     }
   }
@@ -91,13 +112,11 @@ class HomeServicesImpl implements HomeServices {
 
       if (response.statusCode == 200) {
         _cachedProducts.removeWhere((product) => product.id == id);
+        _socket.emit('productDeleted', {'id': id});
       } else {
         throw Exception('Failed to delete product');
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Error deleting product: $e');
-      }
       throw Exception('Error deleting product: $e');
     }
   }
