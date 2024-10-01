@@ -41,7 +41,7 @@ class FavoritesProvider with ChangeNotifier {
       print('Connected to Socket.IO server');
     });
 
-    socket?.on('favoriteAdded', (data) {
+    socket?.on('favoriteAdded', (data) async {
       print('Favorite added via socket: $data');
       final newFavorite = FavoriteModel.fromJson(data);
       _favItems.add(newFavorite);
@@ -62,52 +62,17 @@ class FavoritesProvider with ChangeNotifier {
     });
   }
 
-  void _listenToAuthChanges() async {
-    final currentUser = await authServices.getUser();
-    if (currentUser == null) {
-      _clearFavorites();
-    } else {
-      subscribeToFavorites(currentUser.id);
-    }
-  }
-
-  Stream<List<ProductItemModel>> getProductStream(List<String> favoriteIds) {
-    return favServices.getProductStream(favoriteIds);
-  }
-
-  void _clearFavorites() {
-    _favItems.clear();
-    _favoritesProducts.clear();
-    notifyListeners();
-  }
-
   void subscribeToFavorites(String userId) {
     _state = FavoritesState.loading;
     notifyListeners();
 
     favServices.getFavItemsStream(userId).listen((favorites) async {
-      List<FavoriteModel> updatedFavorites = [];
-
-      for (var fav in favorites) {
-        try {
-          updatedFavorites.add(fav);
-          if (kDebugMode) {
-            print('Updated favorites: $fav');
-          }
-        } catch (e) {
-          if (kDebugMode) {
-            print('Error checking product existence: $e');
-          }
-        }
-      }
-
-      _favoritesProducts = updatedFavorites;
-      _favItems = updatedFavorites;
-      _state = updatedFavorites.isNotEmpty
-          ? FavoritesState.loaded
-          : FavoritesState.error;
-      if (updatedFavorites.isEmpty) {
-        _errorMessage = 'No favorites found.';
+      if (favorites.isNotEmpty) {
+        _favItems = favorites;
+        _favoritesProducts = favorites;
+        _state = FavoritesState.loaded;
+      } else {
+        _state = FavoritesState.loaded;
       }
       notifyListeners();
     }, onError: (error) {
@@ -117,10 +82,29 @@ class FavoritesProvider with ChangeNotifier {
     });
   }
 
+  void _listenToAuthChanges() async {
+    authServices.usernameStream().listen((username) async {
+      if (username == null) {
+        _clearFavorites();
+      } else {
+        final currentUser = await authServices.getUser();
+        if (currentUser != null) {
+          subscribeToFavorites(currentUser.id);
+        }
+      }
+    });
+  }
+
+  void _clearFavorites() {
+    _favItems.clear();
+    _favoritesProducts.clear();
+    _state = FavoritesState.initial;
+    notifyListeners();
+  }
+
   Future<void> addToFav(String productId) async {
     try {
       final currentUser = await authServices.getUser();
-
       if (currentUser == null) return;
 
       final existingFav =
