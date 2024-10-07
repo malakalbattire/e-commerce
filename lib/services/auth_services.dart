@@ -291,9 +291,7 @@ class AuthServicesImpl implements AuthServices {
 
   @override
   Stream<String?> usernameStream() async* {
-    while (true) {
-      await Future.delayed(Duration(seconds: 40));
-      yield await getUsername();
-    }
+    final username = await getUsername();
+    yield username;
   }
 }

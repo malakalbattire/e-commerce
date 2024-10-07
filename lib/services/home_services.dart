@@ -50,7 +50,7 @@ class HomeServicesImpl implements HomeServices {
     try {
       _isFetching = true;
       final response = await http.get(Uri.parse('${BackendUrl.url}/products'));
-
+      print('Backend URL: $BackendUrl.url');
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
         _cachedProducts = data.map((product) {
@@ -58,9 +58,11 @@ class HomeServicesImpl implements HomeServices {
         }).toList();
         return _cachedProducts;
       } else {
+        print('Failed to fetch products. Status code: ${response.statusCode}');
         throw Exception('Failed to fetch products');
       }
     } catch (e) {
+      print('Error fetching products: $e');
       throw Exception('Error fetching products: $e');
     } finally {
       _isFetching = false;
@@ -69,17 +71,8 @@ class HomeServicesImpl implements HomeServices {
 
   @override
   Stream<List<ProductItemModel>> getProductsStream() async* {
-    if (_cachedProducts.isNotEmpty) {
-      yield _cachedProducts;
-    }
-
-    yield* Stream.periodic(Duration(seconds: 40)).asyncMap((_) async {
-      try {
-        return await getProducts();
-      } catch (e) {
-        return _cachedProducts;
-      }
-    });
+    final products = await getProducts();
+    yield products;
   }
 
   @override

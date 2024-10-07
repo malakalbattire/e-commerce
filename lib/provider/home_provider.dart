@@ -78,18 +78,19 @@ class HomeProvider with ChangeNotifier {
   Future<void> loadHomeData() async {
     _state = HomeState.loading;
     notifyListeners();
+    print('Loading home data...');
 
     try {
       _carouselItems = dummyCarouselItems;
-      if (kDebugMode) {
-        print('Carousel Items: $_carouselItems');
-      }
+      print('Carousel items set');
 
       _products = await _homeServices.getProducts();
       _state = HomeState.loaded;
+      print('Home data loaded successfully');
     } catch (error) {
       _errorMessage = error.toString();
       _state = HomeState.error;
+      print('Error in loadHomeData: $_errorMessage');
     }
 
     notifyListeners();
