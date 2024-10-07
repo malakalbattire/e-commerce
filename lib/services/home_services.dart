@@ -73,7 +73,7 @@ class HomeServicesImpl implements HomeServices {
       yield _cachedProducts;
     }
 
-    yield* Stream.periodic(Duration(seconds: 10)).asyncMap((_) async {
+    yield* Stream.periodic(Duration(seconds: 40)).asyncMap((_) async {
       try {
         return await getProducts();
       } catch (e) {

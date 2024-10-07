@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+enum AuthState { initial, loading, loaded, error }
+
 abstract class AuthServices {
   Future<bool> login(String email, String password);
   Future<bool> register(String email, String password, String username);
@@ -20,7 +22,8 @@ abstract class AuthServices {
 class AuthServicesImpl implements AuthServices {
   String? _currentUserId;
   String? _currentUsername;
-
+  AuthState _state = AuthState.initial;
+  AuthState get state => _state;
   @override
   Future<bool> isAdmin() async {
     try {
@@ -248,6 +251,7 @@ class AuthServicesImpl implements AuthServices {
 
   @override
   Future<String?> getUsername() async {
+    _state = AuthState.loading;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       _currentUserId = prefs.getString('currentUserId');
@@ -262,7 +266,7 @@ class AuthServicesImpl implements AuthServices {
       if (kDebugMode) {
         print('Fetching username for userId: $_currentUserId');
       }
-
+      _state = AuthState.loading;
       final response = await http.get(
         Uri.parse('${BackendUrl.url}/users/$_currentUserId'),
         headers: {'Content-Type': 'application/json'},
@@ -288,7 +292,7 @@ class AuthServicesImpl implements AuthServices {
   @override
   Stream<String?> usernameStream() async* {
     while (true) {
-      await Future.delayed(Duration(seconds: 10));
+      await Future.delayed(Duration(seconds: 40));
       yield await getUsername();
     }
   }
